@@ -1,1 +1,1 @@
-# projRigel
+# Projet Rigel (CS-BA2)
