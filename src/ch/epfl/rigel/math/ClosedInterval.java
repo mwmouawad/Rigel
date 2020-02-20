@@ -45,7 +45,7 @@ public final class ClosedInterval extends Interval  {
     /**
      * Method based on clipping interval. If v is lower (higher) than the interval
      * return the lower bound (higher bound) .
-     * @param v     the input value to be clipped.
+     * @param v the input value to be clipped.
      * @return
      */
     double clip(double v){
