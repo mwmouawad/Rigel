@@ -41,12 +41,17 @@ public final class RightOpenInterval extends Interval {
         return false;
     }
 
+    /**
+     * Method based on reducing interval.
+     * @param v the input value to be reduced to the instance interval.
+     * @return
+     */
     double reduce(double v){
 
         double a = this.low();
         double b = this.high();
-        double x = v - this.low();
-        double y = this.high() - this.low();
+        double x = v - a;
+        double y = b - a;
 
         double floorModResult = x - y * Math.floor(x/y);
 
