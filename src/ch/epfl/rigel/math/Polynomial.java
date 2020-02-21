@@ -6,12 +6,6 @@ public final class Polynomial {
 
     double coefficients[];
 
-    public static void main(String[] args) {
-
-        Polynomial poly = Polynomial.of(3,2,1,1);
-        System.out.println(poly.at(2));
-
-    }
 
     private Polynomial(double coefficientN, double... coefficients){
 
