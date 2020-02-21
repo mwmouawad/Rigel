@@ -10,6 +10,16 @@ public final class ClosedInterval extends Interval  {
         super(low, high);
     }
 
+    public static void main(String[] args) {
+        double a = 0.15;
+        double b = 0.15;
+        double c = 0.1;
+        double d = 0.2;
+
+        System.out.println(a+b);
+        System.out.println(c+d);
+    }
+
 
     public static ClosedInterval of(double low, double high){
 
