@@ -42,7 +42,9 @@ public final class Polynomial {
 
     @Override
     public String toString() {
-        return super.toString();
+        StringBuilder sb = new StringBuilder();
+
+        return sb.toString();
     }
 
     @Override

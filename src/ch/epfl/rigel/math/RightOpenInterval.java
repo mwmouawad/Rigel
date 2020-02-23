@@ -25,7 +25,7 @@ public final class RightOpenInterval extends Interval {
         Preconditions.checkArgument( size > 0);
 
         //Create low and high bounds centered around zero.
-        double centeredLow = size / 2;
+        double centeredLow = -(size / 2);
         double centeredHigh = -centeredLow;
 
         return new RightOpenInterval(centeredLow, centeredHigh);

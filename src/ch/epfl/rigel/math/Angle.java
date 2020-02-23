@@ -6,7 +6,7 @@ import java.lang.Math;
 
 public final class Angle {
 
-    static private double TAU = 2*Math.PI ;
+    static  double TAU = 2*Math.PI ;
     private static final double DEG_PER_RAD = 360.0 / TAU;
     static private RightOpenInterval zeroToTAU =  RightOpenInterval.of(0, TAU);
 
@@ -51,33 +51,32 @@ public final class Angle {
      * @return
      */
     public static double ofHr(double hr){
-        return hr * 15;
+        return ofDeg(hr * 15);
     }
 
     /**
-     * Convert the input angle to degrees.
+     * Convert the input angle to hours.
      * @param rad input angles in hours.
      * @return
      */
     public static double toHr(double rad){
 
-        double deg = ofDeg(rad);
-
+        double deg = toDeg(rad);
         return deg / 15;
 
     }
 
-    double ofDMS(int deg, int min, double sec){
+    public static double ofDMS(int deg, int min, double sec){
 
         Preconditions.checkArgument(min<60 && min>=0 && sec<60 && sec>=0);
 
         //Convert arcminutes to Degrees
-        double minInDeg = min / 60;
+        double minInDeg = (double)min / 60;
         //Convert arcseconds to Degrees
         double secInDeg = sec / 3600;
 
 
-        return Math.toRadians(deg)  + Math.toRadians(minInDeg) + Math.toRadians(secInDeg);
+        return ofDeg(deg + minInDeg + secInDeg);
 
     }
 

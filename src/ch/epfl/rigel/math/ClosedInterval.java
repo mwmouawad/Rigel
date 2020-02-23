@@ -9,7 +9,7 @@ public final class ClosedInterval extends Interval  {
     private ClosedInterval(double low, double high){
         super(low, high);
     }
-    
+
 
     public static ClosedInterval of(double low, double high){
 
@@ -24,7 +24,7 @@ public final class ClosedInterval extends Interval  {
         Preconditions.checkArgument(size>0);
 
         //Create low and high bounds centered around zero.
-        double centeredLow = size / 2;
+        double centeredLow = -(size / 2);
         double centeredHigh = -centeredLow;
 
         return new ClosedInterval(centeredLow, centeredHigh);
