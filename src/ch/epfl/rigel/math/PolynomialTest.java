@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class PolynomialTest {
-    @org.junit.Test
+    @Test
     void ofFailsWithFirstCoefficient0() {
         assertThrows(IllegalArgumentException.class, () -> {
             Polynomial.of(0, 2, 45, -1, 0);

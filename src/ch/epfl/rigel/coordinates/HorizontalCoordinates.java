@@ -74,27 +74,28 @@ public final class HorizontalCoordinates extends SphericalCoordinates {
 
     }
 
-    public String azOctantName(String N, String E, String S, String W){
-        switch ((int)(Math.round(az()*8 / Angle.TAU))) {
-            case 1 :
+    public String azOctantName(String N, String E, String S, String W) {
+        switch ((int) (Math.round(az() * 8 / Angle.TAU))) {
+            case 1:
                 return N + E;
-            case 2 :
+            case 2:
                 return E;
-            case 3 :
+            case 3:
                 return S + E;
-            case 4 :
+            case 4:
                 return S;
-            case 5 :
+            case 5:
                 return S + W;
-            case 6 :
+            case 6:
                 return W;
-            case 7 :
+            case 7:
                 return N + W;
-            case 8 :
-            case 0 :
+            case 8:
+            case 0:
                 return N;
+            default:
+                throw new IllegalStateException();
         }
-        throw new IllegalStateException();
     }
 
     public String toString() {

@@ -1,6 +1,8 @@
 package ch.epfl.rigel.astronomy;
 
 import java.time.*;
+import java.time.temporal.ChronoUnit;
+
 
 public enum Epoch {
     J2010(ZonedDateTime.of(
@@ -17,6 +19,8 @@ public enum Epoch {
     }
 
     public double daysUntil(ZonedDateTime when){
-        return 0;
+        return when.until(this.time, ChronoUnit.MILLIS);
     }
+
+    public double julianCenturiesUntil(ZonedDateTime when){ return 0; }
 }
