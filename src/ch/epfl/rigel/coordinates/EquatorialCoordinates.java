@@ -34,6 +34,8 @@ public final class EquatorialCoordinates extends SphericalCoordinates {
 
     public double raDeg(){ return super.lonDeg(); }
 
+    public double raHr(){ return Angle.toHr(this.ra()); }
+
     public double dec(){ return super.lat(); }
 
     public double decDeg(){ return super.latDeg(); }
