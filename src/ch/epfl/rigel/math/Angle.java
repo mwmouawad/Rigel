@@ -6,7 +6,7 @@ import java.lang.Math;
 
 public final class Angle {
 
-    static  double TAU = 2*Math.PI ;
+    public final static  double TAU = 2*Math.PI ;
     private static final double DEG_PER_RAD = 360.0 / TAU;
     static private RightOpenInterval zeroToTAU =  RightOpenInterval.of(0, TAU);
 
