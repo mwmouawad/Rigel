@@ -13,16 +13,18 @@ public enum Epoch {
             LocalTime.of(12, 0), ZoneOffset.UTC));
 
     private ZonedDateTime time;
+    private final double MILLISTODAYS = 1000*60*60*24;
+    private final double MILLISTOJULIANS = MILLISTODAYS/36525;
 
     Epoch(ZonedDateTime time) {
         this.time = time;
     }
 
     public double daysUntil(ZonedDateTime when){
-        double coef = 1000*60*60*24;
-        return - (double) (when.until(this.time, ChronoUnit.MILLIS))/coef;
+        return (this.time.until(when, ChronoUnit.MILLIS))/MILLISTODAYS;
     }
-    //TODO VERIFIER TRUC POSTERIEUR ANTERIEUR PAS CLAIR
+    //TODO VERIFIER TRUC POSTERIEUR ANTERIEUR
 
-    public double julianCenturiesUntil(ZonedDateTime when){ return 0; }
+    public double julianCenturiesUntil(ZonedDateTime when){
+        return 0; }
 }
