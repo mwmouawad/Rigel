@@ -14,9 +14,9 @@ public final class GeographicCoordinates extends SphericalCoordinates {
         super(longitude, latitude);
     }
 
-    public static GeographicCoordinates ofDeg(double lonDeg, double latDeg) {
-        Preconditions.checkInInterval(RightOpenInterval.of(-180, 180), lonDeg);
-        Preconditions.checkInInterval(ClosedInterval.of(-90, 90), latDeg);
+    static GeographicCoordinates ofDeg(double lonDeg, double latDeg) {
+        Preconditions.checkArgument(isValidLonDeg(lonDeg));
+        Preconditions.checkArgument(isValidLatDeg(latDeg));
         double lonRad = Angle.ofDeg(lonDeg);
         double latRad = Angle.ofDeg(latDeg);
         return new GeographicCoordinates(lonRad, latRad);
@@ -49,7 +49,7 @@ public final class GeographicCoordinates extends SphericalCoordinates {
 
     @Override
     public String toString() {
-        return String.format(Locale.ROOT, "(lon=%.4f°,lat=%.4f°)", this.lonDeg(), this.latDeg()
+        return String.format(Locale.ROOT, "(lon=%.4f°, lat=%.4f°)", this.lonDeg(), this.latDeg()
         );
     }
 }

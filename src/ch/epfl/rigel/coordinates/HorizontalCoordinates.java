@@ -86,7 +86,7 @@ public final class HorizontalCoordinates extends SphericalCoordinates {
     }
 
     public String toString() {
-        return String.format(Locale.ROOT, "(az=%.4f°,alt=%.4f°)", this.azDeg(), this.altDeg());
+        return String.format(Locale.ROOT, "(az=%.4f°, alt=%.4f°)", this.azDeg(), this.altDeg());
     }
 
 }
