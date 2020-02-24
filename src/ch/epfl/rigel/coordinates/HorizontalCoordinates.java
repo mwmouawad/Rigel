@@ -75,20 +75,29 @@ public final class HorizontalCoordinates extends SphericalCoordinates {
     }
 
     //TODO
-    public String azOctantName(String north, String east, String south, String west){
-
-        return "";
-
-
-
+    public String azOctantName(String N, String E, String S, String W){
+        double v = Angle.toDeg(this.az()) - 45/2;
+        if (v < 0) {
+            return N;
+        } else if (v < 45) {
+            return N + E;
+        } else if (v < 90) {
+            return E;
+        } else if (v < 135) {
+            return S + E;
+        } else if (v < 180) {
+            return S;
+        } else if (v < 235) {
+            return S + W;
+        } else if (v < 270) {
+            return W;
+        } else if (v < 315) {
+            return N + W; }
+        return N;
     }
 
     public String toString() {
-        return String.format(Locale.ROOT,
-                "(az=%.4f°,alt=%.4f°)",
-                this.azDeg(),
-                this.altDeg()
-        );
+        return String.format(Locale.ROOT, "(az=%.4f°,alt=%.4f°)", this.azDeg(), this.altDeg());
     }
 
 
