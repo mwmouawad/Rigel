@@ -1,8 +1,8 @@
-// Rigel stage 1
+package ch.epfl.rigel.math;// Rigel stage 1
 
-package ch.epfl.rigel.math;
-
+import ch.epfl.rigel.math.Angle;
 import ch.epfl.test.TestRandomizer;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static java.lang.Math.PI;
@@ -13,7 +13,7 @@ public class AngleTest {
 
     @Test
     void tauIsDefinedCorrectly() {
-        assertEquals(6.283185307179586, Angle.TAU);
+        Assertions.assertEquals(6.283185307179586, Angle.TAU);
     }
 
     @Test
