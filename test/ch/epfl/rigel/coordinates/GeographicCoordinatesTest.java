@@ -24,7 +24,6 @@ public class GeographicCoordinatesTest {
     void toStringWorksOnKnownCoordinates() {
         var coord1 = GeographicCoordinates.ofDeg(6.57, 46.52);
         assertEquals("(lon=6.5700°, lat=46.5200°)", coord1.toString());
-
     }
 
 
