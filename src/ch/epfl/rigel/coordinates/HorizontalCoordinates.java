@@ -19,20 +19,14 @@ public final class HorizontalCoordinates extends SphericalCoordinates {
     }
 
     public static HorizontalCoordinates of(double az, double alt){
-
         Preconditions.checkInInterval(azDegInterval, Angle.toDeg(az));
         Preconditions.checkInInterval(altDegInterval, Angle.toDeg(alt));
-
-
         return  new HorizontalCoordinates(az, alt);
     }
 
     public static HorizontalCoordinates ofDeg(double azDeg, double altDeg){
-
         Preconditions.checkInInterval(azDegInterval,azDeg);
         Preconditions.checkInInterval(altDegInterval, altDeg);
-
-
         return  new HorizontalCoordinates(Angle.ofDeg(azDeg), Angle.ofDeg(altDeg));
     }
 
@@ -53,11 +47,7 @@ public final class HorizontalCoordinates extends SphericalCoordinates {
     }
 
 
-    public double angularDistanceTo(HorizontalCoordinates that){
-
-        return angularDistance(this, that);
-
-    }
+    public double angularDistanceTo(HorizontalCoordinates that){ return angularDistance(this, that); }
 
     /**
      * Calculates the angular distance in Rad between two Horizontal Coordinates objects.
@@ -66,12 +56,9 @@ public final class HorizontalCoordinates extends SphericalCoordinates {
      * @return
      */
     public static double angularDistance(HorizontalCoordinates a, HorizontalCoordinates b){
-
-        return Math.acos(
-                Math.sin(a.alt()) * Math.sin(b.alt())
+        return Math.acos(Math.sin(a.alt()) * Math.sin(b.alt())
                 + Math.cos(a.alt()) * Math.cos(b.alt()) * Math.cos(a.az() - b.az())
         );
-
     }
 
     public String azOctantName(String N, String E, String S, String W) {
@@ -101,9 +88,5 @@ public final class HorizontalCoordinates extends SphericalCoordinates {
     public String toString() {
         return String.format(Locale.ROOT, "(az=%.4f°,alt=%.4f°)", this.azDeg(), this.altDeg());
     }
-
-
-
-
 
 }

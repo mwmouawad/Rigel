@@ -10,7 +10,6 @@ abstract class SphericalCoordinates {
     SphericalCoordinates(double longitude, double latitude){
         this.longitude = longitude;
         this.latitude = latitude;
-
     }
 
     double lon(){
