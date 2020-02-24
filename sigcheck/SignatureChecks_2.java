@@ -1,4 +1,3 @@
-package ch.epfl.sigcheck;
 
 import ch.epfl.rigel.coordinates.EclipticCoordinates;
 import ch.epfl.rigel.coordinates.EquatorialCoordinates;
