@@ -19,8 +19,10 @@ public enum Epoch {
     }
 
     public double daysUntil(ZonedDateTime when){
-        return when.until(this.time, ChronoUnit.MILLIS);
+        double coef = 1000*60*60*24;
+        return - (double) (when.until(this.time, ChronoUnit.MILLIS))/coef;
     }
+    //TODO VERIFIER TRUC POSTERIEUR ANTERIEUR PAS CLAIR
 
     public double julianCenturiesUntil(ZonedDateTime when){ return 0; }
 }
