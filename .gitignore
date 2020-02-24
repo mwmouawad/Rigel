@@ -1,0 +1,5 @@
+#Ignore IML Intellij file
+/ProjRigel.iml
+/.idea
+.DS_Store
+

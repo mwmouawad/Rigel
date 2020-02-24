@@ -41,9 +41,7 @@ public final class Angle {
         return Math.toDegrees(rad);
     }
 
-    public static double ofDeg(double deg){
-        return Math.toRadians(deg);
-    }
+    public static double ofDeg(double deg){ return Math.toRadians(deg); }
 
     /**
      * Convert the input angle to degrees.

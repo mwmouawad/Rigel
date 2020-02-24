@@ -1,4 +1,4 @@
-// Rigel stage 1
+package ch.epfl.test;// Rigel stage 1
 
 
 import java.util.SplittableRandom;
