@@ -26,5 +26,5 @@ public enum Epoch {
     //TODO VERIFIER TRUC POSTERIEUR ANTERIEUR
 
     public double julianCenturiesUntil(ZonedDateTime when){
-        return 0; }
+        return (daysUntil(when)/36525); }
 }
