@@ -19,20 +19,20 @@ public final  class SiderealTime {
     private SiderealTime(){}
 
     /**
-     * Returns the greenwhich sideral time in rad.
+     * Returns the greenwich sideral time in rad.
      * @param when
      * @return
      */
     public static double greenwich(ZonedDateTime when){
 
-        ZonedDateTime whenInGreenwhichUTC = when.withZoneSameInstant(ZoneOffset.UTC);
-        System.out.println(whenInGreenwhichUTC.truncatedTo(ChronoUnit.DAYS));
+        ZonedDateTime whenInGreenwichUTC = when.withZoneSameInstant(ZoneOffset.UTC);
+        System.out.println(whenInGreenwichUTC.truncatedTo(ChronoUnit.DAYS));
 
         System.out.println("J200: " + ZonedDateTime.of(LocalDate.of(2000, Month.JANUARY, 1),
                 LocalTime.of(12, 0), ZoneOffset.UTC));
 
         //Calculate the number of centuries between when and J2000 truncated to days. (Truncating to 0 hours)
-        double timeJulianDifference = J2000.julianCenturiesUntil(whenInGreenwhichUTC.truncatedTo(ChronoUnit.DAYS));
+        double timeJulianDifference = J2000.julianCenturiesUntil(whenInGreenwichUTC.truncatedTo(ChronoUnit.DAYS));
         System.out.println("Julian Difference: " + timeJulianDifference);
 
         //Calculate the number of hours between the 0h and the when hour.
@@ -46,16 +46,16 @@ public final  class SiderealTime {
         double S1 = 1.002737909 * hoursInWhen;
 
 
-        double greenWhichSiderealTimeInHours = S0 + S1;
+        double greenwichSiderealTimeInHours = S0 + S1;
 
-        System.out.println(greenWhichSiderealTimeInHours);
+        System.out.println(greenwichSiderealTimeInHours);
 
         //TODO: How to convert from hours to rad? Using simple conversion?
-        double greenWhichSiderealTimeInRad = Angle.ofHr(greenWhichSiderealTimeInHours);
+        double greenwichSiderealTimeInRad = Angle.ofHr(greenwichSiderealTimeInHours);
 
         //Normalize angle to the interval
 
-        return interval.reduce(greenWhichSiderealTimeInRad);
+        return interval.reduce(greenwichSiderealTimeInRad);
     }
 
     /**
