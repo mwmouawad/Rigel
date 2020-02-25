@@ -4,6 +4,11 @@ import ch.epfl.rigel.Preconditions;
 
 import java.util.Locale;
 
+/**
+ *
+ * @author Mark Mouawad (296508)
+ * @author Leah Uzzan (302829)
+ */
 public final class EclipticCoordinates extends SphericalCoordinates {
 
 

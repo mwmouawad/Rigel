@@ -3,7 +3,10 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 import ch.epfl.test.TestRandomizer;
 
-
+/**
+ * @author Mark Mouawad (296508)
+ * @author Leah Uzzan (302829)
+ */
 public class GeographicCoordinatesTest {
 
     @Test

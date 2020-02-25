@@ -7,7 +7,12 @@ import ch.epfl.rigel.math.RightOpenInterval;
 
 import java.util.Locale;
 
-//NB: Is an immutable class. So no setters.
+/**
+ *
+ * NB: Is an immutable class. So no setters.
+ * @author Mark Mouawad (296508)
+ * @author Leah Uzzan (302829)
+ */
 public final class HorizontalCoordinates extends SphericalCoordinates {
 
     private static RightOpenInterval azDegInterval = RightOpenInterval.of(0,360);

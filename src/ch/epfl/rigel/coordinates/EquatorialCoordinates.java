@@ -7,6 +7,11 @@ import ch.epfl.rigel.math.RightOpenInterval;
 
 import java.util.Locale;
 
+/**
+ *
+ * @author Mark Mouawad (296508)
+ * @author Leah Uzzan (302829)
+ */
 public final class EquatorialCoordinates extends SphericalCoordinates {
 
     private static RightOpenInterval raInterval = RightOpenInterval.of(0,360);

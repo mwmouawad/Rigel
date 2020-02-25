@@ -2,6 +2,10 @@ package ch.epfl.rigel.math;
 
 import ch.epfl.rigel.Preconditions;
 
+/**
+ * @author Mark Mouawad (296508)
+ * @author Leah Uzzan (302829)
+ */
 public final class Polynomial {
 
     double coefficients[];

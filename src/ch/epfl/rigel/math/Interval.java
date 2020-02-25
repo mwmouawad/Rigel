@@ -1,5 +1,10 @@
 package ch.epfl.rigel.math;
 
+
+/**
+ * @author Mark Mouawad (296508)
+ * @author Leah Uzzan (302829)
+ */
 public abstract class Interval {
 
     private final double low;

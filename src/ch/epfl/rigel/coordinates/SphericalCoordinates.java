@@ -2,6 +2,11 @@ package ch.epfl.rigel.coordinates;
 
 import ch.epfl.rigel.math.Angle;
 
+/**
+ *
+ * @author Mark Mouawad (296508)
+ * @author Leah Uzzan (302829)
+ */
 abstract class SphericalCoordinates {
 
     private double longitude;

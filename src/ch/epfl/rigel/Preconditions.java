@@ -6,6 +6,8 @@ import ch.epfl.rigel.math.Interval;
 /**
  * Class Precondtions
  * Intended to be used for checking arguments.
+ * @author Mark Mouawad (296508)
+ * @author Leah Uzzan (302829)
  */
 public final class Preconditions {
     private Preconditions() {}

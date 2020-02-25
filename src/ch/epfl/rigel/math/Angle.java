@@ -4,6 +4,10 @@ import ch.epfl.rigel.Preconditions;
 
 import java.lang.Math;
 
+/**
+ * @author Mark Mouawad (296508)
+ * @author Leah Uzzan (302829)
+ */
 public final class Angle {
 
     public final static  double TAU = 2*Math.PI ;
