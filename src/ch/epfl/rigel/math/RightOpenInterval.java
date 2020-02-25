@@ -46,7 +46,7 @@ public final class RightOpenInterval extends Interval {
      * @param v the input value to be reduced to the instance interval.
      * @return
      */
-    double reduce(double v){
+    public double reduce(double v){
 
         double a = this.low();
         double b = this.high();
