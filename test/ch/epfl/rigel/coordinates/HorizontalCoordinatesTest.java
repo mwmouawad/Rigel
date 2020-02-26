@@ -1,5 +1,6 @@
 package ch.epfl.rigel.coordinates;
 
+import ch.epfl.rigel.math.Angle;
 import ch.epfl.rigel.math.ClosedInterval;
 import org.junit.jupiter.api.Test;
 
@@ -11,6 +12,16 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * @author Leah Uzzan (302829)
  */
 public class HorizontalCoordinatesTest {
+
+    @Test
+    void gettersTest(){
+        HorizontalCoordinates a = HorizontalCoordinates.ofDeg(6.5682, 46.5183);
+        assertEquals(6.5682, a.lonDeg());
+        assertEquals(46.5183, a.latDeg());
+        assertEquals(Angle.ofDeg(6.5682), a.lon());
+        assertEquals(Angle.ofDeg(46.5183), a.lat());
+
+    }
 
     @Test
     void testAngularDistanceTo(){
@@ -26,7 +37,7 @@ public class HorizontalCoordinatesTest {
     }
 
     @Test
-    void testUnvalidHorizontalCoordinates(){
+    void testInvalidHorizontalCoordinates(){
         assertThrows(IllegalArgumentException.class, () -> {
             HorizontalCoordinates.ofDeg(-1, 10);
         });

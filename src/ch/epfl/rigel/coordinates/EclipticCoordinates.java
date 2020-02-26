@@ -27,7 +27,6 @@ public final class EclipticCoordinates extends SphericalCoordinates {
         Preconditions.checkArgument(lonInterval.contains(lon));
         Preconditions.checkArgument(latInterval.contains(lat));
 
-
         return new EclipticCoordinates(lon,lat);
 
     }
