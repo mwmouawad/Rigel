@@ -3,7 +3,8 @@ package ch.epfl.rigel.coordinates;
 import ch.epfl.rigel.math.Angle;
 
 /**
- *
+ * Mother class representing a wide variety of =coordinates
+ * systems based on Spherical Coordinates
  * @author Mark Mouawad (296508)
  * @author Leah Uzzan (302829)
  */
