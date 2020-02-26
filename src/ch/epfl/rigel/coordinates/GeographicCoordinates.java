@@ -19,7 +19,7 @@ public final class GeographicCoordinates extends SphericalCoordinates {
         super(longitude, latitude);
     }
 
-    static GeographicCoordinates ofDeg(double lonDeg, double latDeg) {
+    public static GeographicCoordinates ofDeg(double lonDeg, double latDeg) {
         Preconditions.checkArgument(isValidLonDeg(lonDeg));
         Preconditions.checkArgument(isValidLatDeg(latDeg));
         double lonRad = Angle.ofDeg(lonDeg);

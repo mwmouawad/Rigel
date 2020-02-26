@@ -45,10 +45,22 @@ public class HorizontalCoordinatesTest {
         assertEquals("NO", coord1.azOctantName("N", "E", "S", "O"));
 
         var coord2 = HorizontalCoordinates.ofDeg(0,0);
-        assertEquals("N", coord1.azOctantName("N", "E", "S", "O"));
+        assertEquals("N", coord2.azOctantName("N", "E", "S", "O"));
 
         var coord3 = HorizontalCoordinates.ofDeg(155,0);
-        assertEquals("SE", coord1.azOctantName("N", "E", "S", "O"));
+        assertEquals("SE", coord3.azOctantName("N", "E", "S", "O"));
+
+        var coord5 = HorizontalCoordinates.ofDeg(108, 0);
+        assertEquals("E", coord5.azOctantName("N", "E", "S", "O"));
+
+        var coord6 = HorizontalCoordinates.ofDeg(197, 0);
+        assertEquals("S", coord6.azOctantName("N", "E", "S", "O"));
+
+        var coord4 = HorizontalCoordinates.ofDeg(254,0);
+        assertEquals("O", coord4.azOctantName("N", "E", "S", "O"));
+
+        var coord7 = HorizontalCoordinates.ofDeg(203.45,0);
+        assertEquals("SO", coord7.azOctantName("N", "E", "S", "O"));
 
     }
 

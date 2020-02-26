@@ -66,33 +66,30 @@ public final class HorizontalCoordinates extends SphericalCoordinates {
         );
     }
 
-    public String azOctantName(String N, String E, String S, String W) {
-        System.out.println("Result= "+  (int) (Math.round(az() * 8 / Angle.TAU) ));
+    public String azOctantName(String n, String e, String s, String w) {
 
-        switch ((int) (Math.round(az() * 8 / Angle.TAU))) {
+        switch ((int) (((az() * 8))/Angle.TAU + 0.5)){
             case 1:
-                return N + E;
+                return n + e;
             case 2:
-                return E;
+                return e;
             case 3:
-                return S + E;
+                return s + e;
             case 4:
-                return S;
+                return s;
             case 5:
-                return S + W;
+                return s + w;
             case 6:
-                return W;
+                return w;
             case 7:
-                return N + W;
+                return n + w;
             case 8:
             case 0:
-                return N;
+                return n;
             default:
                 throw new IllegalStateException();
         }
     }
-
-
 
     public String toString() {
         return String.format(Locale.ROOT, "(az=%.4f°, alt=%.4f°)", this.azDeg(), this.altDeg());
