@@ -1,6 +1,8 @@
 package ch.epfl.rigel.coordinates;
 
 import ch.epfl.rigel.Preconditions;
+import ch.epfl.rigel.math.ClosedInterval;
+import ch.epfl.rigel.math.RightOpenInterval;
 
 import java.util.Locale;
 
@@ -11,6 +13,9 @@ import java.util.Locale;
  */
 public final class EclipticCoordinates extends SphericalCoordinates {
 
+    private final static RightOpenInterval lonInterval = RightOpenInterval.of(0,360);
+    private final static ClosedInterval latInterval = ClosedInterval.of(-90,90);
+
 
     private EclipticCoordinates(double lon, double lat ){
         super(lon, lat);
@@ -19,6 +24,9 @@ public final class EclipticCoordinates extends SphericalCoordinates {
     public static EclipticCoordinates of(double lon, double lat){
 
         //TODO: Check conditions
+        Preconditions.checkArgument(lonInterval.contains(lon));
+        Preconditions.checkArgument(latInterval.contains(lat));
+
 
         return new EclipticCoordinates(lon,lat);
 
