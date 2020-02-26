@@ -7,14 +7,19 @@ import ch.epfl.rigel.math.RightOpenInterval;
 
 import java.util.Locale;
 
-//NB: Is an immutable class. So no setters.
+/**
+ * Represents a pair of Geographic Coordinates.
+ * NB: Is an immutable class. So no setters.
+ * @author Mark Mouawad (296508)
+ * @author Leah Uzzan (302829)
+ */
 public final class GeographicCoordinates extends SphericalCoordinates {
 
     private GeographicCoordinates(double longitude, double latitude) {
         super(longitude, latitude);
     }
 
-    public static GeographicCoordinates ofDeg(double lonDeg, double latDeg) {
+    static GeographicCoordinates ofDeg(double lonDeg, double latDeg) {
         Preconditions.checkArgument(isValidLonDeg(lonDeg));
         Preconditions.checkArgument(isValidLatDeg(latDeg));
         double lonRad = Angle.ofDeg(lonDeg);

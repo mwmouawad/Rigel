@@ -8,7 +8,7 @@ import ch.epfl.rigel.math.RightOpenInterval;
 import java.util.Locale;
 
 /**
- *
+ * Represents a pair of Horizontal Coordinates.
  * NB: Is an immutable class. So no setters.
  * @author Mark Mouawad (296508)
  * @author Leah Uzzan (302829)
@@ -67,6 +67,8 @@ public final class HorizontalCoordinates extends SphericalCoordinates {
     }
 
     public String azOctantName(String N, String E, String S, String W) {
+        System.out.println("Result= "+  (int) (Math.round(az() * 8 / Angle.TAU) ));
+
         switch ((int) (Math.round(az() * 8 / Angle.TAU))) {
             case 1:
                 return N + E;
@@ -89,6 +91,8 @@ public final class HorizontalCoordinates extends SphericalCoordinates {
                 throw new IllegalStateException();
         }
     }
+
+
 
     public String toString() {
         return String.format(Locale.ROOT, "(az=%.4f°, alt=%.4f°)", this.azDeg(), this.altDeg());

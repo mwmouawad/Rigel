@@ -1,8 +1,11 @@
 package ch.epfl.rigel.coordinates;
 
+import ch.epfl.rigel.math.ClosedInterval;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 /**
  * @author Mark Mouawad (296508)
  * @author Leah Uzzan (302829)
@@ -23,11 +26,45 @@ public class HorizontalCoordinatesTest {
     }
 
     @Test
+    void testUnvalidHorizontalCoordinates(){
+        assertThrows(IllegalArgumentException.class, () -> {
+            HorizontalCoordinates.ofDeg(-1, 10);
+        });
+        assertThrows(IllegalArgumentException.class, () -> {
+            HorizontalCoordinates.ofDeg(0, 91);
+        });
+        assertThrows(IllegalArgumentException.class, () -> {
+            HorizontalCoordinates.of(-5, 0);
+        });
+    }
+
+    @Test
     void testOctantName(){
 
         var coord1 = HorizontalCoordinates.ofDeg(335,0);
         assertEquals("NO", coord1.azOctantName("N", "E", "S", "O"));
 
+        var coord2 = HorizontalCoordinates.ofDeg(0,0);
+        assertEquals("N", coord1.azOctantName("N", "E", "S", "O"));
+
+        var coord3 = HorizontalCoordinates.ofDeg(155,0);
+        assertEquals("SE", coord1.azOctantName("N", "E", "S", "O"));
+
+    }
+
+    @Test
+    void equalsThrowsUOE() {
+        assertThrows(UnsupportedOperationException.class, () -> {
+            var horCoord = HorizontalCoordinates.ofDeg(350, 7.2);
+            horCoord.equals(horCoord);
+        });
+    }
+
+    @Test
+    void hashCodeThrowsUOE() {
+        assertThrows(UnsupportedOperationException.class, () -> {
+            HorizontalCoordinates.ofDeg(350,7.2).hashCode();
+        });
     }
 
 }
