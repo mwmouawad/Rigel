@@ -12,7 +12,7 @@ import ch.epfl.rigel.math.Interval;
 public final class Preconditions {
     private Preconditions() {}
 
-        static public void checkArgument(boolean isTrue){
+    static public void checkArgument(boolean isTrue){
             if(!isTrue){
                 throw new IllegalArgumentException();
             }

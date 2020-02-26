@@ -68,6 +68,14 @@ public final class Angle {
 
     }
 
+    /**
+     * Converts the input from degree, minutes and seconds
+     * to rad.
+     * @param deg input in degrees.
+     * @param min minutes.
+     * @param sec seconds.
+     * @return rad angle.
+     */
     public static double ofDMS(int deg, int min, double sec){
 
         Preconditions.checkArgument(min<60 && min>=0 && sec<60 && sec>=0);

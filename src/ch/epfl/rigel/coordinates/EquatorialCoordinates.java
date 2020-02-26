@@ -8,7 +8,7 @@ import ch.epfl.rigel.math.RightOpenInterval;
 import java.util.Locale;
 
 /**
- *
+ * Represents a pair of equatorial coordinates.
  * @author Mark Mouawad (296508)
  * @author Leah Uzzan (302829)
  */
@@ -22,6 +22,13 @@ public final class EquatorialCoordinates extends SphericalCoordinates {
     }
 
 
+    /**
+     * Creates an instance of Equatorial Coordinates.
+     * @param ra right ascencion input between [0,24[
+     * @param dec declination input between [-90°, +90°]
+     * @throws IllegalArgumentException if the inputs are not contained in the bounds specified above.
+     * @return
+     */
     public static EquatorialCoordinates of(double ra, double dec){
         Preconditions.checkInInterval(raInterval, Angle.toDeg(ra));
         Preconditions.checkInInterval(decInterval, Angle.toDeg(dec));

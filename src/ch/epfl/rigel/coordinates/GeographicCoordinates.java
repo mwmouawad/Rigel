@@ -19,6 +19,13 @@ public final class GeographicCoordinates extends SphericalCoordinates {
         super(longitude, latitude);
     }
 
+    /**
+     * Creates an instance of GeographicCoordinates Coordinates.
+     * @param lonDeg longitude input in degrees between [-180°,180°[
+     * @param latDeg latitude input in degrees between [-90°, +90°]
+     * @throws IllegalArgumentException if the inputs are not contained in the bounds specified above.
+     * @return Geographic Coordinates object.
+     */
     public static GeographicCoordinates ofDeg(double lonDeg, double latDeg) {
         Preconditions.checkArgument(isValidLonDeg(lonDeg));
         Preconditions.checkArgument(isValidLatDeg(latDeg));
@@ -27,10 +34,22 @@ public final class GeographicCoordinates extends SphericalCoordinates {
         return new GeographicCoordinates(lonRad, latRad);
     }
 
+    /**
+     * Check if given longitude coordinates
+     * is valid according to the geographic coordinates system.
+     * @param lonDeg longitude input in degrees.
+     * @return
+     */
     public static boolean isValidLonDeg(double lonDeg) {
         return (RightOpenInterval.of(-180, 180).contains(lonDeg));
     }
 
+    /**
+     * Check if given latitude coordinates
+     * is valid according to the geographic coordinates system.
+     * @param latDeg longitude input in degrees.
+     * @return
+     */
     public static boolean isValidLatDeg(double latDeg) {
         return (ClosedInterval.of(-90, 90).contains(latDeg));
     }
@@ -50,6 +69,7 @@ public final class GeographicCoordinates extends SphericalCoordinates {
     public double latDeg(){
         return super.latDeg();
     }
+
 
 
     @Override
