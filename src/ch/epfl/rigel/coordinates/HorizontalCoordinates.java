@@ -15,8 +15,8 @@ import java.util.Locale;
  */
 public final class HorizontalCoordinates extends SphericalCoordinates {
 
-    private static RightOpenInterval azDegInterval = RightOpenInterval.of(0,360);
-    private static ClosedInterval altDegInterval = ClosedInterval.of(-90,90);
+    private final  static RightOpenInterval azDegInterval = RightOpenInterval.of(0,360);
+    private final static ClosedInterval altDegInterval = ClosedInterval.of(-90,90);
 
 
     private HorizontalCoordinates(double longitude, double latitude) {

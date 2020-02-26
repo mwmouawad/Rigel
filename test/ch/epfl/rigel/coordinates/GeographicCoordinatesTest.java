@@ -1,7 +1,6 @@
 package ch.epfl.rigel.coordinates;
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
-import ch.epfl.test.TestRandomizer;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Mark Mouawad (296508)

@@ -14,8 +14,8 @@ import java.util.Locale;
  */
 public final class EquatorialCoordinates extends SphericalCoordinates {
 
-    private static RightOpenInterval raInterval = RightOpenInterval.of(0,360);
-    private static ClosedInterval decInterval = ClosedInterval.of(-90,90);
+    private final static RightOpenInterval raInterval = RightOpenInterval.of(0,360);
+    private final static ClosedInterval decInterval = ClosedInterval.of(-90,90);
 
     private EquatorialCoordinates(double longitude, double latitude) {
         super(longitude, latitude);
