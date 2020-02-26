@@ -39,7 +39,7 @@ public final class ClosedInterval extends Interval  {
      * @param v the input value to be clipped.
      * @return
      */
-    double clip(double v){
+    public double clip(double v){
         if( v <= this.low()){
             return this.low();
         } else if( v > this.high()){
