@@ -15,8 +15,8 @@ import java.util.Locale;
  */
 public final class HorizontalCoordinates extends SphericalCoordinates {
 
-    private final  static RightOpenInterval azDegInterval = RightOpenInterval.of(0,360);
-    private final static ClosedInterval altDegInterval = ClosedInterval.of(-90,90);
+    private final  static RightOpenInterval azInterval = RightOpenInterval.of(0,Angle.TAU);
+    private final static ClosedInterval altInterval = ClosedInterval.symmetric(Math.PI);
 
 
     private HorizontalCoordinates(double longitude, double latitude) {
@@ -24,10 +24,19 @@ public final class HorizontalCoordinates extends SphericalCoordinates {
     }
 
 
+    /**
+     * Creates an instance of HorizontalCoordinates.
+     * @param az ascension input in rad between [0,2PI[
+     * @param alt altitude input in rad between [-PI/2, PI/2]
+     * @throws IllegalArgumentException if the inputs are not contained in the bounds specified above.
+     * @return HorizontalCoordinates object.
+     */
     public static HorizontalCoordinates of(double az, double alt){
-        Preconditions.checkInInterval(azDegInterval, Angle.toDeg(az));
-        Preconditions.checkInInterval(altDegInterval, Angle.toDeg(alt));
-        return  new HorizontalCoordinates(az, alt);
+
+        return  new HorizontalCoordinates(
+                Preconditions.checkInInterval(azInterval, az),
+                Preconditions.checkInInterval(altInterval, alt)
+                );
     }
 
     /**
@@ -38,9 +47,10 @@ public final class HorizontalCoordinates extends SphericalCoordinates {
      * @return HorizontalCoordinates object.
      */
     public static HorizontalCoordinates ofDeg(double azDeg, double altDeg){
-        Preconditions.checkInInterval(azDegInterval,azDeg);
-        Preconditions.checkInInterval(altDegInterval, altDeg);
-        return  new HorizontalCoordinates(Angle.ofDeg(azDeg), Angle.ofDeg(altDeg));
+        return  new HorizontalCoordinates(
+                Preconditions.checkInInterval(azInterval, Angle.ofDeg(azDeg)),
+                Preconditions.checkInInterval(altInterval,Angle.ofDeg(altDeg))
+        );
     }
 
     public double az(){

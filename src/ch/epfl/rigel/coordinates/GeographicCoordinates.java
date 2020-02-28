@@ -15,6 +15,10 @@ import java.util.Locale;
  */
 public final class GeographicCoordinates extends SphericalCoordinates {
 
+    private static final RightOpenInterval lonDegInterval =  RightOpenInterval.of(-180, 180);
+    private static final ClosedInterval latDegInterval =  ClosedInterval.symmetric(180);
+
+
     private GeographicCoordinates(double longitude, double latitude) {
         super(longitude, latitude);
     }
@@ -27,10 +31,9 @@ public final class GeographicCoordinates extends SphericalCoordinates {
      * @return Geographic Coordinates object.
      */
     public static GeographicCoordinates ofDeg(double lonDeg, double latDeg) {
-        Preconditions.checkArgument(isValidLonDeg(lonDeg));
         Preconditions.checkArgument(isValidLatDeg(latDeg));
-        double lonRad = Angle.ofDeg(lonDeg);
-        double latRad = Angle.ofDeg(latDeg);
+        double lonRad = Angle.ofDeg(Preconditions.checkInInterval(lonDegInterval, lonDeg));
+        double latRad = Angle.ofDeg(Preconditions.checkInInterval(latDegInterval, latDeg));
         return new GeographicCoordinates(lonRad, latRad);
     }
 
@@ -40,9 +43,7 @@ public final class GeographicCoordinates extends SphericalCoordinates {
      * @param lonDeg longitude input in degrees.
      * @return
      */
-    public static boolean isValidLonDeg(double lonDeg) {
-        return (RightOpenInterval.of(-180, 180).contains(lonDeg));
-    }
+    public static boolean isValidLonDeg(double lonDeg) { return (lonDegInterval.contains(lonDeg)); 
 
     /**
      * Check if given latitude coordinates
@@ -50,9 +51,7 @@ public final class GeographicCoordinates extends SphericalCoordinates {
      * @param latDeg longitude input in degrees.
      * @return
      */
-    public static boolean isValidLatDeg(double latDeg) {
-        return (ClosedInterval.of(-90, 90).contains(latDeg));
-    }
+    public static boolean isValidLatDeg(double latDeg) { return (latDegInterval.contains(latDeg)) ; }
 
     public double lon(){
         return super.lon();
