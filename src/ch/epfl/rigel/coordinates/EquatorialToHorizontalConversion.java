@@ -26,6 +26,7 @@ public final class EquatorialToHorizontalConversion implements Function<Equatori
         double alt = Math.asin(Math.sin(delta)*Math.sin(phi) + Math.cos(delta)*Math.cos(phi)*Math.cos(angle));
 
         return HorizontalCoordinates.of(az, alt);
+        
     }
 
     @Override
