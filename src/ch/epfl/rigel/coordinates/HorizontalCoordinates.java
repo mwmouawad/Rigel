@@ -93,10 +93,10 @@ public final class HorizontalCoordinates extends SphericalCoordinates {
     /**
      * Returns the Octant name in terms of the instance's coordinates.
      * The parameters used compose the output String.
-     * @param n string representing North
-     * @param e string representing East
-     * @param s string representing South
-     * @param w string represernting West
+     * @param n string representing North.
+     * @param e string representing East.
+     * @param s string representing South.
+     * @param w string representing West.
      * @return corresponding octant name.
      */
     public String azOctantName(String n, String e, String s, String w) {

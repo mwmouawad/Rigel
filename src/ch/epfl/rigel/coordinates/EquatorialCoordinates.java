@@ -24,7 +24,7 @@ public final class EquatorialCoordinates extends SphericalCoordinates {
 
     /**
      * Creates an instance of Equatorial Coordinates.
-     * @param ra right ascencion input between [0,24[ hours or [0°, 2PI[
+     * @param ra right ascencion input between [0,24[ hours or [0, 2PI[
      * @param dec declination input between [-PI/2, PI/2]
      * @throws IllegalArgumentException if the inputs are not contained in the bounds specified above.
      * @return
