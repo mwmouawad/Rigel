@@ -40,7 +40,7 @@ public final class GeographicCoordinates extends SphericalCoordinates {
      * Check if given longitude coordinates
      * is valid according to the geographic coordinates system.
      * @param lonDeg longitude input in degrees.
-     * @return
+     * @return true if valid
      */
     public static boolean isValidLonDeg(double lonDeg) { return (lonDegInterval.contains(lonDeg)); }
 
@@ -48,7 +48,7 @@ public final class GeographicCoordinates extends SphericalCoordinates {
      * Check if given latitude coordinates
      * is valid according to the geographic coordinates system.
      * @param latDeg longitude input in degrees.
-     * @return
+     * @return true if valid
      */
     public static boolean isValidLatDeg(double latDeg) { return (latDegInterval.contains(latDeg)) ; }
 
@@ -72,7 +72,6 @@ public final class GeographicCoordinates extends SphericalCoordinates {
 
     @Override
     public String toString() {
-        return String.format(Locale.ROOT, "(lon=%.4f°, lat=%.4f°)", this.lonDeg(), this.latDeg()
-        );
+        return String.format(Locale.ROOT, "(lon=%.4f°, lat=%.4f°)", this.lonDeg(), this.latDeg());
     }
 }

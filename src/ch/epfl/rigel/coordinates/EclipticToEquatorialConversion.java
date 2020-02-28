@@ -25,8 +25,8 @@ public final class EclipticToEquatorialConversion implements Function<EclipticCo
 
     public EclipticToEquatorialConversion(ZonedDateTime when){
         double time = J2000.julianCenturiesUntil(when);
-        this.cosepsi = Math.cos(epsi.at(time));
-        this.sinepsi = Math.sin(epsi.at(time));
+        cosepsi = Math.cos(epsi.at(time));
+        sinepsi = Math.sin(epsi.at(time));
     }
 
     @Override

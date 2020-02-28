@@ -24,6 +24,6 @@ public enum Epoch {
     }
 
     public double julianCenturiesUntil(ZonedDateTime when){
-        //TODO change this method so there is no dependence between them.
+        //TODO change this method so there is no dependence between them, what about les arrondis?
         return (daysUntil(when)/36525); }
 }
