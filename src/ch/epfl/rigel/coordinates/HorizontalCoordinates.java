@@ -85,9 +85,10 @@ public final class HorizontalCoordinates extends SphericalCoordinates {
      * @return
      */
     public static double angularDistance(HorizontalCoordinates a, HorizontalCoordinates b){
-        return Math.acos(Math.sin(a.alt()) * Math.sin(b.alt())
+        return Math.acos(
+                Math.sin(a.alt()) * Math.sin(b.alt())
                 + Math.cos(a.alt()) * Math.cos(b.alt()) * Math.cos(a.az() - b.az())
-        );
+                );
     }
 
     /**
@@ -116,11 +117,8 @@ public final class HorizontalCoordinates extends SphericalCoordinates {
                 return w;
             case 7:
                 return n + w;
-            case 8:
-            case 0:
-                return n;
             default:
-                throw new IllegalStateException();
+                return n;
         }
     }
 

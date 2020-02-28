@@ -73,6 +73,9 @@ public class HorizontalCoordinatesTest {
         var coord7 = HorizontalCoordinates.ofDeg(203.45,0);
         assertEquals("SO", coord7.azOctantName("N", "E", "S", "O"));
 
+        var coord8 = HorizontalCoordinates.ofDeg(338,0);
+        assertEquals("N", coord8.azOctantName("N", "E", "S", "O"));
+
     }
 
     @Test
