@@ -20,7 +20,6 @@ public class SiderealTimeTest {
      * page 23. Example: Sidereal Time.
      */
     void greenwichTest(){
-        assertEquals(0,0);
         //TODO: FIND A TEST FOR IT. In the book they are not usin J2000 as a reference time.
 
     }
