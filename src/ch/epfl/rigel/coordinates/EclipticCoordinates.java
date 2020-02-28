@@ -23,8 +23,8 @@ public final class EclipticCoordinates extends SphericalCoordinates {
 
     /**
      * Creates an instance of Ecliptic Coordinates.
-     * @param lon right ascencion input between [0°, 360°[
-     * @param lat declination input between [-90°, 90°]
+     * @param lon right ascencion input between [0°, 2PI°[
+     * @param lat declination input between [-PI/2°, PI°]
      * @throws IllegalArgumentException if the inputs are not contained in the bounds specified above.
      * @return EclipticCoordinates instance.
      */

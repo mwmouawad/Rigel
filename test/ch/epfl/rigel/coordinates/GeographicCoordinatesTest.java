@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class GeographicCoordinatesTest {
 
     @Test
-    void gettersTest(){
+    void gettersWorksOnKnownValues(){
         GeographicCoordinates a = GeographicCoordinates.ofDeg(100,90);
         assertEquals(100, a.lonDeg());
         assertEquals(90, a.latDeg());

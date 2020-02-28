@@ -43,7 +43,7 @@ public final class GeographicCoordinates extends SphericalCoordinates {
      * @param lonDeg longitude input in degrees.
      * @return
      */
-    public static boolean isValidLonDeg(double lonDeg) { return (lonDegInterval.contains(lonDeg)); 
+    public static boolean isValidLonDeg(double lonDeg) { return (lonDegInterval.contains(lonDeg)); }
 
     /**
      * Check if given latitude coordinates

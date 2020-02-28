@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class HorizontalCoordinatesTest {
 
     @Test
-    void gettersTest(){
+    void gettersWorksOnKnownValues(){
         HorizontalCoordinates a = HorizontalCoordinates.ofDeg(6.5682, 46.5183);
         assertEquals(6.5682, a.lonDeg());
         assertEquals(46.5183, a.latDeg());
