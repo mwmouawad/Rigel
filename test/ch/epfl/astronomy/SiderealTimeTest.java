@@ -19,8 +19,8 @@ public class SiderealTimeTest {
      * As taken from the book Practical Astronomy Spreadsheet
      * page 23. Example: Sidereal Time.
      */
-    void greenwhichTest(){
-
+    void greenwichTest(){
+        assertEquals(0,0);
         //TODO: FIND A TEST FOR IT. In the book they are not usin J2000 as a reference time.
 
     }

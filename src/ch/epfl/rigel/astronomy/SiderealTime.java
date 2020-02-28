@@ -24,20 +24,13 @@ public final  class SiderealTime {
      * @return
      */
     public static double greenwich(ZonedDateTime when){
-
         ZonedDateTime whenInGreenwichUTC = when.withZoneSameInstant(ZoneOffset.UTC);
-        System.out.println(whenInGreenwichUTC.truncatedTo(ChronoUnit.DAYS));
 
-        System.out.println("J200: " + ZonedDateTime.of(LocalDate.of(2000, Month.JANUARY, 1),
-                LocalTime.of(12, 0), ZoneOffset.UTC));
-
-        //Calculate the number of centuries between when and J2000 truncated to days. (Truncating to 0 hours)
+        //Computes the number of centuries between when and J2000 truncated to days. (Truncating to 0 hours)
         double timeJulianDifference = J2000.julianCenturiesUntil(whenInGreenwichUTC.truncatedTo(ChronoUnit.DAYS));
-        System.out.println("Julian Difference: " + timeJulianDifference);
 
-        //Calculate the number of hours between the 0h and the when hour.
+        //Computes the number of hours between the 0h and the when hour.
         double hoursInWhen = when.getHour();
-        System.out.println("Number of hours in the date: " + hoursInWhen);
 
         //Equation Variables
         double S0 = ( 0.000025862 * timeJulianDifference * timeJulianDifference )
@@ -48,8 +41,6 @@ public final  class SiderealTime {
 
         double greenwichSiderealTimeInHours = S0 + S1;
 
-        System.out.println(greenwichSiderealTimeInHours);
-
         //TODO: How to convert from hours to rad? Using simple conversion?
         double greenwichSiderealTimeInRad = Angle.ofHr(greenwichSiderealTimeInHours);
 
@@ -58,16 +49,15 @@ public final  class SiderealTime {
         return interval.reduce(greenwichSiderealTimeInRad);
     }
 
+
     /**
-     * Returns the local sideral time.
+     * Returns the local sidereal time from the Greenwich one.
      * @param when
      * @param where
-     * @return local sideral time in rad in the interval [0,TAU[
+     * @return local sidereal time in rad in the interval [0,TAU[
      */
     public static double local(ZonedDateTime when, GeographicCoordinates where){
-
-        return 0;
-
+        return greenwich(when) + where.lon();
     }
 
 }
