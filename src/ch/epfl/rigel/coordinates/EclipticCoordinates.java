@@ -28,8 +28,8 @@ public final class EclipticCoordinates extends SphericalCoordinates {
      * @return EclipticCoordinates instance.
      */
     public static EclipticCoordinates of(double lon, double lat){
-        return new EclipticCoordinates(Preconditions.checkInInterval(lonInterval,lon), Preconditions.checkInInterval(latInterval,lat));
-
+        return new EclipticCoordinates(Preconditions.checkInInterval(lonInterval,lon),
+                Preconditions.checkInInterval(latInterval,lat));
     }
 
     public double lon(){
