@@ -14,16 +14,16 @@ public enum Epoch {
 
     private ZonedDateTime time;
     private final double MILLISTODAYS = 1000*60*60*24;
-    private final double MILLISTOJULIANS = MILLISTODAYS/36525;
 
     Epoch(ZonedDateTime time) {
         this.time = time;
     }
 
     public double daysUntil(ZonedDateTime when){
-        return (this.time.until(when, ChronoUnit.MILLIS))/MILLISTODAYS;
+        return (time.until(when, ChronoUnit.MILLIS))/MILLISTODAYS;
     }
 
     public double julianCenturiesUntil(ZonedDateTime when){
+        //TODO change this method so there is no dependence between them.
         return (daysUntil(when)/36525); }
 }

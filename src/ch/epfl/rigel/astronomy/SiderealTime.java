@@ -12,9 +12,6 @@ import static ch.epfl.rigel.astronomy.Epoch.J2000;
 
 public final  class SiderealTime {
 
-    private static RightOpenInterval interval = RightOpenInterval.of(0, Angle.TAU);
-
-
     //Non instanceable class.
     private SiderealTime(){}
 
@@ -46,7 +43,7 @@ public final  class SiderealTime {
 
         //Normalize angle to the interval
 
-        return interval.reduce(greenwichSiderealTimeInRad);
+        return Angle.normalizePositive(greenwichSiderealTimeInRad);
     }
 
 
@@ -57,7 +54,7 @@ public final  class SiderealTime {
      * @return local sidereal time in rad in the interval [0,TAU[
      */
     public static double local(ZonedDateTime when, GeographicCoordinates where){
-        return greenwich(when) + where.lon();
+        return Angle.normalizePositive(greenwich(when) + where.lon());
     }
 
 }

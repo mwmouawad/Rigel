@@ -19,14 +19,13 @@ public final class EquatorialToHorizontalConversion implements Function<Equatori
     }
 
     @Override
-    public HorizontalCoordinates apply(EquatorialCoordinates equatorialCoordinates) {
-        double delta = equatorialCoordinates.dec();
+    public HorizontalCoordinates apply(EquatorialCoordinates equ) {
+        double delta = equ.dec();
         double az = Math.atan2(-Math.cos(delta)
                 *Math.cos(phi)*Math.sin(angle), Math.sin(delta) - Math.sin(phi)*Math.sin(angle));
         double alt = Math.asin(Math.sin(delta)*Math.sin(phi) + Math.cos(delta)*Math.cos(phi)*Math.cos(angle));
 
         return HorizontalCoordinates.of(az, alt);
-        
     }
 
     @Override
