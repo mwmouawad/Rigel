@@ -1,6 +1,7 @@
 package ch.epfl.rigel.coordinates;
 
 import ch.epfl.rigel.Preconditions;
+import ch.epfl.rigel.math.Angle;
 import ch.epfl.rigel.math.ClosedInterval;
 import ch.epfl.rigel.math.RightOpenInterval;
 
@@ -13,23 +14,25 @@ import java.util.Locale;
  */
 public final class EclipticCoordinates extends SphericalCoordinates {
 
-    private final static RightOpenInterval lonInterval = RightOpenInterval.of(0,360);
-    private final static ClosedInterval latInterval = ClosedInterval.symmetric(180);
+    private final static RightOpenInterval lonInterval = RightOpenInterval.of(0, Angle.TAU);
+    private final static ClosedInterval latInterval = ClosedInterval.symmetric(Math.PI);
 
     private EclipticCoordinates(double lon, double lat ){
         super(lon, lat);
     }
 
     /**
-     * Creates an instance of Equatorial Coordinates.
+     * Creates an instance of Ecliptic Coordinates.
      * @param lon right ascencion input between [0°, 360°[
      * @param lat declination input between [-90°, 90°]
      * @throws IllegalArgumentException if the inputs are not contained in the bounds specified above.
      * @return EclipticCoordinates instance.
      */
     public static EclipticCoordinates of(double lon, double lat){
-        return new EclipticCoordinates(Preconditions.checkInInterval(lonInterval,lon),
-                Preconditions.checkInInterval(latInterval,lat));
+        return new EclipticCoordinates(
+                Preconditions.checkInInterval(lonInterval,lon),
+                Preconditions.checkInInterval(latInterval,lat)
+        );
     }
 
     public double lon(){

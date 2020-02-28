@@ -24,14 +24,16 @@ public final class EquatorialCoordinates extends SphericalCoordinates {
 
     /**
      * Creates an instance of Equatorial Coordinates.
-     * @param ra right ascencion input between [0,24[ hours or [0°, 360°[
-     * @param dec declination input between [-90°, 90°]
+     * @param ra right ascencion input between [0,24[ hours or [0°, 2PI[
+     * @param dec declination input between [-PI/2, PI/2]
      * @throws IllegalArgumentException if the inputs are not contained in the bounds specified above.
      * @return
      */
     public static EquatorialCoordinates of(double ra, double dec){
-        return new EquatorialCoordinates(Preconditions.checkInInterval(raInterval, ra),
-                Preconditions.checkInInterval(decInterval, dec));
+        return new EquatorialCoordinates(
+                Preconditions.checkInInterval(raInterval, ra),
+                Preconditions.checkInInterval(decInterval, dec)
+                );
     }
 
     public double ra(){ return super.lon(); }

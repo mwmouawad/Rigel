@@ -26,7 +26,7 @@ public class GeographicCoordinatesTest {
     }
 
     @Test
-    void ofDegFailsWithValidValues() {
+    void ofDegFailsWithInValidValues() {
         assertThrows(IllegalArgumentException.class, () -> {
             GeographicCoordinates.ofDeg(180, 0 );
         });
