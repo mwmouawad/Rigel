@@ -42,7 +42,6 @@ public final  class SiderealTime {
         double greenwichSiderealTimeInRad = Angle.ofHr(greenwichSiderealTimeInHours);
 
         //Normalize angle to the interval
-
         return Angle.normalizePositive(greenwichSiderealTimeInRad);
     }
 

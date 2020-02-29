@@ -9,18 +9,38 @@ public final class EquatorialToHorizontalConversion implements Function<Equatori
 
     public double phi;
     public double angle;
+    private double cosPhi;
+    private double sinPhi;
+    private double cosAngle;
+    private double sinAngle;
 
     public EquatorialToHorizontalConversion(ZonedDateTime when, GeographicCoordinates where){
         phi = where.lat();
         angle = SiderealTime.local(when, where);
+
+        cosPhi = Math.cos(phi);
+        sinPhi = Math.sin(phi);
+        cosAngle = Math.cos(angle);
+        sinAngle = Math.sin(angle);
+
     }
 
+    /**
+     *
+     * @param equ equatorial coordinates input.
+     * @return Horizontal Coordinates representation of the input.
+     */
     @Override
     public HorizontalCoordinates apply(EquatorialCoordinates equ) {
         double delta = equ.dec();
-        double az = Math.atan2(-Math.cos(delta)
-                *Math.cos(phi)*Math.sin(angle), Math.sin(delta) - Math.sin(phi)*Math.sin(angle));
-        double alt = Math.asin(Math.sin(delta)*Math.sin(phi) + Math.cos(delta)*Math.cos(phi)*Math.cos(angle));
+        double az = Math.atan2(
+                -Math.cos(delta) * cosPhi * sinAngle
+                ,Math.sin(delta) - sinPhi * sinAngle
+        );
+        double alt = Math.asin(
+                        Math.sin(delta) * sinPhi
+                        + Math.cos(delta) * cosPhi * cosAngle
+        );
 
         return HorizontalCoordinates.of(az, alt);
     }
