@@ -50,9 +50,10 @@ public final class EclipticToEquatorialConversion implements Function<EclipticCo
 
         double alpha = Math.atan2(
                 Math.sin(lambda) * cosEpsi - Math.tan(beta) * sinEpsi
-                , (Math.cos(lambda) - Math.cos(lambda))
+                ,Math.cos(lambda)
         );
 
+        System.out.println("alpha: " + Angle.toDeg(alpha));
         double delta = Math.asin(Math.sin(beta) * cosEpsi + Math.cos(beta) * sinEpsi * Math.sin(lambda));
 
         return EquatorialCoordinates.of(alpha, delta);
