@@ -22,7 +22,6 @@ public final class EquatorialToHorizontalConversion implements Function<Equatori
         sinPhi = Math.sin(phi);
         cosAngle = Math.cos(angle);
         sinAngle = Math.sin(angle);
-
     }
 
     /**
@@ -37,13 +36,10 @@ public final class EquatorialToHorizontalConversion implements Function<Equatori
         double alt = Math.asin(
                 Math.sin(delta) * sinPhi + Math.cos(delta) * cosPhi * cosAngle
         );
-
         double az = Math.atan2(
                 -Math.cos(delta) * cosPhi * sinAngle
                 ,Math.sin(delta) - sinPhi * Math.sin(alt)
         );
-
-
         return HorizontalCoordinates.of(az, alt);
     }
 

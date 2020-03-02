@@ -1,6 +1,7 @@
 package ch.epfl.astronomy;
 
 import ch.epfl.rigel.astronomy.SiderealTime;
+import ch.epfl.rigel.coordinates.GeographicCoordinates;
 import ch.epfl.rigel.math.Angle;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -25,7 +26,8 @@ public class SiderealTimeTest {
         var dateTime = ZonedDateTime.of(LocalDate.of(1980, Month.APRIL, 22),
                 LocalTime.of(14, 36,51,670000000), ZoneOffset.UTC);
 
-        assertEquals(Angle.ofHr(4.668120), SiderealTime.greenwich(dateTime),1e-6);
+        assertEquals(Angle.ofHr(4.668119), SiderealTime.greenwich(dateTime),1e-6);
+
     }
 
     /**
@@ -34,7 +36,12 @@ public class SiderealTimeTest {
      */
     @Test
     void localSiderealTimeTest(){
+        var dateTime = ZonedDateTime.of(LocalDate.of(1980, Month.APRIL, 22),
+                LocalTime.of(14, 36,51,670000000), ZoneOffset.UTC);
 
+        var when = GeographicCoordinates.ofDeg(-64, 0);
+
+        assertEquals(Angle.ofHr(0.401453), SiderealTime.local(dateTime, when),1e-6);
 
     }
 
