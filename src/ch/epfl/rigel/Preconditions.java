@@ -27,5 +27,14 @@ public final class Preconditions {
             }
         }
 
+        static public float checkInInterval(Interval interval, float value){
+            if(!interval.contains(value)){
+                throw new IllegalArgumentException();
+            }
+            else{
+                return value;
+            }
+        }
+
 
 }
