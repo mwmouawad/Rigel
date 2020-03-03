@@ -42,8 +42,7 @@ public final class StereographicProjection implements Function<HorizontalCoordin
 
 
     public double applyToAngle(double rad){
-        //TODO
-        return 0;
+        return 2*Math.tan(rad/2);
     }
 
     public HorizontalCoordinates inverseApply(CartesianCoordinates xy){
