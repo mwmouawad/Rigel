@@ -31,7 +31,7 @@ public final class EquatorialToHorizontalConversion implements Function<Equatori
     @Override
     public HorizontalCoordinates apply(EquatorialCoordinates equ) {
         double delta = equ.dec();
-        //As seen from the book page 24 to find the right ascension.
+        //As seen from the book page 24 to find the hour angle.
         double hourAngle = Angle.normalizePositive(angle - equ.ra());
 
         System.out.println("Hour Angle: " + Angle.toHr(hourAngle));
@@ -50,28 +50,7 @@ public final class EquatorialToHorizontalConversion implements Function<Equatori
         return HorizontalCoordinates.of( Angle.normalizePositive(az), alt);
     }
 
-    /**
-     * Created for better testing purposes of the method apply.
-     * @param hourAngle
-     * @param dec
-     * @return
-     */
-    public HorizontalCoordinates equatorialToHorizontalCoord(double hourAngle, double dec){
 
-        double sinAngle  = Math.sin(hourAngle);
-        double cosAngle  = Math.cos(hourAngle);
-
-
-        double alt = Math.asin(
-                Math.sin(dec) * sinPhi + Math.cos(dec) * cosPhi * cosAngle
-        );
-        double az = Math.atan2(
-                -Math.cos(dec) * cosPhi * sinAngle
-                ,Math.sin(dec) - sinPhi * Math.sin(alt)
-        );
-        return HorizontalCoordinates.of(az, alt);
-
-    }
 
     /**
      *
