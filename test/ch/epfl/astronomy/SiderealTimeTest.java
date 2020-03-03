@@ -21,7 +21,6 @@ public class SiderealTimeTest {
      * page 23. Example: Sidereal Time.
      */
     void greenwichTest(){
-        //TODO: FIND A TEST FOR IT. In the book they are not usin J2000 as a reference time.
 
         var dateTime = ZonedDateTime.of(LocalDate.of(1980, Month.APRIL, 22),
                 LocalTime.of(14, 36,51,670000000), ZoneOffset.UTC);
@@ -42,6 +41,14 @@ public class SiderealTimeTest {
         var when = GeographicCoordinates.ofDeg(-64, 0);
 
         assertEquals(Angle.ofHr(0.401453), SiderealTime.local(dateTime, when),1e-6);
+
+        //Second Test
+        var dateTime2 = ZonedDateTime.of(LocalDate.of(2020, Month.MARCH, 3),
+                LocalTime.of(5, 35,35,0), ZoneOffset.UTC);
+
+        var when2 = GeographicCoordinates.ofDeg(-80, 0);
+
+        assertEquals(Angle.ofHr(11.0 + 1.0/60 + 25.80/3600), SiderealTime.local(dateTime2, when2),1e-6);
 
     }
 

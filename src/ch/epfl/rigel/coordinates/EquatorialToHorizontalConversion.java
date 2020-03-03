@@ -1,6 +1,7 @@
 package ch.epfl.rigel.coordinates;
 
 import ch.epfl.rigel.astronomy.SiderealTime;
+import ch.epfl.rigel.math.Angle;
 
 import java.time.ZonedDateTime;
 import java.util.function.Function;
@@ -20,8 +21,6 @@ public final class EquatorialToHorizontalConversion implements Function<Equatori
 
         cosPhi = Math.cos(phi);
         sinPhi = Math.sin(phi);
-        cosAngle = Math.cos(angle);
-        sinAngle = Math.sin(angle);
     }
 
     /**
@@ -32,6 +31,13 @@ public final class EquatorialToHorizontalConversion implements Function<Equatori
     @Override
     public HorizontalCoordinates apply(EquatorialCoordinates equ) {
         double delta = equ.dec();
+        //As seen from the book page 24 to find the right ascension.
+        double hourAngle = Angle.normalizePositive(angle - equ.ra());
+
+        System.out.println("Hour Angle: " + Angle.toHr(hourAngle));
+
+        cosAngle = Math.cos(hourAngle);
+        sinAngle = Math.sin(hourAngle);
 
         double alt = Math.asin(
                 Math.sin(delta) * sinPhi + Math.cos(delta) * cosPhi * cosAngle
@@ -40,7 +46,41 @@ public final class EquatorialToHorizontalConversion implements Function<Equatori
                 -Math.cos(delta) * cosPhi * sinAngle
                 ,Math.sin(delta) - sinPhi * Math.sin(alt)
         );
+
+        return HorizontalCoordinates.of( Angle.normalizePositive(az), alt);
+    }
+
+    /**
+     * Created for better testing purposes of the method apply.
+     * @param hourAngle
+     * @param dec
+     * @return
+     */
+    public HorizontalCoordinates equatorialToHorizontalCoord(double hourAngle, double dec){
+
+        double sinAngle  = Math.sin(hourAngle);
+        double cosAngle  = Math.cos(hourAngle);
+
+
+        double alt = Math.asin(
+                Math.sin(dec) * sinPhi + Math.cos(dec) * cosPhi * cosAngle
+        );
+        double az = Math.atan2(
+                -Math.cos(dec) * cosPhi * sinAngle
+                ,Math.sin(dec) - sinPhi * Math.sin(alt)
+        );
         return HorizontalCoordinates.of(az, alt);
+
+    }
+
+    /**
+     *
+     * @return
+     */
+    public double rightAscToHourAngle(double rightAsc){
+
+        return this.angle - rightAsc;
+
     }
 
     @Override
