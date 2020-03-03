@@ -1,6 +1,7 @@
 package ch.epfl.rigel.coordinates;
 
 import ch.epfl.rigel.astronomy.SiderealTime;
+import ch.epfl.rigel.math.Angle;
 
 import java.time.ZonedDateTime;
 import java.util.function.Function;
@@ -20,8 +21,6 @@ public final class EquatorialToHorizontalConversion implements Function<Equatori
 
         cosPhi = Math.cos(phi);
         sinPhi = Math.sin(phi);
-        cosAngle = Math.cos(angle);
-        sinAngle = Math.sin(angle);
     }
 
     /**
@@ -32,6 +31,13 @@ public final class EquatorialToHorizontalConversion implements Function<Equatori
     @Override
     public HorizontalCoordinates apply(EquatorialCoordinates equ) {
         double delta = equ.dec();
+        //As seen from the book page 24 to find the hour angle.
+        double hourAngle = Angle.normalizePositive(angle - equ.ra());
+
+        System.out.println("Hour Angle: " + Angle.toHr(hourAngle));
+
+        cosAngle = Math.cos(hourAngle);
+        sinAngle = Math.sin(hourAngle);
 
         double alt = Math.asin(
                 Math.sin(delta) * sinPhi + Math.cos(delta) * cosPhi * cosAngle
@@ -40,8 +46,12 @@ public final class EquatorialToHorizontalConversion implements Function<Equatori
                 -Math.cos(delta) * cosPhi * sinAngle
                 ,Math.sin(delta) - sinPhi * Math.sin(alt)
         );
-        return HorizontalCoordinates.of(az, alt);
+
+        //TODO: Normalize alt?
+
+        return HorizontalCoordinates.of( Angle.normalizePositive(az), alt);
     }
+
 
     @Override
     public boolean equals(Object o) { throw new UnsupportedOperationException(); }
