@@ -47,20 +47,11 @@ public final class EquatorialToHorizontalConversion implements Function<Equatori
                 ,Math.sin(delta) - sinPhi * Math.sin(alt)
         );
 
+        //TODO: Normalize alt?
+
         return HorizontalCoordinates.of( Angle.normalizePositive(az), alt);
     }
 
-
-
-    /**
-     *
-     * @return
-     */
-    public double rightAscToHourAngle(double rightAsc){
-
-        return this.angle - rightAsc;
-
-    }
 
     @Override
     public boolean equals(Object o) { throw new UnsupportedOperationException(); }
