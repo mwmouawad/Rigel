@@ -45,4 +45,27 @@ public class EquatorialToHorizontalConversionTest {
 
     }
 
+
+    @Test
+    void hashCodeThrowsUOE() {
+        assertThrows(UnsupportedOperationException.class, () -> {
+            var obsPosition = GeographicCoordinates.ofDeg(0,52);
+            var time = ZonedDateTime.of(LocalDate.of(2020, Month.MARCH, 01),
+                    LocalTime.of(0,0,0), ZoneOffset.UTC);
+            EquatorialToHorizontalConversion eqToHorConv = new EquatorialToHorizontalConversion(time, obsPosition);
+            eqToHorConv.hashCode();
+        });
+    }
+
+    @Test
+    void equalsThrowsUOE() {
+        assertThrows(UnsupportedOperationException.class, () -> {
+            var obsPosition = GeographicCoordinates.ofDeg(0,52);
+            var time = ZonedDateTime.of(LocalDate.of(2020, Month.MARCH, 01),
+                    LocalTime.of(0,0,0), ZoneOffset.UTC);
+            EquatorialToHorizontalConversion eqToHorConv = new EquatorialToHorizontalConversion(time, obsPosition);
+            eqToHorConv.equals(eqToHorConv);
+        });
+    }
+
 }
