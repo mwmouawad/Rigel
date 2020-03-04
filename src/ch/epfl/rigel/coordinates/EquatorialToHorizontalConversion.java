@@ -18,7 +18,6 @@ public final class EquatorialToHorizontalConversion implements Function<Equatori
     public EquatorialToHorizontalConversion(ZonedDateTime when, GeographicCoordinates where){
         phi = where.lat();
         angle = SiderealTime.local(when, where);
-
         cosPhi = Math.cos(phi);
         sinPhi = Math.sin(phi);
     }
@@ -47,9 +46,8 @@ public final class EquatorialToHorizontalConversion implements Function<Equatori
                 ,Math.sin(delta) - sinPhi * Math.sin(alt)
         );
 
-        //TODO: Normalize alt?
 
-        return HorizontalCoordinates.of( Angle.normalizePositive(az), alt);
+        return HorizontalCoordinates.of( Angle.normalizePositive(az), Angle.normalizePositive(alt));
     }
 
 

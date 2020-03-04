@@ -27,8 +27,8 @@ public final  class SiderealTime {
         double timeJulianDifference = J2000.julianCenturiesUntil(whenInGreenwichUTC.truncatedTo(ChronoUnit.DAYS));
 
         //Computes the time in hours between the 0h and the when hour.
-        double hoursInWhen = when.getHour() + ((double)when.getMinute() / 60) + (double)when.getSecond() / 3600 +
-                (double)when.getNano() / (1e9 * 3600);
+        double hoursInWhen = whenInGreenwichUTC.getHour() + ((double)whenInGreenwichUTC.getMinute() / 60) + (double)whenInGreenwichUTC.getSecond() / 3600 +
+                (double)whenInGreenwichUTC.getNano() / (1e9 * 3600);
 
         //Equation Variables
         double S0 = ( 0.000025862 * timeJulianDifference * timeJulianDifference )
@@ -36,12 +36,12 @@ public final  class SiderealTime {
                     + 6.697374558;
         double S1 = 1.002737909 * hoursInWhen;
 
-        double greenwichSiderealTimeInHours = S0 + S1 ;
-        double greenwichSiderealTimeInHoursNormalized = RightOpenInterval.of(0,24).reduce(greenwichSiderealTimeInHours);
-        double greenwichSiderealTimeInRad = Angle.ofHr(greenwichSiderealTimeInHoursNormalized);
+        double greenwichSiderealTimeInHours = S1 + S0;
+
+        System.out.println("Greenwhich hours: " + RightOpenInterval.of(0,24).reduce(greenwichSiderealTimeInHours));
 
         //Normalize angle to the interval
-        return Angle.normalizePositive(greenwichSiderealTimeInRad);
+        return Angle.normalizePositive(Angle.ofHr(greenwichSiderealTimeInHours));
     }
 
 

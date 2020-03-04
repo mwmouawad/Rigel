@@ -53,7 +53,6 @@ public final class EclipticToEquatorialConversion implements Function<EclipticCo
                 ,Math.cos(lambda)
         );
 
-        System.out.println("alpha: " + Angle.toDeg(alpha));
         double delta = Math.asin(Math.sin(beta) * cosEpsi + Math.cos(beta) * sinEpsi * Math.sin(lambda));
 
         return EquatorialCoordinates.of(alpha, delta);

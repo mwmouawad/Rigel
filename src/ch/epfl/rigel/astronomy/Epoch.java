@@ -21,7 +21,7 @@ public enum Epoch {
     }
 
     public double daysUntil(ZonedDateTime when){
-        return time.until(when, ChronoUnit.MILLIS)/MILLIS_TO_DAYS;
+        return time.until(when, ChronoUnit.MILLIS) / MILLIS_TO_DAYS;
     }
 
     public double julianCenturiesUntil(ZonedDateTime when){
