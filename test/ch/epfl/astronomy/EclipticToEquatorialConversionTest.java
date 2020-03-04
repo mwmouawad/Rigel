@@ -43,6 +43,38 @@ public class EclipticToEquatorialConversionTest {
     }
 
 
+    /**
+     * Examples taken from this website: https://tinyurl.com/qwl8cde
+     */
+    @Test
+    void eclipticToEquatorialWorksWithValuesFromWebsite(){
+
+        var eclipticCoordinates = EclipticCoordinates.of(
+                Angle.ofDMS(15, 41,10.4),
+                Angle.ofDMS(89,10,20.00)
+        );
+        var time = ZonedDateTime.of(LocalDate.of(1977, Month.DECEMBER, 31),
+                LocalTime.of(0, 0), ZoneOffset.UTC);
+
+        EclipticToEquatorialConversion eclToEqConversion = new EclipticToEquatorialConversion(time);
+
+
+        assertEquals(
+                Angle.ofDMS(66, 46,7.50),
+                eclToEqConversion.apply(eclipticCoordinates).dec(),
+                1e-8
+        );
+
+        assertEquals(
+                Angle.ofHr(18 + 8.0/60 + 4.99 / 3600),
+                (eclToEqConversion.apply(eclipticCoordinates).ra()),
+                1e-7
+        );
+    }
+
+
+
+
     @Test
     void hashCodeThrowsUOE() {
         assertThrows(UnsupportedOperationException.class, () -> {
