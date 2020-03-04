@@ -17,7 +17,7 @@ public class EquatorialToHorizontalConversionTest {
     /**
      */
     @Test
-    void applyWorksOnKnownValues(){
+    void applyWorksOnKnownValuesFromWebsite(){
 
         /**
          * Data used to find an hour angle as used in the book example.

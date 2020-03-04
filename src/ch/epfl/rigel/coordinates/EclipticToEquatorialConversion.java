@@ -45,7 +45,6 @@ public final class EclipticToEquatorialConversion implements Function<EclipticCo
     @Override
     public EquatorialCoordinates apply(EclipticCoordinates eclipticCoordinates) {
         double lambda = eclipticCoordinates.lon();
-
         double beta = eclipticCoordinates.lat();
 
         double alpha = Math.atan2(
@@ -55,7 +54,7 @@ public final class EclipticToEquatorialConversion implements Function<EclipticCo
 
         double delta = Math.asin(Math.sin(beta) * cosEpsi + Math.cos(beta) * sinEpsi * Math.sin(lambda));
 
-        return EquatorialCoordinates.of(alpha, delta);
+        return EquatorialCoordinates.of(Angle.normalizePositive(alpha), Angle.normalizePositive(delta));
     }
 
     @Override
