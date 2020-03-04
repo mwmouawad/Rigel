@@ -30,13 +30,13 @@ public class SiderealTimeTest {
     }
 
     @Test
-    void greenwhichWorksWithOtherTimeZones(){
+    void greenwichWorksWithOtherTimeZones(){
 
         //Date time at GMT-3:00 (Vai Brasil).
         var dateTime = ZonedDateTime.of(LocalDate.of(2010, Month.DECEMBER, 10),
                 LocalTime.of(20, 15,30,0), ZoneId.of("Brazil/East"));
 
-        assertEquals( Angle.ofHr(3.0 + 33.0/60 + 36.91/3600) ,SiderealTime.greenwich(dateTime), 1e-7);
+        assertEquals( Angle.ofHr(3.0 + 33.0/60 + 36.91/3600), SiderealTime.greenwich(dateTime), 1e-7);
 
 
 
@@ -50,7 +50,7 @@ public class SiderealTimeTest {
 
         var when = GeographicCoordinates.ofDeg(23, 0);
 
-        assertEquals( Angle.ofHr(8.0 + 1/60 + 53.21/3600) ,SiderealTime.local(dateTime, when), 1e-7);
+        assertEquals( Angle.ofHr(8.0 + 1/60 + 53.21/3600), SiderealTime.local(dateTime, when), 1e-7);
 
     }
 
