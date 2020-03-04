@@ -15,7 +15,6 @@ public final class StereographicProjection implements Function<HorizontalCoordin
         centerY = center.alt();
         sinCenterY = Math.sin(centerY);
         cosCenterY = Math.cos(centerY);
-
     }
 
     @Override
@@ -42,17 +41,19 @@ public final class StereographicProjection implements Function<HorizontalCoordin
 
 
     public double applyToAngle(double rad){
-        return 2*Math.tan(rad/2); 
+        return 2*Math.tan(rad/4);
     }
 
     public HorizontalCoordinates inverseApply(CartesianCoordinates xy){
-        double rho = Math.sqrt(xy.x()*xy.x() + xy.y()*xy.y());
+        double x = xy.x();
+        double y = xy.y();
+        double rho = Math.sqrt(x*x + y*y);
         double sinc = 2*rho/(rho*rho + 1);
         double cosc= (1-rho*rho)/(rho*rho + 1);
 
         //computes inverse coordinates with the above constants
-        double lambda = Math.atan2(xy.x()*sinc, rho*cosCenterY*cosc - xy.y()*sinCenterY*sinc) + centerX;
-        double phi = Math.asin(cosc*sinCenterY + (xy.y()*sinc*cosCenterY)/rho);
+        double lambda = Math.atan2(x*sinc, rho*cosCenterY*cosc - y*sinCenterY*sinc) + centerX;
+        double phi = Math.asin(cosc*sinCenterY + (y*sinc*cosCenterY)/rho);
         return HorizontalCoordinates.of(lambda, phi);
     }
 
