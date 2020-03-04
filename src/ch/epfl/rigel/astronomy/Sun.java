@@ -5,16 +5,16 @@ import ch.epfl.rigel.coordinates.EquatorialCoordinates;
 
 import java.util.Objects;
 
-public final class Sun extends CelestialObject{
+public final class Sun extends CelestialObject {
 
-    private EclipticCoordinates eclipticPos;
-    private float meanAnomaly;
+    private final EclipticCoordinates eclipticPos;
+    private final float meanAnomaly;
 
     /**
-     * @param eclipticPos ecliptic position of the object
+     * @param eclipticPos   ecliptic position of the object
      * @param equatorialPos equatorial position of the object
      * @param angularSize   size of the object
-     * @param meanAnomaly mean anomaly of the sun
+     * @param meanAnomaly   mean anomaly of the sun
      * @throws NullPointerException     if the name or the equatorial position are null
      * @throws IllegalArgumentException if the angular size is less than 0.
      */
@@ -24,6 +24,11 @@ public final class Sun extends CelestialObject{
         this.meanAnomaly = meanAnomaly;
     }
 
-    public EclipticCoordinates eclipticPos() { return eclipticPos; }
-    public double meanAnomaly() { return meanAnomaly; }
+    public EclipticCoordinates eclipticPos() {
+        return eclipticPos;
+    }
+
+    public double meanAnomaly() {
+        return meanAnomaly;
+    }
 }

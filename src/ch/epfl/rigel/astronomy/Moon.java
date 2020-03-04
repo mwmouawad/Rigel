@@ -8,7 +8,7 @@ import java.util.Locale;
 
 public final class Moon extends CelestialObject {
 
-    private float phase;
+    private final float phase;
 
     /**
      * @param equatorialPos equatorial position of the object at a given time

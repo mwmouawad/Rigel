@@ -2,7 +2,7 @@ package ch.epfl.rigel.astronomy;
 
 import ch.epfl.rigel.coordinates.EquatorialCoordinates;
 
-public final class Planet extends CelestialObject{
+public final class Planet extends CelestialObject {
 
     /**
      * @param name          of the celestial object
