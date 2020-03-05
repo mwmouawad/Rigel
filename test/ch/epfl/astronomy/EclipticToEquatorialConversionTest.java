@@ -5,6 +5,7 @@ import ch.epfl.rigel.math.Angle;
 import org.junit.jupiter.api.Test;
 
 import java.time.*;
+import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -72,7 +73,23 @@ public class EclipticToEquatorialConversionTest {
         );
     }
 
+    @Test
+    void applyChainWorksOnKnownValues(){
 
+        var date = ZonedDateTime.of(LocalDate.of(1988, Month.JANUARY, 15),
+                LocalTime.of(0, 0 ), ZoneOffset.UTC);
+        EclipticCoordinates ecl = EclipticCoordinates.of(Angle.ofDMS(10,10,11.6),Angle.ofDMS(5,5,5));
+        var eclToEq = new EclipticToEquatorialConversion(date);
+        var equToHor = new EquatorialToHorizontalConversion(date, GeographicCoordinates.ofDeg(0, 15));
+
+        Function<EclipticCoordinates,HorizontalCoordinates> eclToHor = eclToEq.andThen(equToHor);
+
+        HorizontalCoordinates hor = eclToHor.apply(ecl);
+
+        //TODO: Find a test for this.
+
+
+    }
 
 
     @Test

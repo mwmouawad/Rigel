@@ -2,6 +2,7 @@ package ch.epfl.rigel.coordinates;
 
 import ch.epfl.rigel.astronomy.SiderealTime;
 import ch.epfl.rigel.math.Angle;
+import ch.epfl.rigel.math.RightOpenInterval;
 
 import java.time.ZonedDateTime;
 import java.util.function.Function;
@@ -14,6 +15,7 @@ public final class EquatorialToHorizontalConversion implements Function<Equatori
     private double sinPhi;
     private double cosAngle;
     private double sinAngle;
+    private final static RightOpenInterval altInterval = RightOpenInterval.symmetric(Math.PI);
 
     public EquatorialToHorizontalConversion(ZonedDateTime when, GeographicCoordinates where){
         phi = where.lat();
@@ -47,7 +49,7 @@ public final class EquatorialToHorizontalConversion implements Function<Equatori
         );
 
 
-        return HorizontalCoordinates.of( Angle.normalizePositive(az), Angle.normalizePositive(alt));
+        return HorizontalCoordinates.of(Angle.normalizePositive(az), altInterval.reduce(alt));
     }
 
 

@@ -40,7 +40,8 @@ public class EquatorialToHorizontalConversionTest {
         var result = eqToHorConv.apply(eqCoordinates);
 
 
-        assertEquals(Angle.ofDeg(283.271027), result.az(), 1e-7);
+
+        assertEquals(Angle.ofDeg(283.271027), (result.az()), 1e-7);
         assertEquals(Angle.ofDeg(19.334345), result.alt(), 1e-7);
 
     }

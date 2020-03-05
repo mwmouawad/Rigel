@@ -42,17 +42,7 @@ public class SiderealTimeTest {
 
     }
 
-    @Test
-    void localSiderealTimeWorksWithOtherTimezones(){
 
-        var dateTime = ZonedDateTime.of(LocalDate.of(1977, Month.MARCH, 19),
-                LocalTime.of(0, 15,3,0), ZoneId.of("Asia/Katmandu"));
-
-        var when = GeographicCoordinates.ofDeg(23, 0);
-
-        assertEquals( Angle.ofHr(8.0 + 1/60 + 53.21/3600), SiderealTime.local(dateTime, when), 1e-7);
-
-    }
 
 
     /**

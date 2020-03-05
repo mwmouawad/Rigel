@@ -22,11 +22,27 @@ public class EpochTest {
 
         assertEquals(2.25, Epoch.J2000.daysUntil(d));
 
+        var d2 = ZonedDateTime.of(
+                LocalDate.of(1977, Month.APRIL, 3),
+                LocalTime.of(16, 51, 34),
+                ZoneOffset.UTC);
+
+
+        assertEquals(-717793706.0 / (60 * 60 * 24), Epoch.J2000.daysUntil(d2));
+
+
     }
 
     @Test
     void julianCenturiesUntilTest(){
 
+        var d2 = ZonedDateTime.of(
+                LocalDate.of(1977, Month.APRIL, 3),
+                LocalTime.of(16, 51, 34),
+                ZoneOffset.UTC);
+
+
+        assertEquals(-717793706.0 / (60 * 60 * 24 * 365.25 * 100), Epoch.J2000.julianCenturiesUntil(d2));
 
 
     }
