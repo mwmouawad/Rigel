@@ -41,6 +41,18 @@ public class EclipticToEquatorialConversionTest {
                 (eclToEqConversion.apply(eclipticCoordinates).ra()),
                 1e-7
         );
+        
+        EclipticCoordinates a = EclipticCoordinates.of(Angle.ofDeg(139.686111), Angle.ofDeg(4.875278) );
+        EclipticToEquatorialConversion zab = new EclipticToEquatorialConversion(ZonedDateTime.of
+
+                (2009,7,6, 0,0,0,0, ZoneId.of("UTC")));
+
+        EquatorialCoordinates eqCoord = zab.apply(a);
+
+        assertEquals(143.722173, eqCoord.raDeg(),1e-6);
+        assertEquals(19.535003, eqCoord.decDeg(), 1e-6);
+
+
     }
 
 
