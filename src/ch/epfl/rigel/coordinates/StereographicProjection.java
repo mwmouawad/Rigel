@@ -19,18 +19,24 @@ public final class StereographicProjection implements Function<HorizontalCoordin
 
     @Override
     public CartesianCoordinates apply(HorizontalCoordinates azAlt) {
+
         double coordX = azAlt.az();
         double coordY = azAlt.alt();
         double varX = coordX - centerX;
 
+
         double d = 1 / (1 + Math.sin(coordY) * sinCenterY + Math.cos(coordY) * cosCenterY * Math.cos(varX));
+        System.out.println(d);
+
         //computes the new coordinates
         double x = d * Math.cos(coordY) * Math.sin(varX);
         double y = d * (Math.sin(coordY) * cosCenterY - Math.cos(coordY) * sinCenterY * Math.cos(varX));
+
         return CartesianCoordinates.of(x, y);
     }
 
     public CartesianCoordinates circleCenterForParallel(HorizontalCoordinates hor) {
+        double sin2 = Math.sin(hor.alt());
         double coordY = cosCenterY / (Math.sin(hor.alt()) + sinCenterY);
         return CartesianCoordinates.of(0, coordY);
     }
@@ -38,7 +44,6 @@ public final class StereographicProjection implements Function<HorizontalCoordin
     public double circleRadiusForParallel(HorizontalCoordinates parallel) {
         return (Math.cos(parallel.alt()) / (Math.sin(parallel.alt()) + sinCenterY));
     }
-
 
     public double applyToAngle(double rad) {
         return 2 * Math.tan(rad / 4);

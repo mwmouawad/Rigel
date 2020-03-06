@@ -9,12 +9,10 @@ import java.util.function.Function;
 
 public final class EquatorialToHorizontalConversion implements Function<EquatorialCoordinates, HorizontalCoordinates> {
 
-    public double phi;
-    public double angle;
-    private double cosPhi;
-    private double sinPhi;
-    private double cosAngle;
-    private double sinAngle;
+    public final double phi;
+    public final double angle;
+    private final double cosPhi;
+    private final double sinPhi;
     private final static RightOpenInterval altInterval = RightOpenInterval.symmetric(Math.PI);
 
     public EquatorialToHorizontalConversion(ZonedDateTime when, GeographicCoordinates where){
@@ -37,14 +35,14 @@ public final class EquatorialToHorizontalConversion implements Function<Equatori
 
         System.out.println("Hour Angle: " + Angle.toHr(hourAngle));
 
-        cosAngle = Math.cos(hourAngle);
-        sinAngle = Math.sin(hourAngle);
+        double cosAngleHour = Math.cos(hourAngle);
+        double sinAngleHour = Math.sin(hourAngle);
 
         double alt = Math.asin(
-                Math.sin(delta) * sinPhi + Math.cos(delta) * cosPhi * cosAngle
+                Math.sin(delta) * sinPhi + Math.cos(delta) * cosPhi * cosAngleHour
         );
         double az = Math.atan2(
-                -Math.cos(delta) * cosPhi * sinAngle
+                -Math.cos(delta) * cosPhi * sinAngleHour
                 ,Math.sin(delta) - sinPhi * Math.sin(alt)
         );
 

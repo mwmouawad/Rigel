@@ -25,9 +25,9 @@ public final class EclipticToEquatorialConversion implements Function<EclipticCo
             -Angle.ofArcsec(46.815),
             Angle.ofDMS(23, 26, 21.45)
     );
-    private double cosEpsi;
-    private double sinEpsi;
-    private static final RightOpenInterval decInterval  =  RightOpenInterval.symmetric(Math.PI);
+    private final double cosEpsi;
+    private final double sinEpsi;
+    private final static  RightOpenInterval decInterval  =  RightOpenInterval.symmetric(Math.PI);
 
     /**
      * @param when time zone time used to be converted.
