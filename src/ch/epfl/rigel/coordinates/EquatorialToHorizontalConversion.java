@@ -10,14 +10,14 @@ import java.util.function.Function;
 public final class EquatorialToHorizontalConversion implements Function<EquatorialCoordinates, HorizontalCoordinates> {
 
     public final double phi;
-    public final double angle;
+    public final double localTime;
     private final double cosPhi;
     private final double sinPhi;
     private final static RightOpenInterval altInterval = RightOpenInterval.symmetric(Math.PI);
 
     public EquatorialToHorizontalConversion(ZonedDateTime when, GeographicCoordinates where){
         phi = where.lat();
-        angle = SiderealTime.local(when, where);
+        localTime = SiderealTime.local(when, where);
         cosPhi = Math.cos(phi);
         sinPhi = Math.sin(phi);
     }
@@ -31,7 +31,7 @@ public final class EquatorialToHorizontalConversion implements Function<Equatori
     public HorizontalCoordinates apply(EquatorialCoordinates equ) {
         double delta = equ.dec();
         //As seen from the book page 24 to find the hour angle.
-        double hourAngle = Angle.normalizePositive(angle - equ.ra());
+        double hourAngle = Angle.normalizePositive(localTime - equ.ra());
 
         System.out.println("Hour Angle: " + Angle.toHr(hourAngle));
 
