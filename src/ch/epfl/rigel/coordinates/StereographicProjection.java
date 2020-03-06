@@ -58,7 +58,7 @@ public final class StereographicProjection implements Function<HorizontalCoordin
      */
     public CartesianCoordinates circleCenterForParallel(HorizontalCoordinates hor) {
         double sin2 = Math.sin(hor.alt());
-        double coordY = cosCenterY / (Math.sin(hor.alt()) + sinCenterY);
+        double coordY = cosCenterY / (sin2 + sinCenterY);
         return CartesianCoordinates.of(0, coordY);
     }
 

@@ -8,7 +8,7 @@ import java.util.Locale;
 
 public final class Moon extends CelestialObject {
 
-    private final double phase;
+    private final float phase;
 
     /**
      * @param equatorialPos equatorial position of the object at a given time
@@ -20,8 +20,7 @@ public final class Moon extends CelestialObject {
      */
     public Moon(EquatorialCoordinates equatorialPos, float angularSize, float magnitude, float phase) {
         super("Lune", equatorialPos, angularSize, magnitude);
-        //TODO check if we are allowed to add a method to preconditions
-        this.phase = Preconditions.checkInInterval(ClosedInterval.of(0,1), phase);
+        this.phase = (float) Preconditions.checkInInterval(ClosedInterval.of(0,1), phase);
     }
 
     @Override
