@@ -2,6 +2,9 @@ package ch.epfl.rigel.coordinates;
 
 import java.util.Locale;
 
+/**
+ * Represents a couple of Cartesian Coordinates (x,y).
+ */
 public final class CartesianCoordinates {
 
     private double x;
@@ -12,6 +15,12 @@ public final class CartesianCoordinates {
         this.y = y;
     }
 
+    /**
+     * Creates an instance of cartesian coordinates.
+     * @param x x coordinate.
+     * @param y y coordinate.
+     * @return CartesianCoordinates instance.
+     */
     public static CartesianCoordinates of(double x, double y){
         return new CartesianCoordinates(x,y);
     }
@@ -29,7 +38,6 @@ public final class CartesianCoordinates {
         throw new UnsupportedOperationException();
     }
 
-    //TODO check if correct
     public String toString() {
         return String.format(Locale.ROOT, "(x= %.4f, y= %.4f)", x, y); }
 }
