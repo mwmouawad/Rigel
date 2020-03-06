@@ -22,19 +22,9 @@ public final class Preconditions {
             if(!interval.contains(value)){
                 throw new IllegalArgumentException();
             }
-            else{
-                return value;
-            }
+            return value;
         }
 
-        static public float checkInInterval(Interval interval, float value){
-            if(!interval.contains(value)){
-                throw new IllegalArgumentException();
-            }
-            else{
-                return value;
-            }
-        }
 
 
 }

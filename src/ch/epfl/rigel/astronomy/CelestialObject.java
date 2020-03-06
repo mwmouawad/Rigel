@@ -38,7 +38,6 @@ public abstract class CelestialObject {
         return equatorialPos;
     }
 
-    //TODO how does it return a double without a cast ?
     public double angularSize() {
         return angularSize;
     }

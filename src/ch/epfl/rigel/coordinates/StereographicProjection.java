@@ -113,7 +113,6 @@ public final class StereographicProjection implements Function<HorizontalCoordin
         throw new UnsupportedOperationException();
     }
 
-    //TODO check if correct, only want center ?
     public String toString() {
         return String.format(Locale.ROOT, "Stereographic Projection center : (x= %.4f, y= %.4f)", centerX,
                 centerY);

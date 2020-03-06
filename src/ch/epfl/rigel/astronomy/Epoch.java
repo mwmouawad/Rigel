@@ -13,15 +13,15 @@ public enum Epoch {
             LocalTime.of(12, 0), ZoneOffset.UTC));
 
     private ZonedDateTime time;
-    private final double MILLIS_TO_DAYS = 1000*60*60*24;
-    private final double MILLIS_TO_CENTURIES = MILLIS_TO_DAYS*36525;
+    private static final double MILLIS_TO_DAYS = Duration.ofDays(1).toMillis();
+    private static final double MILLIS_TO_CENTURIES = Duration.ofDays(36525).toMillis();
 
     Epoch(ZonedDateTime time) {
         this.time = time;
     }
 
     public double daysUntil(ZonedDateTime when){
-        return time.until(when, ChronoUnit.MILLIS) / MILLIS_TO_DAYS;
+        return time.until(when, ChronoUnit.MILLIS)/MILLIS_TO_DAYS;
     }
 
     public double julianCenturiesUntil(ZonedDateTime when){

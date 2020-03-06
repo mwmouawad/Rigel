@@ -8,7 +8,7 @@ import java.util.Locale;
 
 public final class Moon extends CelestialObject {
 
-    private final float phase;
+    private final double phase;
 
     /**
      * @param equatorialPos equatorial position of the object at a given time
@@ -25,8 +25,7 @@ public final class Moon extends CelestialObject {
     }
 
     @Override
-    //TODO find another way
     public String info() {
-        return String.format(Locale.ROOT, "Lune (%.1f%s)", phase*100, '%');
+        return String.format(Locale.ROOT, "Lune (%.1f%%)", phase*100);
     }
 }
