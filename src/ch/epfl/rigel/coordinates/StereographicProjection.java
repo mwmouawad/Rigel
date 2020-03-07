@@ -6,6 +6,8 @@ import java.util.function.Function;
 /**
  * Represents a Stereographic method of projection from any Spherical Coordinates
  * system to cartesian coordinates centered on coordinates (x,y).
+ * @author Mark Mouawad (296508)
+ * @author Leah Uzzan (302829)
  */
 public final class StereographicProjection implements Function<HorizontalCoordinates, CartesianCoordinates> {
 
@@ -15,7 +17,7 @@ public final class StereographicProjection implements Function<HorizontalCoordin
     private final double cosCenterY;
 
     /**
-     * Constructor returing a StereoGraphic projection centered in the horizontal coordinates.
+     * Constructor returning a StereoGraphic projection centered in the horizontal coordinates.
      * @param center coordinates where the projection is centered.
      */
     public StereographicProjection(HorizontalCoordinates center) {

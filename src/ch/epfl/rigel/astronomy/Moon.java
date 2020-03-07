@@ -6,8 +6,14 @@ import ch.epfl.rigel.math.ClosedInterval;
 
 import java.util.Locale;
 
+/**
+ * Represents the moon planet.
+ * @author Mark Mouawad (296508)
+ * @author Leah Uzzan (302829)
+ */
 public final class Moon extends CelestialObject {
 
+    private final static ClosedInterval phaseInterval = ClosedInterval.of(0,1);
     private final float phase;
 
     /**
@@ -20,7 +26,7 @@ public final class Moon extends CelestialObject {
      */
     public Moon(EquatorialCoordinates equatorialPos, float angularSize, float magnitude, float phase) {
         super("Lune", equatorialPos, angularSize, magnitude);
-        this.phase = (float) Preconditions.checkInInterval(ClosedInterval.of(0,1), phase);
+        this.phase = (float) Preconditions.checkInInterval(phaseInterval, phase);
     }
 
     @Override

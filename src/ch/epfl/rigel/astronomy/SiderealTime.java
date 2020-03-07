@@ -10,7 +10,12 @@ import java.time.temporal.ChronoUnit;
 
 import static ch.epfl.rigel.astronomy.Epoch.J2000;
 
-public final  class SiderealTime {
+/**
+ * Static class offering tools for Sidereal Time related computations.
+ * @author Mark Mouawad (296508)
+ * @author Leah Uzzan (302829)
+ */
+public final class SiderealTime {
 
     //Non instanceable class.
     private SiderealTime(){}

@@ -7,6 +7,12 @@ import ch.epfl.rigel.math.RightOpenInterval;
 import java.time.ZonedDateTime;
 import java.util.function.Function;
 
+/**
+ * Tool to represent equatorial coordinates to horizontal coordinates.
+ * The class is implements a function to enable chaining the conversions.
+ * @author Mark Mouawad (296508)
+ * @author Leah Uzzan (302829)
+ */
 public final class EquatorialToHorizontalConversion implements Function<EquatorialCoordinates, HorizontalCoordinates> {
 
     public final double phi;
@@ -14,6 +20,7 @@ public final class EquatorialToHorizontalConversion implements Function<Equatori
     private final double cosPhi;
     private final double sinPhi;
     private final static RightOpenInterval altInterval = RightOpenInterval.symmetric(Math.PI);
+
 
     public EquatorialToHorizontalConversion(ZonedDateTime when, GeographicCoordinates where){
         phi = where.lat();

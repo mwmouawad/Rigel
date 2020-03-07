@@ -3,7 +3,10 @@ package ch.epfl.rigel.astronomy;
 import java.time.*;
 import java.time.temporal.ChronoUnit;
 
-
+/**
+ * @author Mark Mouawad (296508)
+ * @author Leah Uzzan (302829)
+ */
 public enum Epoch {
     J2010(ZonedDateTime.of(
             LocalDate.of(2010, Month.JANUARY, 1).minusDays(1),

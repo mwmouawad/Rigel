@@ -12,8 +12,8 @@ import java.util.function.Function;
 import static ch.epfl.rigel.astronomy.Epoch.J2000;
 
 /**
- * Tool to convert from Ecliptic to Equatorial Conversion.
- *
+ * Tool to represent ecliptic coordinates to equatorial coordinates.
+ * The class is implements a function to enable chaining the conversions.
  * @author Mark Mouawad (296508)
  * @author Leah Uzzan (302829)
  */

@@ -5,6 +5,10 @@ import ch.epfl.rigel.coordinates.EquatorialCoordinates;
 
 import java.util.Objects;
 
+/**
+ * @author Mark Mouawad (296508)
+ * @author Leah Uzzan (302829)
+ */
 public abstract class CelestialObject {
 
     private final String name;
