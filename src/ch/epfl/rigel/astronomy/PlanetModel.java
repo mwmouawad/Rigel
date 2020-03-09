@@ -62,7 +62,7 @@ public enum PlanetModel implements CelestialObjectModel<Planet> {
         double phi = Math.asin(Math.sin(lon - lon_nod) * Math.sin(obliquity));
         radius *= Math.cos(phi);
         lon = Math.atan2(Math.sin(lon - lon_nod)*Math.cos(obliquity), Math.cos(lon - lon_nod)) + lon_nod;
-        
+
 
         return null;
     }
