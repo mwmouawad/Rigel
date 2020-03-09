@@ -1,6 +1,8 @@
 package ch.epfl.rigel.astronomy;
 
+import ch.epfl.rigel.coordinates.EclipticCoordinates;
 import ch.epfl.rigel.coordinates.EclipticToEquatorialConversion;
+import ch.epfl.rigel.coordinates.EquatorialCoordinates;
 import ch.epfl.rigel.coordinates.EquatorialToHorizontalConversion;
 import ch.epfl.rigel.math.Angle;
 
@@ -18,10 +20,15 @@ public enum SunModel implements CelestialObjectModel<Sun>{
         double trueAnomaly = meanAnomaly + 2*eccentricity*Math.sin(meanAnomaly);
 
         double lonEcliptic = trueAnomaly + lonPerigee;
-        double latEcliptic = 0; //to delete
         //TODO : do we have to convert theta0 in radian ?
+        // explicit cast for angularSize, don't want to lose precision ?
+        // mean anomaly is the one computed above?
         double theta0 = Angle.ofDeg(0.533128);
         double angularSize = theta0*((1 + eccentricity*Math.cos(trueAnomaly)) / (1 - eccentricity*eccentricity));
-        return null;
+
+        EclipticCoordinates eclipticPos = EclipticCoordinates.of(lonEcliptic, 0);
+        EquatorialCoordinates equatorialPos = eclipticToEquatorialConversion.apply(eclipticPos);
+
+        return new Sun(eclipticPos, equatorialPos, (float) angularSize, (float) meanAnomaly);
     }
 }
