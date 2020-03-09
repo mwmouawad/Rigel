@@ -55,7 +55,7 @@ public enum PlanetModel implements CelestialObjectModel<Planet> {
 
     @Override
     public Planet at(double daysSinceJ2010, EclipticToEquatorialConversion eclipticToEquatorialConversion) {
-        
+
 
         return null;
     }
