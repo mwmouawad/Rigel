@@ -22,7 +22,7 @@ abstract class SphericalCoordinates {
         return this.longitude;
     }
 
-    double lonDeg(){
+    public double lonDeg(){
         return Angle.toDeg(this.longitude);
     }
 
@@ -30,7 +30,7 @@ abstract class SphericalCoordinates {
         return this.latitude;
     }
 
-    double latDeg(){
+    public double latDeg(){
         return Angle.toDeg(this.latitude);
     }
 
