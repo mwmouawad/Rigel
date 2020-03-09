@@ -16,8 +16,8 @@ public enum SunModel implements CelestialObjectModel<Sun>{
         double lonPerigee = Angle.ofDeg(283.112438);
         double eccentricity = 0.016705;
 
-        double meanAnomaly = (Angle.TAU/365.242191)*daysSinceJ2010 + lonJ2010- lonPerigee;
-        double trueAnomaly = meanAnomaly + 2*eccentricity*Math.sin(meanAnomaly);
+        double meanAnomaly = (Angle.TAU/365.242191) * daysSinceJ2010 + lonJ2010 - lonPerigee;
+        double trueAnomaly = meanAnomaly + 2 * eccentricity * Math.sin(meanAnomaly);
 
         double lonEcliptic = trueAnomaly + lonPerigee;
         //TODO : do we have to convert theta0 in radian ?
@@ -25,7 +25,7 @@ public enum SunModel implements CelestialObjectModel<Sun>{
         // mean anomaly is the one computed above?
         // something to normalize?
         double theta0 = Angle.ofDeg(0.533128);
-        double angularSize = theta0*((1 + eccentricity*Math.cos(trueAnomaly)) / (1 - eccentricity*eccentricity));
+        double angularSize = theta0 * ((1 + eccentricity*Math.cos(trueAnomaly)) / (1 - eccentricity*eccentricity));
 
         EclipticCoordinates eclipticPos = EclipticCoordinates.of(lonEcliptic, 0);
         EquatorialCoordinates equatorialPos = eclipticToEquatorialConversion.apply(eclipticPos);
