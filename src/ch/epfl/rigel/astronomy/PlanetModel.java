@@ -1,8 +1,10 @@
 package ch.epfl.rigel.astronomy;
 
 import ch.epfl.rigel.coordinates.EclipticToEquatorialConversion;
+import ch.epfl.rigel.math.Angle;
 
 import java.util.List;
+import java.util.Objects;
 
 public enum PlanetModel implements CelestialObjectModel<Planet> {
     MERCURY("Mercure", 0.24085, 75.5671, 77.612, 0.205627,
@@ -35,20 +37,28 @@ public enum PlanetModel implements CelestialObjectModel<Planet> {
     private double magnitude;
 
     //TODO check if public
+    // check conditions, null pointers have to take into account ?
     PlanetModel(String name, double period, double lonJ2010, double lonPerigee, double eccentricity, double axe,
                 double obliquity, double lon_nod, double size, double magnitude){
-
-
+    this.name = Objects.requireNonNull(name);
+    this.period = period;
+    this.lonJ2010 = Angle.ofDeg(lonJ2010);
+    this.lonPerigee = Angle.ofDeg(lonPerigee);
+    this.eccentricity = eccentricity;
+    this.axe = axe;
+    this.obliquity = Angle.ofDeg(obliquity);
+    this.lon_nod = Angle.ofDeg(lon_nod);
+    this.angularSize = size; //unite ?
+    this.magnitude = magnitude;
     }
 
 
     @Override
     public Planet at(double daysSinceJ2010, EclipticToEquatorialConversion eclipticToEquatorialConversion) {
+        
+
         return null;
     }
 
 
-    //Attention : ces paramètres doivent être acceptés dans les mêmes unités que celles utilisées dans ces tables,
-    // mais les angles doivent tous être convertis en radians avant d'être stockés ou utilisés,
-    // conformément à la convention utilisée dans ce projet.
 }
