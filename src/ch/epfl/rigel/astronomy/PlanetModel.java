@@ -55,7 +55,14 @@ public enum PlanetModel implements CelestialObjectModel<Planet> {
 
     @Override
     public Planet at(double daysSinceJ2010, EclipticToEquatorialConversion eclipticToEquatorialConversion) {
-
+        double meanAnomaly = (Angle.TAU/365.242191)*(daysSinceJ2010/period) + lonJ2010- lonPerigee;
+        double trueAnomaly = meanAnomaly + 2*eccentricity*Math.sin(meanAnomaly);
+        double radius = (axe * (1 - eccentricity*eccentricity))/(1 + eccentricity*Math.cos(trueAnomaly));
+        double lon = trueAnomaly + lonPerigee;
+        double phi = Math.asin(Math.sin(lon - lon_nod) * Math.sin(obliquity));
+        radius *= Math.cos(phi);
+        lon = Math.atan2(Math.sin(lon - lon_nod)*Math.cos(obliquity), Math.cos(lon - lon_nod)) + lon_nod;
+        
 
         return null;
     }
