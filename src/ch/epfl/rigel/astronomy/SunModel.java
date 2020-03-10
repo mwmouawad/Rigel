@@ -10,12 +10,12 @@ public enum SunModel implements CelestialObjectModel<Sun>{
 
     SUN;
 
+    private static double lonJ2010 = Angle.ofDeg(279.557208);
+    private static double lonPerigee = Angle.ofDeg(283.112438);
+    private static double eccentricity = 0.016705;
+
     @Override
     public Sun at(double daysSinceJ2010, EclipticToEquatorialConversion eclipticToEquatorialConversion) {
-        double lonJ2010 = Angle.ofDeg(279.557208);
-        double lonPerigee = Angle.ofDeg(283.112438);
-        double eccentricity = 0.016705;
-
         double meanAnomaly = (Angle.TAU/365.242191) * daysSinceJ2010 + lonJ2010 - lonPerigee;
         double trueAnomaly = meanAnomaly + 2 * eccentricity * Math.sin(meanAnomaly);
 

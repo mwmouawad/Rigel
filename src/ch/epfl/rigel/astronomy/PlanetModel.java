@@ -1,6 +1,8 @@
 package ch.epfl.rigel.astronomy;
 
+import ch.epfl.rigel.coordinates.EclipticCoordinates;
 import ch.epfl.rigel.coordinates.EclipticToEquatorialConversion;
+import ch.epfl.rigel.coordinates.EquatorialCoordinates;
 import ch.epfl.rigel.math.Angle;
 
 import java.util.List;
@@ -33,38 +35,199 @@ public enum PlanetModel implements CelestialObjectModel<Planet> {
     private double axe;
     private double obliquity;
     private double lon_nod;
-    private double angularSize;
+    private double angularSize1UA;
     private double magnitude;
+    private static PlanetModel[] innerPlanets = {MERCURY, EARTH, VENUS};
 
-    //TODO check if public
-    // check conditions, null pointers have to take into account ?
+
+        // check conditions, null pointers have to take into account ?
     PlanetModel(String name, double period, double lonJ2010, double lonPerigee, double eccentricity, double axe,
-                double obliquity, double lon_nod, double size, double magnitude){
-    this.name = Objects.requireNonNull(name);
-    this.period = period;
-    this.lonJ2010 = Angle.ofDeg(lonJ2010);
-    this.lonPerigee = Angle.ofDeg(lonPerigee);
-    this.eccentricity = eccentricity;
-    this.axe = axe;
-    this.obliquity = Angle.ofDeg(obliquity);
-    this.lon_nod = Angle.ofDeg(lon_nod);
-    this.angularSize = size; //unite ?
-    this.magnitude = magnitude;
+                double obliquity, double lon_nod, double size, double magnitude) {
+        this.name = Objects.requireNonNull(name);
+        this.period = period;
+        this.lonJ2010 = Angle.ofDeg(lonJ2010);
+        this.lonPerigee = Angle.ofDeg(lonPerigee);
+        this.eccentricity = eccentricity;
+        this.axe = axe;
+        this.obliquity = Angle.ofDeg(obliquity);
+        this.lon_nod = Angle.ofDeg(lon_nod);
+        this.angularSize1UA = size; //unite ?
+        this.magnitude = magnitude;
     }
 
 
     @Override
     public Planet at(double daysSinceJ2010, EclipticToEquatorialConversion eclipticToEquatorialConversion) {
-        double meanAnomaly = (Angle.TAU / 365.242191) * (daysSinceJ2010 / period) + lonJ2010- lonPerigee;
-        double trueAnomaly = meanAnomaly + 2 * eccentricity * Math.sin(meanAnomaly);
-        double radius = (axe * (1 - eccentricity * eccentricity)) / (1 + eccentricity * Math.cos(trueAnomaly));
-        double lon = trueAnomaly + lonPerigee;
-        double phi = Math.asin(Math.sin(lon - lon_nod) * Math.sin(obliquity));
+
+        double trueAnomaly = computeTrueAnomaly(this, daysSinceJ2010);
+        double radius = computeRadius(this, trueAnomaly);
+        double lon = computeLongitude(this, trueAnomaly);
+        double phi = computeLatitude(this, lon);
         radius *= Math.cos(phi);
-        lon = Math.atan2(Math.sin(lon - lon_nod)*Math.cos(obliquity), Math.cos(lon - lon_nod)) + lon_nod;
+        lon = Math.atan2(Math.sin(lon - lon_nod) * Math.cos(obliquity), Math.cos(lon - lon_nod)) + lon_nod;
+
+        //Earth's Coordinates
+        double earthTrueAnomaly = computeTrueAnomaly(EARTH, daysSinceJ2010);
+        double R = computeRadius(EARTH, earthTrueAnomaly);
+        double L = computeLongitude(EARTH, earthTrueAnomaly);
+
+        //Planet Ecliptic Geocentric Coordinates
+        EclipticCoordinates eclCoord;
+        if (isAnInnerPlanet()) {
+            eclCoord = innerPlanetsEclGeocentricCoord(this, daysSinceJ2010, radius, lon, phi, R, L);
+        } else {
+            eclCoord = outerPlanetsEclGeocentricCoord(this, daysSinceJ2010, radius, lon, phi, R, L);
+        }
+
+        double distanceToEarth = computeDistanceToEarth(this, radius, lon, R, L, phi);
+
+        //TODO: Find a bette name
+        float angularSize = (float) (this.angularSize1UA / distanceToEarth) ;
+
+        float magnitude = (float) computeMagnitude(this, radius, lon, eclCoord.lon(), distanceToEarth, phi);
+
+        //TODO: We need to convert to equatorial Coordinates?
+        EquatorialCoordinates equatorialPos = eclipticToEquatorialConversion.apply(eclCoord);
+
+        return new Planet(this.name,equatorialPos, angularSize, magnitude);
+
+    }
+
+    /**
+     * Computes of a planet  to the Earth.
+     * @param planetModel
+     * @param r
+     * @param l
+     * @param R
+     * @param L
+     * @param phi
+     * @return
+     */
+    static double computeDistanceToEarth(PlanetModel planetModel, double r, double l, double R, double L, double phi) {
+
+        double distance = Math.sqrt(
+                R * R + r * r - 2 * R * r * Math.cos(l - L) * Math.cos(phi)
+        );
+
+        return distance;
+
+    }
+
+    static double computeMagnitude(PlanetModel planetModel, double r, double l, double lambda, double distanceToEarth, double phi) {
+
+        double F = (1 + Math.cos(lambda - l)) / 2.0;
+
+        double magnitude = planetModel.magnitude + 5 * Math.log10( (r * distanceToEarth) / Math.sqrt(F) );
+
+        return magnitude;
+
+    }
+
+    /**
+     * Computes true anomaly of a Planet.
+     * @param planetModel
+     * @param daysSinceJ2010
+     * @return
+     */
+    static double computeTrueAnomaly(PlanetModel planetModel, double daysSinceJ2010) {
+        double meanAnomaly = (Angle.TAU / 365.242191) * (daysSinceJ2010 / planetModel.period) + planetModel.lonJ2010 - planetModel.lonPerigee;
+        double trueAnomaly = meanAnomaly + 2 * planetModel.lonJ2010 * Math.sin(meanAnomaly);
+        return trueAnomaly;
+
+    }
+
+    /**
+     * Computes the orbit radius of a planet.
+     * @param planetModel
+     * @param trueAnomaly
+     * @return
+     */
+    static double computeRadius(PlanetModel planetModel, double trueAnomaly) {
+
+        double radius = (planetModel.axe * (1 - planetModel.eccentricity * planetModel.eccentricity))
+                / (1 + planetModel.eccentricity * Math.cos(trueAnomaly));
+
+        return radius;
+
+    }
+
+    /**
+     * Computes the longitude of a planet in its orbit plan.
+     * @param planetModel
+     * @param trueAnomaly
+     * @return
+     */
+    static double computeLongitude(PlanetModel planetModel, double trueAnomaly) {
+        return trueAnomaly + planetModel.lonPerigee;
+    }
+
+    /**
+     * Computes the ecliptic heliocentric latitude.
+     * @param planetModel
+     * @param longitude
+     * @return
+     */
+    static double computeLatitude(PlanetModel planetModel, double longitude) {
+        return Math.asin(Math.sin(longitude - planetModel.lon_nod) * Math.sin(planetModel.obliquity));
+    }
 
 
-        return null;
+    /**
+     * Computes the Ecliptic Geocentric Coordinates of an inner planet.
+     * @param planetModel
+     * @param daysSinceJ2010
+     * @param planetRadius
+     * @param lon
+     * @param phi
+     * @param R
+     * @param L
+     * @return
+     */
+    private static EclipticCoordinates innerPlanetsEclGeocentricCoord(PlanetModel planetModel, double daysSinceJ2010, double planetRadius, double lon, double phi, double R, double L) {
+
+
+        double lamdba = Math.PI + L + R + Math.atan2(planetRadius * Math.sin(L - lon), R - planetRadius * Math.cos(L - lon));
+
+        //TODO: Same computation than for outerPlanets! Both should be changed. Or maybe create another method?
+        double beta = Math.atan2(planetRadius * Math.tan(phi) * Math.sin(phi - lon), R * Math.sin(lon - L));
+
+        return EclipticCoordinates.of(lamdba, beta);
+    }
+
+    /**
+     * Computes the Ecliptic Geocentric coordianters of an outer planet.
+     * @param planetModel
+     * @param daysSinceJ2010
+     * @param planetRadius
+     * @param lon
+     * @param phi
+     * @param R
+     * @param L
+     * @return
+     */
+    private static EclipticCoordinates outerPlanetsEclGeocentricCoord(PlanetModel planetModel, double daysSinceJ2010, double planetRadius, double lon, double phi, double R, double L) {
+
+
+        double lambda = lon + Math.atan2(R * Math.sin(lon - L), planetRadius - R * Math.cos(lon - L));
+
+        //TODO: Same computation than for innerPlanets! Both should be changed. Or maybe create another method?
+        double beta = Math.atan2(planetRadius * Math.tan(phi) * Math.sin(phi - lon), R * Math.sin(lon - L));
+
+        return EclipticCoordinates.of(lambda, beta);
+
+    }
+
+    /**
+     * Checks if the instance belongs to the group of inner planets.
+     * @return
+     */
+    private boolean isAnInnerPlanet() {
+        for (PlanetModel planet : innerPlanets) {
+            if (this.equals(planet)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 
