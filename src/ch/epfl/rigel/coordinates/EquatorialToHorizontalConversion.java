@@ -53,6 +53,7 @@ public final class EquatorialToHorizontalConversion implements Function<Equatori
                 ,Math.sin(delta) - sinPhi * Math.sin(alt)
         );
 
+        //TODO : second conversion not necessary because of the arcsin.
 
         return HorizontalCoordinates.of(Angle.normalizePositive(az), altInterval.reduce(alt));
     }
