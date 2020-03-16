@@ -21,7 +21,6 @@ public enum SunModel implements CelestialObjectModel<Sun>{
 
         double lonEcliptic = trueAnomaly + lonPerigee;
         //TODO : do we have to convert theta0 in radian ?
-        // explicit cast for angularSize, don't want to lose precision ?
         // mean anomaly is the one computed above?
         // something to normalize?
         double theta0 = Angle.ofDeg(0.533128);
