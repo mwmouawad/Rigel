@@ -9,16 +9,17 @@ public enum MoonModel implements CelestialObjectModel<Moon> {
 
     MOON;
 
-
+    private static final double eccentricityMoon = 0.0549;
+    private static final double lonJ2010 = Angle.ofDeg(279.557208);
+    private static final double lonPerigee = Angle.ofDeg(283.112438);
+    private static final double eccentricitySun = 0.016705;
     @Override
     public Moon at(double daysSinceJ2010, EclipticToEquatorialConversion eclipticToEquatorialConversion) {
         //TODO : CHECK magic numbers
         // + How can we re-use the numbers from sunModel ?
         // + something to normalize ? !!!!!!!!!!!!!!!!!!!!!!!!!!!!!! and in step 4-5!!!!!!!!!!!!!!!!!!!!!!!
+        
         //computes sun constants
-        double lonJ2010 = Angle.ofDeg(279.557208);
-        double lonPerigee = Angle.ofDeg(283.112438);
-        double eccentricitySun = 0.016705;
         double meanAnomalySun = (Angle.TAU/365.242191) * daysSinceJ2010 + lonJ2010 - lonPerigee;
         double sinSun = Math.sin(meanAnomalySun);
         double trueAnomalySun = meanAnomalySun + 2 * eccentricitySun * sinSun;
@@ -49,7 +50,6 @@ public enum MoonModel implements CelestialObjectModel<Moon> {
         double phase = ( 1 - Math.cos(trueLonMoon - lonSun) )/ 2;
 
         //computes angular size
-        double eccentricityMoon = 0.0549;
         double distance = (1 - eccentricityMoon * eccentricityMoon)/
                 (1 + eccentricityMoon * Math.cos(correctedAnomaly + correctionCenter));
         double theta0 = Angle.ofDeg(0.5181);
