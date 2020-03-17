@@ -51,7 +51,7 @@ public enum PlanetModel implements CelestialObjectModel<Planet> {
         this.axe = axe;
         this.obliquity = Angle.ofDeg(obliquity);
         this.lon_nod = Angle.ofDeg(lon_nod);
-        this.angularSize1UA = size; //unite ?
+        this.angularSize1UA = Angle.ofArcsec(size); //unite ?
         this.magnitude = magnitude;
     }
 
@@ -65,6 +65,7 @@ public enum PlanetModel implements CelestialObjectModel<Planet> {
         double phi = computeLatitude(this, lon);
         radius *= Math.cos(phi);
         lon = Math.atan2(Math.sin(lon - lon_nod) * Math.cos(obliquity), Math.cos(lon - lon_nod)) + lon_nod;
+        lon = Angle.normalizePositive(lon);
 
         //Earth's Coordinates
         double earthTrueAnomaly = computeTrueAnomaly(EARTH, daysSinceJ2010);
@@ -116,12 +117,12 @@ public enum PlanetModel implements CelestialObjectModel<Planet> {
      *
      * @param planetModel
      * @param daysSinceJ2010
-     * @return
+     * @return True anomaly in the interval [0,TAU]
      */
     static double computeTrueAnomaly(PlanetModel planetModel, double daysSinceJ2010) {
-        double meanAnomaly = (Angle.TAU / 365.242191) * (daysSinceJ2010 / planetModel.period) + planetModel.lonJ2010 - planetModel.lonPerigee;
-        double trueAnomaly = meanAnomaly + 2 * planetModel.lonJ2010 * Math.sin(meanAnomaly);
-        return trueAnomaly;
+        double meanAnomaly = (Angle.TAU / (365.242191)) * (daysSinceJ2010 / planetModel.period) + planetModel.lonJ2010 - planetModel.lonPerigee;
+        double trueAnomaly = Angle.normalizePositive(meanAnomaly) + 2 * planetModel.eccentricity * Math.sin(meanAnomaly);
+        return Angle.normalizePositive(trueAnomaly);
     }
 
     /**
@@ -145,7 +146,7 @@ public enum PlanetModel implements CelestialObjectModel<Planet> {
      * @return
      */
     static double computeLongitude(PlanetModel planetModel, double trueAnomaly) {
-        return trueAnomaly + planetModel.lonPerigee;
+        return Angle.normalizePositive(trueAnomaly + planetModel.lonPerigee);
     }
 
     /**
@@ -173,9 +174,10 @@ public enum PlanetModel implements CelestialObjectModel<Planet> {
      * @return
      */
     private static EclipticCoordinates innerPlanetsEclGeocentricCoord(PlanetModel planetModel, double daysSinceJ2010, double planetRadius, double lon, double phi, double R, double L) {
-        double lamdba = Math.PI + L + R + Math.atan2(planetRadius * Math.sin(L - lon), R - planetRadius * Math.cos(L - lon));
-        double beta = Math.atan2(planetRadius * Math.tan(phi) * Math.sin(phi - lon), R * Math.sin(lon - L));
-        return EclipticCoordinates.of(lamdba, beta);
+        double lambda = Math.PI + L + Math.atan2(planetRadius * Math.sin(L - lon), R - planetRadius * Math.cos(L - lon));
+        lambda = Angle.normalizePositive(lambda);
+        double beta = Math.atan((planetRadius * Math.tan(phi) * Math.sin(lambda - lon)) / (R * Math.sin(lon - L)));
+        return EclipticCoordinates.of(lambda, beta);
     }
 
     /**
@@ -192,8 +194,10 @@ public enum PlanetModel implements CelestialObjectModel<Planet> {
      */
     private static EclipticCoordinates outerPlanetsEclGeocentricCoord(PlanetModel planetModel, double daysSinceJ2010, double planetRadius, double lon, double phi, double R, double L) {
         double lambda = lon + Math.atan2(R * Math.sin(lon - L), planetRadius - R * Math.cos(lon - L));
-        double beta = Math.atan2(planetRadius * Math.tan(phi) * Math.sin(phi - lon), R * Math.sin(lon - L));
+        lambda = Angle.normalizePositive(lambda);
+        double beta = Math.atan((planetRadius * Math.tan(phi) * Math.sin(lambda - lon)) / (R * Math.sin(lon - L)));
         return EclipticCoordinates.of(lambda, beta);
+
     }
 
     /**

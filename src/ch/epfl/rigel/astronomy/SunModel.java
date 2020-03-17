@@ -17,12 +17,12 @@ public enum SunModel implements CelestialObjectModel<Sun>{
     @Override
     public Sun at(double daysSinceJ2010, EclipticToEquatorialConversion eclipticToEquatorialConversion) {
         double meanAnomaly = (Angle.TAU/365.242191) * daysSinceJ2010 + lonJ2010 - lonPerigee;
+        meanAnomaly = Angle.normalizePositive(meanAnomaly);
         double trueAnomaly = meanAnomaly + 2 * eccentricity * Math.sin(meanAnomaly);
+        trueAnomaly = Angle.normalizePositive(trueAnomaly);
 
-        double lonEcliptic = trueAnomaly + lonPerigee;
-        //TODO : do we have to convert theta0 in radian ?
-        // mean anomaly is the one computed above?
-        // something to normalize?
+
+        double lonEcliptic = Angle.normalizePositive(trueAnomaly + lonPerigee);
         double theta0 = Angle.ofDeg(0.533128);
         double angularSize = theta0 * ((1 + eccentricity*Math.cos(trueAnomaly)) / (1 - eccentricity*eccentricity));
 
