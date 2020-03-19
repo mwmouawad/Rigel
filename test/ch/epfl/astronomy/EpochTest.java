@@ -38,7 +38,6 @@ public class EpochTest {
         ZonedDateTime e = ZonedDateTime.of(LocalDate.of(1999, Month.DECEMBER, 6), LocalTime.of(23, 3), ZoneOffset.UTC);
 
 
-
         assertEquals(1306.125, Epoch.J2000.daysUntil(a));
         assertEquals(7383.5, Epoch.J2000.daysUntil(b));
         assertEquals(2358.259028, Epoch.J2000.daysUntil(c), 1e-6);

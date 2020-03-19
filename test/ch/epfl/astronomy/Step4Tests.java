@@ -4,7 +4,6 @@ import ch.epfl.rigel.coordinates.CartesianCoordinates;
 import ch.epfl.rigel.coordinates.HorizontalCoordinates;
 import ch.epfl.rigel.coordinates.StereographicProjection;
 import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class Step4Tests {
@@ -29,6 +28,7 @@ public class Step4Tests {
         assertEquals(a2.x(), c2.x(), 1e-8);
         assertEquals(a2.y(), c2.y(), 1e-8);
     }
+
 
     @Test
     void circleCenterForParallelWorks(){

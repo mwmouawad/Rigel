@@ -2,6 +2,7 @@ package ch.epfl.astronomy;
 
 import ch.epfl.rigel.astronomy.Sun;
 import ch.epfl.rigel.astronomy.SunModel;
+import ch.epfl.rigel.coordinates.EclipticCoordinates;
 import ch.epfl.rigel.coordinates.EclipticToEquatorialConversion;
 import ch.epfl.rigel.math.Angle;
 import org.junit.jupiter.api.Test;
@@ -32,6 +33,12 @@ public class SunModelTest {
         assertEquals(Angle.ofHr(8 + 23.0 / 60.0 + 34.0/3600.0), sunPo.equatorialPos().ra(), (Angle.ofHr(0.5/3600.0)));
         assertEquals(Angle.ofDeg(123.580601), sunPo.eclipticPos().lon(), Angle.ofDeg(0.0000005));
 
+        //Testing conversion
+        var eclToEq = new EclipticToEquatorialConversion(dateTime);
+        var expectedEq = eclToEq.apply(EclipticCoordinates.of(Angle.ofDeg(123.580601), 0));
+
+        assertEquals(expectedEq.ra(), sunPo.equatorialPos().ra(), Angle.ofDeg(0.0000005));
+        assertEquals(expectedEq.dec(), sunPo.equatorialPos().dec(), Angle.ofDeg(0.0000005));
 
     }
 
