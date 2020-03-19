@@ -1,11 +1,78 @@
 package ch.epfl.rigel.astronomy;
 
+import ch.epfl.rigel.Preconditions;
+
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
+/**
+ * Star catalogue.
+ * @author Mark Mouawad (296508)
+ * @author Leah Uzzan (302829)
+ */
 public final class StarCatalogue {
+    final private List<Star> stars;
+    final private Set<Asterism> asterisms;
+    final private HashMap<Asterism, List<Integer>> catalogue;
+
+    /**
+     * If all
+     * @param stars stars list.
+     * @param asterisms
+     * @throws IllegalArgumentException if a star in asterisms is not contained in the stars list.
+     */
+    StarCatalogue(List<Star> stars, List<Asterism> asterisms) {
+        this.catalogue = new HashMap<Asterism, List<Integer>>();
+
+        //Check if there is a star in the asterisms  that is not in the stars list.
+        for(Asterism ast : asterisms){
+            ArrayList<Integer> indexList = new ArrayList<Integer>();
+            List<Star> iterateAst = ast.stars();
+            for(var i = 0; i < iterateAst.size(); i++){
+
+                int index = stars.indexOf(iterateAst.get(i));
+
+                Preconditions.checkArgument( index != -1);
+
+                //Add index in which star is.
+                indexList.add(index);
+
+            }
+            this.catalogue.put(ast, indexList);
+        }
+
+
+        this.stars = Objects.requireNonNull(stars);
+        //Chose a HashSet over TreeSet because order is not important
+        this.asterisms = new HashSet<Asterism>(asterisms);
+
+    }
+
+    public List<Star> stars(){
+        return this.stars;
+    }
+
+    public Set<Asterism> asterisms(){
+        return this.asterisms;
+    }
+
+    /**
+     * Get the index list of the stars for the input astermism.
+     * @param asterism
+     * @return index list of stars.
+     * @throws IllegalArgumentException if the asterism is not contained in the instance.
+     */
+    public List<Integer> asterismIndices(Asterism asterism){
+        List<Integer> indexList = this.catalogue.get(asterism);
+
+        //TODO: We need to make sure no null is stored in the catalogue.
+        Preconditions.checkArgument(indexList != null);
+
+        return indexList;
+
+    }
+
     static final class Builder{
         Builder(){
 
@@ -17,14 +84,8 @@ public final class StarCatalogue {
 
     }
 
-    private List<Star> stars;
-    private List<Asterism> asterisms;
-
-    StarCatalogue(List<Star> stars, List<Asterism> asterisms) {
-        this.stars = Objects.requireNonNull(stars);
 
 
-    }
 
     public interface Loader {
         void load(InputStream inputStream, Builder builder) throws IOException;
