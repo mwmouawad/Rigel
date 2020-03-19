@@ -4,6 +4,7 @@ import ch.epfl.rigel.Preconditions;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Array;
 import java.util.*;
 
 /**
@@ -13,7 +14,6 @@ import java.util.*;
  */
 public final class StarCatalogue {
     final private List<Star> stars;
-    final private Set<Asterism> asterisms;
     final private HashMap<Asterism, List<Integer>> catalogue;
 
     /**
@@ -25,6 +25,7 @@ public final class StarCatalogue {
     StarCatalogue(List<Star> stars, List<Asterism> asterisms) {
         this.catalogue = new HashMap<Asterism, List<Integer>>();
 
+        //TODO: Make sure this is immutable
         //Check if there is a star in the asterisms  that is not in the stars list.
         for(Asterism ast : asterisms){
             ArrayList<Integer> indexList = new ArrayList<Integer>();
@@ -39,22 +40,23 @@ public final class StarCatalogue {
                 indexList.add(index);
 
             }
-            this.catalogue.put(ast, indexList);
+            //We have to make it inmutable.
+            this.catalogue.put( new Asterism(ast.stars()), indexList);
         }
 
 
         this.stars = Objects.requireNonNull(stars);
         //Chose a HashSet over TreeSet because order is not important
-        this.asterisms = new HashSet<Asterism>(asterisms);
 
     }
 
     public List<Star> stars(){
+        //TODO: Add smth to make immutable?
         return this.stars;
     }
 
     public Set<Asterism> asterisms(){
-        return this.asterisms;
+        return this.catalogue.keySet();
     }
 
     /**
