@@ -12,12 +12,14 @@ import java.util.Objects;
  */
 public final class Asterism {
 
-    private List<Star> list;
+    private final List<Star> list;
+
 
     public Asterism(List<Star> stars){
         Preconditions.checkArgument(!stars.isEmpty());
-        list = Objects.requireNonNull(stars);
+        this.list = List.copyOf(Objects.requireNonNull(stars));
     }
 
+    //TODO: should this be copyOf or unmodifiable view?
     public List<Star> stars(){ return list; }
 }
