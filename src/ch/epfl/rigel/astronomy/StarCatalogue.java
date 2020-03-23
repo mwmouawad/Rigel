@@ -87,14 +87,6 @@ public final class StarCatalogue {
         private StarCatalogue starCatalogue;
 
 
-        public Builder() {
-
-            this.starCatalogue = new StarCatalogue(
-                    new ArrayList<Star>(), new ArrayList<Asterism>()
-            );
-
-        }
-
         /**
          * Add star to the star catalogue.
          *
