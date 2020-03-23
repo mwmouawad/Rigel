@@ -13,7 +13,7 @@ import java.util.Locale;
  */
 public final class Moon extends CelestialObject {
 
-    private final static ClosedInterval phaseInterval = ClosedInterval.of(0,1);
+    private final static ClosedInterval PHASE_INTERVAL = ClosedInterval.of(0,1);
     private final float phase;
 
     /**
@@ -26,7 +26,7 @@ public final class Moon extends CelestialObject {
      */
     public Moon(EquatorialCoordinates equatorialPos, float angularSize, float magnitude, float phase) {
         super("Lune", equatorialPos, angularSize, magnitude);
-        this.phase = (float) Preconditions.checkInInterval(phaseInterval, phase);
+        this.phase = (float) Preconditions.checkInInterval(PHASE_INTERVAL, phase);
     }
 
     @Override

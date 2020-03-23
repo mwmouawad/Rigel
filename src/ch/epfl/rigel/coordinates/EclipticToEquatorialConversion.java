@@ -1,12 +1,10 @@
 package ch.epfl.rigel.coordinates;
 
 import ch.epfl.rigel.math.Angle;
-import ch.epfl.rigel.astronomy.Epoch;
 import ch.epfl.rigel.math.Polynomial;
 import ch.epfl.rigel.math.RightOpenInterval;
 
 import java.time.ZonedDateTime;
-import java.util.Objects;
 import java.util.function.Function;
 
 import static ch.epfl.rigel.astronomy.Epoch.J2000;
@@ -27,7 +25,7 @@ public final class EclipticToEquatorialConversion implements Function<EclipticCo
     );
     private final double cosEpsi;
     private final double sinEpsi;
-    private final static  RightOpenInterval decInterval  =  RightOpenInterval.symmetric(Math.PI);
+    private final static  RightOpenInterval DEC_INTERVAL =  RightOpenInterval.symmetric(Math.PI);
 
     /**
      * @param when time zone time used to be converted.
@@ -56,7 +54,7 @@ public final class EclipticToEquatorialConversion implements Function<EclipticCo
 
         double delta = Math.asin(Math.sin(beta) * cosEpsi + Math.cos(beta) * sinEpsi * Math.sin(lambda));
 
-        return EquatorialCoordinates.of(Angle.normalizePositive(alpha), decInterval.reduce(delta));
+        return EquatorialCoordinates.of(Angle.normalizePositive(alpha), DEC_INTERVAL.reduce(delta));
     }
 
     @Override

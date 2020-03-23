@@ -9,21 +9,16 @@ public enum MoonModel implements CelestialObjectModel<Moon> {
 
     MOON;
 
-    private static final double eccentricityMoon = 0.0549;
-    private static final double lonJ2010 = Angle.ofDeg(279.557208);
-    private static final double lonPerigee = Angle.ofDeg(283.112438);
-    private static final double eccentricitySun = 0.016705;
+    private static final double ECCENTRICITY_MOON = 0.0549;
+    private static final double TILT = Angle.ofDeg(5.145396);
+
     @Override
     public Moon at(double daysSinceJ2010, EclipticToEquatorialConversion eclipticToEquatorialConversion) {
-        //TODO : CHECK magic numbers
-        // + How can we re-use the numbers from sunModel ?
-        // + something to normalize ? !!!!!!!!!!!!!!!!!!!!!!!!!!!!!! and in step 4-5!!!!!!!!!!!!!!!!!!!!!!!
 
-        //computes sun constants
-        double meanAnomalySun = (Angle.TAU/365.242191) * daysSinceJ2010 + lonJ2010 - lonPerigee;
+        Sun sun = SunModel.SUN.at(daysSinceJ2010, eclipticToEquatorialConversion);
+        double meanAnomalySun = sun.meanAnomaly();;
         double sinSun = Math.sin(meanAnomalySun);
-        double trueAnomalySun = meanAnomalySun + 2 * eccentricitySun * sinSun;
-        double lonSun = trueAnomalySun + lonPerigee;
+        double lonSun = sun.eclipticPos().lon();
 
         //computes Moon constants
         double meanLon = Angle.ofDeg(13.1763966) * daysSinceJ2010 + Angle.ofDeg(91.929336);
@@ -41,22 +36,20 @@ public enum MoonModel implements CelestialObjectModel<Moon> {
         //computes ecliptic position
         double lonAsc = Angle.ofDeg(291.682547) - Angle.ofDeg(0.0529539) * daysSinceJ2010;
         double lonAscCorrected = lonAsc - Angle.ofDeg(0.16) * sinSun;
-        double tilt = Angle.ofDeg(5.145396);
-        double lonEcliptic = Math.atan2(Math.sin(trueLonMoon - lonAscCorrected) * Math.cos(tilt),
+        double lonEcliptic = Math.atan2(Math.sin(trueLonMoon - lonAscCorrected) * Math.cos(TILT),
                 Math.cos(trueLonMoon - lonAscCorrected)) + lonAscCorrected;
-        double latEcliptic = Math.asin(Math.sin(trueLonMoon - lonAscCorrected) * Math.sin(tilt));
+        double latEcliptic = Math.asin(Math.sin(trueLonMoon - lonAscCorrected) * Math.sin(TILT));
 
         //computes the phase
         double phase = ( 1 - Math.cos(trueLonMoon - lonSun) )/ 2;
 
         //computes angular size
-        double distance = (1 - eccentricityMoon * eccentricityMoon)/
-                (1 + eccentricityMoon * Math.cos(correctedAnomaly + correctionCenter));
+        double distance = (1 - ECCENTRICITY_MOON * ECCENTRICITY_MOON)/
+                (1 + ECCENTRICITY_MOON * Math.cos(correctedAnomaly + correctionCenter));
         double theta0 = Angle.ofDeg(0.5181);
         double angularSize = theta0/distance;
 
-        //TODO : do we have to normalize lat and lon ?
-        EclipticCoordinates eclipticPos = EclipticCoordinates.of(lonEcliptic, latEcliptic);
+        EclipticCoordinates eclipticPos = EclipticCoordinates.of(Angle.normalizePositive(lonEcliptic), latEcliptic);
         EquatorialCoordinates equatorialPos = eclipticToEquatorialConversion.apply(eclipticPos);
 
         return new Moon(equatorialPos,(float) angularSize, 0, (float) phase);

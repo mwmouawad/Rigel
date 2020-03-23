@@ -1,5 +1,7 @@
 package ch.epfl.rigel.coordinates;
 
+import ch.epfl.rigel.math.Angle;
+
 import java.util.Locale;
 import java.util.function.Function;
 
@@ -42,7 +44,6 @@ public final class StereographicProjection implements Function<HorizontalCoordin
 
 
         double d = 1 / (1 + Math.sin(coordY) * sinCenterY + Math.cos(coordY) * cosCenterY * Math.cos(varX));
-        System.out.println(d);
 
         //computes the new coordinates
         double x = d * Math.cos(coordY) * Math.sin(varX);
@@ -100,7 +101,7 @@ public final class StereographicProjection implements Function<HorizontalCoordin
         double cosc = (1 - rho * rho) / (rho * rho + 1);
 
         //computes inverse coordinates with the above constants
-        double lambda = Math.atan2(x * sinc, rho * cosCenterY * cosc - y * sinCenterY * sinc) + centerX;
+        double lambda = Angle.normalizePositive(Math.atan2(x * sinc, rho * cosCenterY * cosc - y * sinCenterY * sinc) + centerX);
         double phi = Math.asin(cosc * sinCenterY + (y * sinc * cosCenterY) / rho);
         return HorizontalCoordinates.of(lambda, phi);
     }

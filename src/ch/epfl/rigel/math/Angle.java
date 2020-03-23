@@ -12,7 +12,7 @@ public final class Angle {
 
     public final static  double TAU = 2*Math.PI ;
     private static final double DEG_PER_RAD = 360.0 / TAU;
-    static private RightOpenInterval zeroToTAU =  RightOpenInterval.of(0, TAU);
+    static private RightOpenInterval ZERO_TO_TAU =  RightOpenInterval.of(0, TAU);
 
 
     private Angle(){
@@ -25,7 +25,7 @@ public final class Angle {
      * @return normalized angle.
      */
     public static double normalizePositive(double rad){
-        return zeroToTAU.reduce(rad);
+        return ZERO_TO_TAU.reduce(rad);
     };
 
     /** Converts arcsec angle to radians

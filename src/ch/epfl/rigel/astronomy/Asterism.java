@@ -14,10 +14,9 @@ public final class Asterism {
 
     private final List<Star> list;
 
-
     public Asterism(List<Star> stars){
         Preconditions.checkArgument(!stars.isEmpty());
-        this.list = List.copyOf(Objects.requireNonNull(stars));
+        this.list = List.copyOf(stars);
     }
 
     //TODO: should this be copyOf or unmodifiable view?
