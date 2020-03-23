@@ -18,7 +18,7 @@ public enum MoonModel implements CelestialObjectModel<Moon> {
         //TODO : CHECK magic numbers
         // + How can we re-use the numbers from sunModel ?
         // + something to normalize ? !!!!!!!!!!!!!!!!!!!!!!!!!!!!!! and in step 4-5!!!!!!!!!!!!!!!!!!!!!!!
-        
+
         //computes sun constants
         double meanAnomalySun = (Angle.TAU/365.242191) * daysSinceJ2010 + lonJ2010 - lonPerigee;
         double sinSun = Math.sin(meanAnomalySun);

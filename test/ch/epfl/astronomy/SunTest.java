@@ -1,97 +1,131 @@
 package ch.epfl.astronomy;
-import ch.epfl.rigel.astronomy.CelestialObject;
-import ch.epfl.rigel.astronomy.Moon;
+
 import ch.epfl.rigel.astronomy.Sun;
 import ch.epfl.rigel.coordinates.EclipticCoordinates;
 import ch.epfl.rigel.coordinates.EquatorialCoordinates;
-import ch.epfl.rigel.math.Angle;
 import ch.epfl.test.TestRandomizer;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
-
-public class SunTest{
-
+class SunTest {
     @Test
-    void sunConstructorFailsWithNullPosition(){
-            assertThrows(NullPointerException.class, () -> {
-                new Sun(null, EquatorialCoordinates.of(0,0), 10, 0);
-            });
-    }
-
-
-    @Test
-    void nameReturnsSoleil(){
-        var sun = new Sun(EclipticCoordinates.of(0,0), EquatorialCoordinates.of(0,0), 10, 0);
-        assertEquals("Soleil", sun.name());
+    void sunConstructorFailsWhenOnePositionIsNull() {
+        assertThrows(NullPointerException.class, () -> {
+            var equ = EquatorialCoordinates.of(0, 0);
+            new Sun(null, equ, 0, 0);
+        });
+        assertThrows(NullPointerException.class, () -> {
+            var ecl = EclipticCoordinates.of(0, 0);
+            new Sun(ecl, null, 0, 0);
+        });
     }
 
     @Test
-    void magnitudeReturnsExpectedValue(){
-        var sun = new Sun(EclipticCoordinates.of(0,0), EquatorialCoordinates.of(0,0), 10, 0);
-        //TODO: Getter is casting the value to double. Is it okay like this?
-        assertEquals((double)-26.7f, sun.magnitude());
+    void sunConstructorFailsWhenAngularSizeIsNegative() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            var ecl = EclipticCoordinates.of(0, 0);
+            var equ = EquatorialCoordinates.of(0, 0);
+            new Sun(ecl, equ, -0.1f, 0);
+        });
     }
 
     @Test
-    void gettersReturnExpectedValues(){
-
-        var sun = new Sun(EclipticCoordinates.of(1.25,-1.235), EquatorialCoordinates.of(0,0), 10, 0);
-        assertEquals(1.25,sun.eclipticPos().lon());
-        assertEquals(-1.235,sun.eclipticPos().lat());
-        assertEquals(0, sun.meanAnomaly());
-
-        var sun2 = new Sun(EclipticCoordinates.of(0.8989,-0.8989), EquatorialCoordinates.of(0,0), 10, 11.123f);
-        assertEquals(0.8989,sun2.eclipticPos().lon());
-        assertEquals(-0.8989,sun2.eclipticPos().lat());
-        assertEquals((double)(11.123f),sun2.meanAnomaly());
-
-
+    void sunNameIsCorrect() {
+        var ecl = EclipticCoordinates.of(0, 0);
+        var equ = EquatorialCoordinates.of(0, 0);
+        var s = new Sun(ecl, equ, 0, 0);
+        assertEquals("Soleil", s.name());
     }
 
     @Test
-    void moonTest(){
-        Moon moon = new Moon(EquatorialCoordinates.of(Angle.ofDeg(55.8),
-                Angle.ofDeg(19.7)), 37.5f, -1, 0.3752f);
-        assertEquals("Lune", moon.name());
-        assertEquals("Lune (37.5%)", moon.info());
-        assertEquals(EquatorialCoordinates.of(Angle.ofDeg(55.8),
-                Angle.ofDeg(19.7)).dec(), moon.equatorialPos().dec());
-        assertEquals(EquatorialCoordinates.of(Angle.ofDeg(55.8),
-                Angle.ofDeg(19.7)).ra(), moon.equatorialPos().ra()); //checking equatorial position
-        assertThrows(IllegalArgumentException.class, () -> {new Moon(EquatorialCoordinates.of(Angle.ofDeg(55.8),
-                Angle.ofDeg(19.7)), 37.5f, -1, -0.1f); });
+    void sunAngularSizeIsCorrect() {
+        var rng = TestRandomizer.newRandom();
+        for (int i = 0; i < TestRandomizer.RANDOM_ITERATIONS; i++) {
+            var ecl = EclipticCoordinates.of(0, 0);
+            var equ = EquatorialCoordinates.of(0, 0);
+            var angularSize = (float) rng.nextDouble(0, Math.PI);
+            var s = new Sun(ecl, equ, angularSize, 0);
+            assertEquals(angularSize, s.angularSize());
+        }
     }
 
     @Test
-    void sunTest(){
-
-        //tests variés pour sun et moon
-        Sun sun = new Sun(EclipticCoordinates.of(Angle.ofDeg(53), Angle.ofDeg(38)),
-                EquatorialCoordinates.of(Angle.ofDeg(55.8),Angle.ofDeg(24)),
-                0.4f, 5.f);
-        assertEquals("Soleil", sun.info());
-        assertEquals(EquatorialCoordinates.of(Angle.ofDeg(55.8),
-                Angle.ofDeg(24)).dec(), sun.equatorialPos().dec());
-        assertEquals(EquatorialCoordinates.of(Angle.ofDeg(55.8),
-                Angle.ofDeg(19.7)).ra(), sun.equatorialPos().ra()); //checking equatorial position
-        assertEquals(5.f, sun.meanAnomaly());
-        assertEquals(-26.7f, sun.magnitude());
-
-        //test pour eclipticPos throws un null
-        assertThrows(NullPointerException.class, () -> { new Sun(null,
-                EquatorialCoordinates.of(Angle.ofDeg(55.8),Angle.ofDeg(24)),
-                0.4f, 5.f); });
-
+    void sunMagnitudeIsCorrect() {
+        var ecl = EclipticCoordinates.of(0, 0);
+        var equ = EquatorialCoordinates.of(0, 0);
+        var s = new Sun(ecl, equ, 0, 0);
+        assertEquals(-26.7f, s.magnitude(), 1e-8);
     }
 
+    @Test
+    void sunEquatorialPosIsCorrect() {
+        var rng = TestRandomizer.newRandom();
+        for (int i = 0; i < TestRandomizer.RANDOM_ITERATIONS; i++) {
+            var ra = rng.nextDouble(0, 2d * Math.PI);
+            var dec = rng.nextDouble(-Math.PI / 2d, Math.PI / 2d);
+            var equ = EquatorialCoordinates.of(ra, dec);
+            var ecl = EclipticCoordinates.of(0, 0);
+            var s = new Sun(ecl, equ, 0f, 0);
+            assertEquals(ra, s.equatorialPos().ra());
+            assertEquals(dec, s.equatorialPos().dec());
+        }
+    }
 
+    @Test
+    void sunInfoIsCorrect() {
+        var ecl = EclipticCoordinates.of(0, 0);
+        var equ = EquatorialCoordinates.of(0, 0);
+        var s = new Sun(ecl, equ, 0, 0);
+        assertEquals("Soleil", s.info());
+    }
 
+    @Test
+    void sunEclipticPosIsCorrect() {
+        var rng = TestRandomizer.newRandom();
+        for (int i = 0; i < TestRandomizer.RANDOM_ITERATIONS; i++) {
+            var eclLon = rng.nextDouble(0, 2d * Math.PI);
+            var eclLat = rng.nextDouble(-Math.PI / 2d, Math.PI / 2d);
+            var ecl = EclipticCoordinates.of(eclLon, eclLat);
+            var equ = EquatorialCoordinates.of(0, 0);
+            var s = new Sun(ecl, equ, 0f, 0);
+            assertEquals(eclLon, s.eclipticPos().lon());
+            assertEquals(eclLat, s.eclipticPos().lat());
+        }
+    }
 
+    @Test
+    void sunMeanAnomalyIsCorrect() {
+        var rng = TestRandomizer.newRandom();
+        for (int i = 0; i < TestRandomizer.RANDOM_ITERATIONS; i++) {
+            var meanAnomaly = (float) rng.nextDouble(0, 2d * Math.PI);
+            var ecl = EclipticCoordinates.of(0, 0);
+            var equ = EquatorialCoordinates.of(0, 0);
+            var s = new Sun(ecl, equ, 0f, meanAnomaly);
+            assertEquals(meanAnomaly, s.meanAnomaly());
+        }
+    }
 
+    @Test
+    void sunHashCodeIsInheritedFromObject() {
+        for (int i = 0; i < TestRandomizer.RANDOM_ITERATIONS; i++) {
+            var ecl = EclipticCoordinates.of(0, 0);
+            var equ = EquatorialCoordinates.of(0, 0);
+            var s = new Sun(ecl, equ, 0, 0);
+            assertEquals(System.identityHashCode(s), s.hashCode());
+        }
+    }
 
-
+    @Test
+    void sunEqualsIsBasedOnIdentity() {
+        var prevSun = (Sun)null;
+        for (int i = 0; i < TestRandomizer.RANDOM_ITERATIONS; i++) {
+            var ecl = EclipticCoordinates.of(0, 0);
+            var equ = EquatorialCoordinates.of(0, 0);
+            var s = new Sun(ecl, equ, 0, 0);
+            assertEquals(s, s);
+            assertNotEquals(s, prevSun);
+            prevSun = s;
+        }
+    }
 }

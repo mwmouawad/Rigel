@@ -66,9 +66,14 @@ public class TestAsterismLoader {
 
             }
 
+        }
+    }
 
-
-
+    @Test
+    void asterismDatabaseIsCorrectlyInstalled() throws IOException {
+        try (InputStream asterismStream = getClass()
+                .getResourceAsStream(ASTERISMS_CATALOGUE_NAME)) {
+            assertNotNull(asterismStream);
         }
     }
 

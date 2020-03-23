@@ -1,63 +1,128 @@
 package ch.epfl.astronomy;
+
 import ch.epfl.rigel.astronomy.Planet;
 import ch.epfl.rigel.coordinates.EquatorialCoordinates;
 import ch.epfl.test.TestRandomizer;
 import org.junit.jupiter.api.Test;
 
+import java.util.SplittableRandom;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
+import static org.junit.jupiter.api.Assertions.*;
 
 public class PlanetTest {
+    @Test
+    void planetConstructorFailsWhenNameIsNull() {
+        assertThrows(NullPointerException.class, () -> {
+            var eqPos = EquatorialCoordinates.of(0, 0);
+            new Planet(null, eqPos, 0, 0);
+        });
+    }
 
     @Test
-    void planetConstructorFailsWithInvalidAngularSize(){
+    void planetConstructorFailsWhenEquatorialPositionIsNull() {
+        assertThrows(NullPointerException.class, () -> {
+            new Planet("Planet B", null, 0, 0);
+        });
+    }
+
+    @Test
+    void planetConstructorFailsWhenAngularSizeIsNegative() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            var eqPos = EquatorialCoordinates.of(0, 0);
+            new Planet("Planet B", eqPos, -0.1f, 0);
+        });
+    }
+
+    private static String randomPlanetName(SplittableRandom rng) {
+        var vowels = "aeiouy";
+        var consonants = "bcdfghjklmnpqrstvwxz";
+        var nameLen = rng.nextInt(2, 8);
+        var nameBuilder = new StringBuilder(nameLen);
+        for (int i = 0; i < nameLen; i++) {
+            var actualAlphabet = ((i % 2) == 0) ? vowels : consonants;
+            if (i == 0)
+                actualAlphabet = actualAlphabet.toUpperCase();
+            nameBuilder.append(actualAlphabet.charAt(rng.nextInt(actualAlphabet.length())));
+        }
+        return nameBuilder.toString();
+    }
+
+    @Test
+    void planetNameIsCorrect() {
         var rng = TestRandomizer.newRandom();
         for (int i = 0; i < TestRandomizer.RANDOM_ITERATIONS; i++) {
-            var angularsize = rng.nextInt(Integer.MIN_VALUE,0);
-            assertThrows(IllegalArgumentException.class, () -> {
-                new Planet("Name", EquatorialCoordinates.of(0,0), angularsize, 0);
-            });
+            var equ = EquatorialCoordinates.of(0, 0);
+            var planetName = randomPlanetName(rng);
+            var p = new Planet(planetName, equ, 0, 0);
+            assertEquals(planetName, p.name());
         }
     }
 
     @Test
-    void gettersReturnExpectedValues(){
-        var planet = new Planet("ko2813091", EquatorialCoordinates.of(3,-1.23), 25, -16);
-        assertEquals("ko2813091",planet.name());
-        assertEquals(3,planet.equatorialPos().ra());
-        assertEquals(-1.23,planet.equatorialPos().dec());
-        assertEquals(25,planet.angularSize());
-        assertEquals(-16,planet.magnitude());
-
-        var planet2 = new Planet("1231231", EquatorialCoordinates.of(0,1.5), 1, 15);
-        assertEquals("1231231",planet2.name());
-        assertEquals(0,planet2.equatorialPos().ra());
-        assertEquals(1.5,planet2.equatorialPos().dec());
-        assertEquals(1,planet2.angularSize());
-        assertEquals(15,planet2.magnitude());
+    void planetAngularSizeIsCorrect() {
+        var rng = TestRandomizer.newRandom();
+        for (int i = 0; i < TestRandomizer.RANDOM_ITERATIONS; i++) {
+            var equ = EquatorialCoordinates.of(0, 0);
+            var angularSize = (float) rng.nextDouble(0, Math.PI);
+            var p = new Planet("Planet B", equ, angularSize, 0);
+            assertEquals(angularSize, p.angularSize());
+        }
     }
 
     @Test
-    void toStringReturnsSameAsInfo(){
-        var planet = new Planet("ko2813091", EquatorialCoordinates.of(3,-1.23), 25, -16);
-        assertEquals(planet.info(), planet.toString());
+    void planetMagnitudeIsCorrect() {
+        var rng = TestRandomizer.newRandom();
+        for (int i = 0; i < TestRandomizer.RANDOM_ITERATIONS; i++) {
+            var equ = EquatorialCoordinates.of(0, 0);
+            var magnitude = (float) rng.nextDouble(-30, 30);
+            var p = new Planet("Planet B", equ, 0, magnitude);
+            assertEquals(magnitude, p.magnitude());
+        }
     }
 
     @Test
-    void planetConstructorFailsWithNullName(){
-        assertThrows(NullPointerException.class, () -> {
-            new Planet(null, EquatorialCoordinates.of(0,0), 0, 10);
-        });
+    void planetEquatorialPosIsCorrect() {
+        var rng = TestRandomizer.newRandom();
+        for (int i = 0; i < TestRandomizer.RANDOM_ITERATIONS; i++) {
+            var ra = rng.nextDouble(0, 2d * Math.PI);
+            var dec = rng.nextDouble(-Math.PI / 2d, Math.PI / 2d);
+            var equ = EquatorialCoordinates.of(ra, dec);
+            var p = new Planet("Planet B", equ, 0, 0);
+            assertEquals(ra, p.equatorialPos().ra());
+            assertEquals(dec, p.equatorialPos().dec());
+        }
     }
 
     @Test
-    void planetConstructorFailsWithNullCoordinates(){
-        assertThrows(NullPointerException.class, () -> {
-            new Planet("Planet", null, 0, 10);
-        });
+    void planetInfoIsCorrect() {
+        var rng = TestRandomizer.newRandom();
+        for (int i = 0; i < TestRandomizer.RANDOM_ITERATIONS; i++) {
+            var equ = EquatorialCoordinates.of(0, 0);
+            var planetName = randomPlanetName(rng);
+            var p = new Planet(planetName, equ, 0, 0);
+            assertEquals(planetName, p.info());
+        }
     }
 
+    @Test
+    void planetHashCodeIsInheritedFromObject() {
+        for (int i = 0; i < TestRandomizer.RANDOM_ITERATIONS; i++) {
+            var equ = EquatorialCoordinates.of(0, 0);
+            var p = new Planet("Planet B", equ, 0, 0);
+            assertEquals(System.identityHashCode(p), p.hashCode());
+        }
+    }
+
+    @Test
+    void planetEqualsIsBasedOnIdentity() {
+        var prevPlanet = (Planet)null;
+        for (int i = 0; i < TestRandomizer.RANDOM_ITERATIONS; i++) {
+            var equ = EquatorialCoordinates.of(0, 0);
+            var p = new Planet("Planet B", equ, 0, 0);
+            assertEquals(p, p);
+            assertNotEquals(p, prevPlanet);
+            prevPlanet = p;
+        }
+    }
 
 }

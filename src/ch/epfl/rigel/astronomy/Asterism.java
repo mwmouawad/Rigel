@@ -22,4 +22,6 @@ public final class Asterism {
 
     //TODO: should this be copyOf or unmodifiable view?
     public List<Star> stars(){ return list; }
+
+
 }
