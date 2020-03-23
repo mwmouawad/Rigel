@@ -27,7 +27,6 @@ public enum HygDatabaseLoader implements StarCatalogue.Loader {
         //Skip the first line
         buffReader.readLine();
 
-
         //Star parameters;
         int hipparcosId;
         String name;
@@ -55,7 +54,7 @@ public enum HygDatabaseLoader implements StarCatalogue.Loader {
     }
 
     /**
-     * Get's star name if proper name exists. Otherwisse use bayer ( "?" default) and WHITESPACE
+     * Get's star name if proper name exists. Otherwise use bayer ( "?" default) and WHITESPACE
      * and Con.
      * @param properName database csv String corresponding to the proper name.
      * @param bayer database csv String corresponding to the bayer.
@@ -79,7 +78,7 @@ public enum HygDatabaseLoader implements StarCatalogue.Loader {
 
 
     /**
-     * Parse's a string to integer. If string is empty, return default parameter.
+     * Parses a string to integer. If string is empty, return default parameter.
      * @param s string to be parsed.
      * @param def default value.
      * @return parsed string to integer or default value.
@@ -104,7 +103,7 @@ public enum HygDatabaseLoader implements StarCatalogue.Loader {
 
 
     /**
-     * Parse's a string to flaot. If string is empty, return default parameter.
+     * Parse's a string to float. If string is empty, return default parameter.
      * @param s string to be parsed.
      * @param def default value.
      * @return parsed string to float or default value.

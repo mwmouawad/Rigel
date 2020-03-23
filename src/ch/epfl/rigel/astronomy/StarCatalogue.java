@@ -14,8 +14,8 @@ import java.util.*;
  * @author Leah Uzzan (302829)
  */
 public final class StarCatalogue {
-    final private List<Star> stars;
-    final private HashMap<Asterism, List<Integer>> catalogue;
+    final private List<Star> starsCatalogue;
+    final private Map<Asterism, List<Integer>> catalogue;
 
     /**
      * Constructs a catalogue of stars and corresponding asterisms.
@@ -25,7 +25,7 @@ public final class StarCatalogue {
      * @throws IllegalArgumentException if a star in one of the asterisms is not contained in the stars list.
      */
     StarCatalogue(List<Star> stars, List<Asterism> asterisms) {
-        this.catalogue = new HashMap<Asterism, List<Integer>>();
+        Map<Asterism, List<Integer>> catalogue =  new HashMap<Asterism, List<Integer>>();
 
         //Check if there is a star in the asterisms  that is not in the stars list.
         for (Asterism ast : asterisms) {
@@ -40,17 +40,17 @@ public final class StarCatalogue {
                 indexList.add(index);
 
             }
-            //TODO : make immutable with a map, construct it, then catalogue = unmodifiable;
-            this.catalogue.put(new Asterism(ast.stars()), indexList);
+            catalogue.put(new Asterism(ast.stars()), indexList);
         }
 
-        this.stars = List.copyOf(Objects.requireNonNull(stars));
+        this.catalogue = Collections.unmodifiableMap(catalogue);
+        this.starsCatalogue = List.copyOf(Objects.requireNonNull(stars));
 
     }
 
     public List<Star> stars() {
         //TODO: Add smth to make immutable?
-        return this.stars;
+        return this.starsCatalogue;
     }
 
     public Set<Asterism> asterisms() {
@@ -80,6 +80,8 @@ public final class StarCatalogue {
      */
     public static final class Builder {
         //TODO : faux, creer attributs stars et asterisms.
+        private List<Star> stars = new ArrayList<Star>();
+        private List<Asterism> asterisms = new ArrayList<Asterism>();
         /**
          * Add star to the star catalogue.
          *
@@ -87,7 +89,7 @@ public final class StarCatalogue {
          * @return the builder instance.
          */
         public Builder addStar(Star star) {
-            this.stars().stars.add(star);
+            this.stars.add(star);
             return this;
         }
 
@@ -100,17 +102,7 @@ public final class StarCatalogue {
          * @return the builder instance.
          */
         public Builder addAsterism(Asterism asterism) {
-            ArrayList<Integer> starIndex = new ArrayList<Integer>();
-            int indexOfStar;
-            //Get the index of the stars in the star catalogue.
-            for (Star s : asterism.stars()) {
-                indexOfStar = this.starCatalogue.stars().indexOf(s);
-                if (indexOfStar != -1)
-                    //TODO: throw an error or smth?
-                    starIndex.add(this.starCatalogue.stars().indexOf(s));
-
-            }
-            this.starCatalogue.catalogue.put(new Asterism(asterism.stars()), starIndex);
+            this.asterisms.add(asterism);
             return this;
         }
 
@@ -120,7 +112,7 @@ public final class StarCatalogue {
          * @return
          */
         public List<Star> stars() {
-            return Collections.unmodifiableList(this.starCatalogue.stars);
+            return Collections.unmodifiableList(this.stars);
         }
 
 
@@ -131,7 +123,7 @@ public final class StarCatalogue {
          */
         public List<Asterism> asterisms() {
             return Collections.unmodifiableList(
-                    new ArrayList<Asterism>(this.starCatalogue.asterisms())
+                   this.asterisms
             );
         }
 
@@ -154,8 +146,7 @@ public final class StarCatalogue {
          * @return
          */
         public StarCatalogue build() {
-            //TODO: Is it making it immutable?
-            StarCatalogue starCatalogue = new StarCatalogue(this.stars(), this.asterisms());
+            StarCatalogue starCatalogue = new StarCatalogue(this.stars, this.asterisms);
             return starCatalogue;
         }
 
