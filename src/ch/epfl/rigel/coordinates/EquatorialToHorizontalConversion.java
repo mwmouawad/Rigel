@@ -19,7 +19,7 @@ public final class EquatorialToHorizontalConversion implements Function<Equatori
     public final double localTime;
     private final double cosPhi;
     private final double sinPhi;
-    private final static RightOpenInterval altInterval = RightOpenInterval.symmetric(Math.PI);
+    private final static RightOpenInterval ALT_INTERVAL = RightOpenInterval.symmetric(Math.PI);
 
 
     public EquatorialToHorizontalConversion(ZonedDateTime when, GeographicCoordinates where){
@@ -55,7 +55,7 @@ public final class EquatorialToHorizontalConversion implements Function<Equatori
 
         //TODO : second conversion not necessary because of the arcsin.
 
-        return HorizontalCoordinates.of(Angle.normalizePositive(az), altInterval.reduce(alt));
+        return HorizontalCoordinates.of(Angle.normalizePositive(az), ALT_INTERVAL.reduce(alt));
     }
 
 

@@ -15,8 +15,8 @@ import java.util.Locale;
  */
 public final class HorizontalCoordinates extends SphericalCoordinates {
 
-    private final  static RightOpenInterval azInterval = RightOpenInterval.of(0,Angle.TAU);
-    private final static ClosedInterval altInterval = ClosedInterval.symmetric(Math.PI);
+    private final  static RightOpenInterval AZ_INTERVAL = RightOpenInterval.of(0,Angle.TAU);
+    private final static ClosedInterval ALT_INTERVAL = ClosedInterval.symmetric(Math.PI);
 
 
     private HorizontalCoordinates(double longitude, double latitude) {
@@ -34,8 +34,8 @@ public final class HorizontalCoordinates extends SphericalCoordinates {
     public static HorizontalCoordinates of(double az, double alt){
 
         return  new HorizontalCoordinates(
-                Preconditions.checkInInterval(azInterval, az),
-                Preconditions.checkInInterval(altInterval, alt)
+                Preconditions.checkInInterval(AZ_INTERVAL, az),
+                Preconditions.checkInInterval(ALT_INTERVAL, alt)
                 );
     }
 
@@ -48,8 +48,8 @@ public final class HorizontalCoordinates extends SphericalCoordinates {
      */
     public static HorizontalCoordinates ofDeg(double azDeg, double altDeg){
         return  new HorizontalCoordinates(
-                Preconditions.checkInInterval(azInterval, Angle.ofDeg(azDeg)),
-                Preconditions.checkInInterval(altInterval,Angle.ofDeg(altDeg))
+                Preconditions.checkInInterval(AZ_INTERVAL, Angle.ofDeg(azDeg)),
+                Preconditions.checkInInterval(ALT_INTERVAL,Angle.ofDeg(altDeg))
         );
     }
 

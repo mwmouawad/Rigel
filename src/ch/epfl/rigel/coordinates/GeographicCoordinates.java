@@ -15,8 +15,8 @@ import java.util.Locale;
  */
 public final class GeographicCoordinates extends SphericalCoordinates {
 
-    private static final RightOpenInterval lonDegInterval =  RightOpenInterval.of(-180, 180);
-    private static final ClosedInterval latDegInterval =  ClosedInterval.symmetric(180);
+    private static final RightOpenInterval LON_DEG_INTERVAL =  RightOpenInterval.of(-180, 180);
+    private static final ClosedInterval LAT_DEG_INTERVAL =  ClosedInterval.symmetric(180);
 
 
     private GeographicCoordinates(double longitude, double latitude) {
@@ -31,8 +31,8 @@ public final class GeographicCoordinates extends SphericalCoordinates {
      * @return Geographic Coordinates object.
      */
     public static GeographicCoordinates ofDeg(double lonDeg, double latDeg) {
-        double lonRad = Angle.ofDeg(Preconditions.checkInInterval(lonDegInterval, lonDeg));
-        double latRad = Angle.ofDeg(Preconditions.checkInInterval(latDegInterval, latDeg));
+        double lonRad = Angle.ofDeg(Preconditions.checkInInterval(LON_DEG_INTERVAL, lonDeg));
+        double latRad = Angle.ofDeg(Preconditions.checkInInterval(LAT_DEG_INTERVAL, latDeg));
         return new GeographicCoordinates(lonRad, latRad);
     }
 
@@ -42,7 +42,7 @@ public final class GeographicCoordinates extends SphericalCoordinates {
      * @param lonDeg longitude input in degrees.
      * @return true if valid
      */
-    public static boolean isValidLonDeg(double lonDeg) { return (lonDegInterval.contains(lonDeg)); }
+    public static boolean isValidLonDeg(double lonDeg) { return (LON_DEG_INTERVAL.contains(lonDeg)); }
 
     /**
      * Check if given latitude coordinates
@@ -50,7 +50,7 @@ public final class GeographicCoordinates extends SphericalCoordinates {
      * @param latDeg longitude input in degrees.
      * @return true if valid
      */
-    public static boolean isValidLatDeg(double latDeg) { return (latDegInterval.contains(latDeg)) ; }
+    public static boolean isValidLatDeg(double latDeg) { return (LAT_DEG_INTERVAL.contains(latDeg)) ; }
 
     public double lon(){
         return super.lon();
