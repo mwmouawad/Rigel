@@ -27,27 +27,24 @@ public final class StarCatalogue {
     StarCatalogue(List<Star> stars, List<Asterism> asterisms) {
         this.catalogue = new HashMap<Asterism, List<Integer>>();
 
-        //TODO: Make sure this is immutable
         //Check if there is a star in the asterisms  that is not in the stars list.
         for (Asterism ast : asterisms) {
-            ArrayList<Integer> indexList = new ArrayList<Integer>();
+            ArrayList<Integer> indexList = new ArrayList<>();
             List<Star> astStars = ast.stars();
             for (Star s : astStars) {
 
                 int index = stars.indexOf(s);
-
                 Preconditions.checkArgument(index != -1);
 
                 //Add index in which star is.
                 indexList.add(index);
 
             }
-            //We have to make it inmutable.
+            //TODO : make immutable with a map, construct it, then catalogue = unmodifiable;
             this.catalogue.put(new Asterism(ast.stars()), indexList);
         }
 
-
-        this.stars = Objects.requireNonNull(stars);
+        this.stars = List.copyOf(Objects.requireNonNull(stars));
 
     }
 
@@ -62,7 +59,6 @@ public final class StarCatalogue {
 
     /**
      * Get the index list of the stars for the input astermism.
-     *
      * @param asterism
      * @return index list of stars.
      * @throws IllegalArgumentException if the asterism is not contained in the instance.
@@ -83,18 +79,7 @@ public final class StarCatalogue {
      * @author Leah Uzzan (302829)
      */
     public static final class Builder {
-
-        private StarCatalogue starCatalogue;
-
-
-        public Builder() {
-
-            this.starCatalogue = new StarCatalogue(
-                    new ArrayList<Star>(), new ArrayList<Asterism>()
-            );
-
-        }
-
+        //TODO : faux, creer attributs stars et asterisms.
         /**
          * Add star to the star catalogue.
          *
@@ -102,7 +87,7 @@ public final class StarCatalogue {
          * @return the builder instance.
          */
         public Builder addStar(Star star) {
-            this.starCatalogue.stars.add(star);
+            this.stars().stars.add(star);
             return this;
         }
 

@@ -3,7 +3,6 @@ package ch.epfl.rigel.astronomy;
 import ch.epfl.rigel.coordinates.EclipticCoordinates;
 import ch.epfl.rigel.coordinates.EclipticToEquatorialConversion;
 import ch.epfl.rigel.coordinates.EquatorialCoordinates;
-import ch.epfl.rigel.coordinates.EquatorialToHorizontalConversion;
 import ch.epfl.rigel.math.Angle;
 
 /**
@@ -15,9 +14,11 @@ public enum SunModel implements CelestialObjectModel<Sun>{
 
     SUN;
 
-    private static double lonJ2010 = Angle.ofDeg(279.557208);
-    private static double lonPerigee = Angle.ofDeg(283.112438);
-    private static double eccentricity = 0.016705;
+    private final static double LON_J2010 = Angle.ofDeg(279.557208);
+    private final static double LON_PERIGEE = Angle.ofDeg(283.112438);
+    private final static double ECCENTRICITY = 0.016705;
+    public final static double SPEED = Angle.TAU/365.242191;
+    private final static double THETA_0 = Angle.ofDeg(0.533128);
 
     @Override
     /**
@@ -27,14 +28,13 @@ public enum SunModel implements CelestialObjectModel<Sun>{
      * @return the Sun in its position and other attributes for the given inputs.
      */
     public Sun at(double daysSinceJ2010, EclipticToEquatorialConversion eclipticToEquatorialConversion) {
-        double meanAnomaly = (Angle.TAU/365.242191) * daysSinceJ2010 + lonJ2010 - lonPerigee;
+        double meanAnomaly = (SPEED) * daysSinceJ2010 + LON_J2010 - LON_PERIGEE;
         meanAnomaly = Angle.normalizePositive(meanAnomaly);
-        double trueAnomaly = meanAnomaly + 2 * eccentricity * Math.sin(meanAnomaly);
+        double trueAnomaly = meanAnomaly + 2 * ECCENTRICITY * Math.sin(meanAnomaly);
         trueAnomaly = Angle.normalizePositive(trueAnomaly);
 
-        double lonEcliptic = Angle.normalizePositive(trueAnomaly + lonPerigee);
-        double theta0 = Angle.ofDeg(0.533128);
-        double angularSize = theta0 * ((1 + eccentricity*Math.cos(trueAnomaly)) / (1 - eccentricity*eccentricity));
+        double lonEcliptic = Angle.normalizePositive(trueAnomaly + LON_PERIGEE);
+        double angularSize = THETA_0 * ((1 + ECCENTRICITY * Math.cos(trueAnomaly)) / (1 - ECCENTRICITY * ECCENTRICITY));
 
         EclipticCoordinates eclipticPos = EclipticCoordinates.of(lonEcliptic, 0);
         EquatorialCoordinates equatorialPos = eclipticToEquatorialConversion.apply(eclipticPos);

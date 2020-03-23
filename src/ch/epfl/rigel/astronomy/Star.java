@@ -10,8 +10,8 @@ import java.util.Objects;
 public final class Star extends CelestialObject {
 
     private int hipparcosId;
-    private float color;
     private final ClosedInterval interval = ClosedInterval.of(-0.5, 5.5);
+    private int colorTemperature;
     /**
      * @param name          of the celestial object
      * @param equatorialPos equatorial position of the object
@@ -25,12 +25,11 @@ public final class Star extends CelestialObject {
         Preconditions.checkArgument(hipparcosId >= 0);
 
         this.hipparcosId = hipparcosId;
-        color = (float) Preconditions.checkInInterval(interval, colorIndex);
+        float color = (float) Preconditions.checkInInterval(interval, colorIndex);
+        colorTemperature = (int) (4600d*((1d/(0.92*color + 1.7))+ (1d/(0.92*color + 0.62))));
     }
 
     public int hipparcosId() { return hipparcosId; }
 
-    public int colorTemperature() {
-        return (int) Math.floor(4600*((1/(0.92*color + 1.7))+ (1/(0.92*color + 0.62))));
-    }
+    public int colorTemperature() { return colorTemperature; }
 }

@@ -49,9 +49,7 @@ public enum HygDatabaseLoader implements StarCatalogue.Loader {
 
             Star star = new Star(hipparcosId, name, eqCoord, magnitude, colorInd);
 
-            builder.addStar(
-                    star
-            );
+            builder.addStar(star);
             line = buffReader.readLine();
         }
     }
