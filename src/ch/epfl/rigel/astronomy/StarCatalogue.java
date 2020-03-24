@@ -1,6 +1,7 @@
 package ch.epfl.rigel.astronomy;
 
 import ch.epfl.rigel.Preconditions;
+import ch.epfl.rigel.coordinates.EquatorialCoordinates;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,23 +26,25 @@ public final class StarCatalogue {
      * @throws IllegalArgumentException if a star in one of the asterisms is not contained in the stars list.
      */
     StarCatalogue(List<Star> stars, List<Asterism> asterisms) {
-        Map<Asterism, List<Integer>> catalogue =  new HashMap<Asterism, List<Integer>>();
+        Map<Star, Integer> starIndexMap = new HashMap<Star, Integer>();
+        Map<Asterism, List<Integer>> catalogue = new HashMap<Asterism, List<Integer>>();
+        int index =0;
+        for(Star s: stars){
+            starIndexMap.put(s, index);
+            index +=1;
 
-        //Check if there is a star in the asterisms  that is not in the stars list.
-        for (Asterism ast : asterisms) {
-            ArrayList<Integer> indexList = new ArrayList<>();
-            List<Star> astStars = ast.stars();
-            for (Star s : astStars) {
-
-                int index = stars.indexOf(s);
-                Preconditions.checkArgument(index != -1);
-
-                //Add index in which star is.
-                indexList.add(index);
-
-            }
-            catalogue.put(new Asterism(ast.stars()), indexList);
         }
+        int starIndex;
+        List<Integer> indexList = new ArrayList<Integer>();
+        for(Asterism ast: asterisms){
+            indexList.clear();
+            for(Star s: ast.stars()){
+                starIndex = Objects.requireNonNull(starIndexMap.get(s));
+                indexList.add(starIndex);
+            }
+            catalogue.put(new Asterism(ast.stars()), List.copyOf(indexList));
+        }
+
 
         this.catalogue = Collections.unmodifiableMap(catalogue);
         this.starsCatalogue = List.copyOf(Objects.requireNonNull(stars));
@@ -59,6 +62,7 @@ public final class StarCatalogue {
 
     /**
      * Get the index list of the stars for the input astermism.
+     *
      * @param asterism
      * @return index list of stars.
      * @throws IllegalArgumentException if the asterism is not contained in the instance.
@@ -82,6 +86,7 @@ public final class StarCatalogue {
         //TODO : faux, creer attributs stars et asterisms.
         private List<Star> stars = new ArrayList<Star>();
         private List<Asterism> asterisms = new ArrayList<Asterism>();
+
         /**
          * Add star to the star catalogue.
          *
@@ -123,7 +128,7 @@ public final class StarCatalogue {
          */
         public List<Asterism> asterisms() {
             return Collections.unmodifiableList(
-                   this.asterisms
+                    this.asterisms
             );
         }
 
@@ -146,7 +151,7 @@ public final class StarCatalogue {
          * @return
          */
         public StarCatalogue build() {
-            StarCatalogue starCatalogue = new StarCatalogue(this.stars, this.asterisms);
+            StarCatalogue starCatalogue = new StarCatalogue(this.stars(), this.asterisms());
             return starCatalogue;
         }
 
