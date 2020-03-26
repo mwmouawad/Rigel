@@ -146,7 +146,7 @@ public final class StarCatalogue {
          * @return
          */
         public StarCatalogue build() {
-            StarCatalogue starCatalogue = new StarCatalogue(this.stars, this.asterisms);
+            StarCatalogue starCatalogue = new StarCatalogue(this.stars(), this.asterisms());
             return starCatalogue;
         }
 
@@ -154,6 +154,12 @@ public final class StarCatalogue {
 
 
     public interface Loader {
+
+        /**Loads from input file in the input stream.
+         * @param inputStream inputstream associated with the file.
+         * @param builder   star catalogue builder with stars loaded.
+         * @throws IOException
+         * */
         void load(InputStream inputStream, Builder builder) throws IOException;
     }
 }

@@ -46,6 +46,10 @@ public final class EquatorialCoordinates extends SphericalCoordinates {
 
     public double decDeg(){ return super.latDeg(); }
 
+    /**
+     *
+     * @see Object#toString()
+     */
     public String toString() {
         return String.format(Locale.ROOT, "(ra=%.4fh, dec=%.4f°)", Angle.toHr(this.ra()),
                 this.decDeg()

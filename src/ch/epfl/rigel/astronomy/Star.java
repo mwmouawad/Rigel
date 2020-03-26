@@ -9,10 +9,10 @@ public final class Star extends CelestialObject {
     private int hipparcosId;
     private final ClosedInterval INTERVAL = ClosedInterval.of(-0.5, 5.5);
     private int colorTemperature;
+
     /**
      * @param name          of the celestial object
      * @param equatorialPos equatorial position of the object
-     * @param angularSize   size of the object
      * @param magnitude     magnitude of the object
      * @throws NullPointerException     if the name or the equatorial position are null
      * @throws IllegalArgumentException if the angular size is less than 0.
@@ -25,6 +25,7 @@ public final class Star extends CelestialObject {
         float color = (float) Preconditions.checkInInterval(INTERVAL, colorIndex);
         colorTemperature = (int) (4600d*((1d/(0.92*color + 1.7))+ (1d/(0.92*color + 0.62))));
     }
+
 
     public int hipparcosId() { return hipparcosId; }
 

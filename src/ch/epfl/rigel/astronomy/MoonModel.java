@@ -12,9 +12,16 @@ public enum MoonModel implements CelestialObjectModel<Moon> {
     private static final double ECCENTRICITY_MOON = 0.0549;
     private static final double TILT = Angle.ofDeg(5.145396);
 
+    /**
+     *
+     * @param daysSinceJ2010 time difference for the given date. ( can be negative )
+     * @param eclipticToEquatorialConversion conversion to be used with.
+     * @return a Moon at a given time.
+     */
     @Override
     public Moon at(double daysSinceJ2010, EclipticToEquatorialConversion eclipticToEquatorialConversion) {
 
+        //creates a sun model in order to use its constants.
         Sun sun = SunModel.SUN.at(daysSinceJ2010, eclipticToEquatorialConversion);
         double meanAnomalySun = sun.meanAnomaly();;
         double sinSun = Math.sin(meanAnomalySun);

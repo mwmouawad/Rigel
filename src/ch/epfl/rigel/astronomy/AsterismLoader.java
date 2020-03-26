@@ -54,7 +54,12 @@ public enum AsterismLoader implements StarCatalogue.Loader {
     }
 
 
-
+    /**
+     *
+     * @param id star id
+     * @param starCatalogue catalogue of stars
+     * @return returns the object star from the catalogue
+     */
     public static Star getStarFromCatalogue(int id, List<Star> starCatalogue){
 
         for(Star s: starCatalogue){

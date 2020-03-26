@@ -34,26 +34,49 @@ public abstract class CelestialObject {
         this.magnitude = magnitude;
     }
 
+    /**
+     *
+     * @return name of object
+     */
     public String name() {
         return name;
     }
-
+    /**
+     *
+     * @return the equatorial position of the object
+     */
     public EquatorialCoordinates equatorialPos() {
         return equatorialPos;
     }
 
+    /**
+     *
+     * @return the angular size of the object
+     */
     public double angularSize() {
         return angularSize;
     }
 
+    /**
+     *
+     * @return the magnitude of the object
+     */
     public double magnitude() {
         return magnitude;
     }
 
+    /**
+     *
+     * @return a description of the object
+     */
     public String info() {
         return name;
     }
 
+    /**
+     *
+     * @see Object#toString()
+     */
     @Override
     public String toString() {
         return info();

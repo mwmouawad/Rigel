@@ -4,6 +4,7 @@ import java.time.*;
 import java.time.temporal.ChronoUnit;
 
 /**
+ * Enumaretes the different times.
  * @author Mark Mouawad (296508)
  * @author Leah Uzzan (302829)
  */

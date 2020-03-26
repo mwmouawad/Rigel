@@ -28,16 +28,31 @@ public final class CartesianCoordinates {
     public double x() { return x; }
     public double y() { return y; }
 
+    /**
+     *
+     * @see Object#equals(Object)
+     * @throws UnsupportedOperationException
+     */
     @Override
     public boolean equals(Object o) {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     *
+     * @see Object#hashCode()
+     * @throws UnsupportedOperationException
+     */
     @Override
     public int hashCode() {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     *
+     * @see Object#toString()
+     */
+    @Override
     public String toString() {
         return String.format(Locale.ROOT, "(x= %.4f, y= %.4f)", x, y); }
 }

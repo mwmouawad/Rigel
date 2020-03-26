@@ -2,7 +2,7 @@ package ch.epfl.rigel.astronomy;
 
 import ch.epfl.rigel.coordinates.EquatorialCoordinates;
 
-/*
+/**
  * @author Mark Mouawad (296508)
  * @author Leah Uzzan (302829)
  */

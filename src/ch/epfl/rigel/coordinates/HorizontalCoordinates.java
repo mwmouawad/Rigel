@@ -122,6 +122,10 @@ public final class HorizontalCoordinates extends SphericalCoordinates {
         }
     }
 
+    /**
+     *
+     * @see Object#toString()
+     */
     public String toString() {
         return String.format(Locale.ROOT, "(az=%.4f°, alt=%.4f°)", this.azDeg(), this.altDeg());
     }
