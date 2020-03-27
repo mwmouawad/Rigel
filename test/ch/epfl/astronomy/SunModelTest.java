@@ -43,4 +43,22 @@ public class SunModelTest {
     }
 
 
+
+    @Test
+    void sunAngularSizeWorksOnKnownValues(){
+
+        var dateTime = ZonedDateTime.of(
+                LocalDate.of(2003, Month.JULY, 27),
+                LocalTime.of(0, 0),
+                ZoneOffset.UTC);
+
+        System.out.println(J2010.daysUntil(dateTime));
+        Sun sunPo = SunModel.SUN.at(-2349.0, new EclipticToEquatorialConversion(dateTime));
+
+        assertEquals(Angle.ofDeg(201.159131), sunPo.meanAnomaly(), 10e-7);
+        assertEquals(Angle.ofDMS(0,31,30), sunPo.angularSize(), Angle.ofDMS(0,0,0.5));
+
+    }
+
+
 }

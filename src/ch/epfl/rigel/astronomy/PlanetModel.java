@@ -55,6 +55,13 @@ public enum PlanetModel implements CelestialObjectModel<Planet> {
     }
 
 
+    /**
+     * Computes the planet's position, it's angular size and magnitude at a given time and position.
+     * It returns a Planet object.
+     * @param daysSinceJ2010 time difference for the given date. ( can be negative )
+     * @param eclipticToEquatorialConversion conversion to be used with.
+     * @return Planet instance with computed position, angular size and magnitude.
+     */
     @Override
     public Planet at(double daysSinceJ2010, EclipticToEquatorialConversion eclipticToEquatorialConversion) {
 
@@ -66,7 +73,8 @@ public enum PlanetModel implements CelestialObjectModel<Planet> {
         lon = Math.atan2(Math.sin(lon - lon_nod) * Math.cos(obliquity), Math.cos(lon - lon_nod)) + lon_nod;
 
         //TODO : to check + tester.
-        lon = Angle.normalizePositive(lon);
+        //Pas besoin de la normaliser.
+        lon = (lon);
 
         //Earth's Coordinates
         double earthTrueAnomaly = EARTH.computeTrueAnomaly(daysSinceJ2010);
@@ -89,7 +97,7 @@ public enum PlanetModel implements CelestialObjectModel<Planet> {
     }
 
     /**
-     * Computes of a planet  to the Earth.
+     * Computes the distance of a planet to Earth.
      *
      * @param r
      * @param l
@@ -99,7 +107,7 @@ public enum PlanetModel implements CelestialObjectModel<Planet> {
      * @return
      */
 
-    private double computeDistanceToEarth(double r, double l, double R, double L, double phi) {
+    private static double computeDistanceToEarth(double r, double l, double R, double L, double phi) {
         return Math.sqrt(R * R + r * r - 2 * R * r * Math.cos(l - L) * Math.cos(phi));
     }
 
@@ -115,9 +123,8 @@ public enum PlanetModel implements CelestialObjectModel<Planet> {
      * @return True anomaly in the interval [0,TAU]
      */
     private double computeTrueAnomaly(double daysSinceJ2010) {
-        double meanAnomaly = (SunModel.SPEED) * (daysSinceJ2010 / period) + lonJ2010 - lonPerigee;
-        double trueAnomaly = Angle.normalizePositive(meanAnomaly) + 2 * this.eccentricity * Math.sin(meanAnomaly);
-        //TODO : check if right and necessary.
+        double meanAnomaly = Angle.normalizePositive((SunModel.SPEED) * (daysSinceJ2010 / period)) + lonJ2010 - lonPerigee;
+        double trueAnomaly = (meanAnomaly) + 2 * this.eccentricity * Math.sin(meanAnomaly);
         return Angle.normalizePositive(trueAnomaly);
     }
 
@@ -137,7 +144,8 @@ public enum PlanetModel implements CelestialObjectModel<Planet> {
      * @return
      */
     private double computeLongitude(double trueAnomaly) {
-        return Angle.normalizePositive(trueAnomaly + this.lonPerigee);
+        //Pas besoin de la normaliser.
+        return (trueAnomaly + this.lonPerigee);
     }
 
     /**

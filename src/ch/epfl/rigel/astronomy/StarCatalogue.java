@@ -28,14 +28,14 @@ public final class StarCatalogue {
     StarCatalogue(List<Star> stars, List<Asterism> asterisms) {
         Map<Star, Integer> starIndexMap = new HashMap<Star, Integer>();
         Map<Asterism, List<Integer>> catalogue = new HashMap<Asterism, List<Integer>>();
-        int index =0;
-        for(Star s: stars){
-            starIndexMap.put(s, index);
-            index +=1;
 
+        for(Star s: stars){
+            starIndexMap.put(s, starIndexMap.size());
         }
+
         int starIndex;
         List<Integer> indexList = new ArrayList<Integer>();
+
         for(Asterism ast: asterisms){
             indexList.clear();
             for(Star s: ast.stars()){
@@ -52,7 +52,6 @@ public final class StarCatalogue {
     }
 
     public List<Star> stars() {
-        //TODO: Add smth to make immutable?
         return this.starsCatalogue;
     }
 
@@ -151,7 +150,7 @@ public final class StarCatalogue {
          * @return
          */
         public StarCatalogue build() {
-            StarCatalogue starCatalogue = new StarCatalogue(this.stars(), this.asterisms());
+            StarCatalogue starCatalogue = new StarCatalogue(this.stars, this.asterisms);
             return starCatalogue;
         }
 
