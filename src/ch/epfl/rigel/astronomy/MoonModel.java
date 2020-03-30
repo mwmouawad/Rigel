@@ -48,6 +48,7 @@ public enum MoonModel implements CelestialObjectModel<Moon> {
         double latEcliptic = Math.asin(Math.sin(trueLonMoon - lonAscCorrected) * Math.sin(TILT));
 
         //computes the phase
+        //TODO : should we normalize it?
         double phase = ( 1 - Math.cos(trueLonMoon - lonSun) )/ 2;
 
         //computes angular size

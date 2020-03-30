@@ -42,6 +42,7 @@ public final class StarCatalogue {
                 starIndex = Objects.requireNonNull(starIndexMap.get(s));
                 indexList.add(starIndex);
             }
+            //TODO : not necessary to add copyOf ?
             catalogue.put(new Asterism(ast.stars()), List.copyOf(indexList));
         }
 
