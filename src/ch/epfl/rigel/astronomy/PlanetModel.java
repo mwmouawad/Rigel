@@ -38,8 +38,7 @@ public enum PlanetModel implements CelestialObjectModel<Planet> {
     private final double angularSize1UA;
     private final double magnitude;
 
-    //Pourquoi t avais mis en argument daystillJ2010 ?
-    // check conditions, null pointers have to take into account ?
+
     PlanetModel(String name, double period, double lonJ2010, double lonPerigee, double eccentricity, double axe,
                 double obliquity, double lon_nod, double size, double magnitude) {
         this.name = Objects.requireNonNull(name);
@@ -69,10 +68,9 @@ public enum PlanetModel implements CelestialObjectModel<Planet> {
         double radius = computeRadius(trueAnomaly);
         double lon = computeLongitude(trueAnomaly);
         double phi = computeLatitude(lon);
-        radius *= Math.cos(phi);
+        double radius2 = radius * Math.cos(phi);
         lon = Math.atan2(Math.sin(lon - lon_nod) * Math.cos(obliquity), Math.cos(lon - lon_nod)) + lon_nod;
 
-        //TODO : to check + tester.
         //Pas besoin de la normaliser.
         lon = (lon);
 
@@ -83,8 +81,8 @@ public enum PlanetModel implements CelestialObjectModel<Planet> {
 
         EclipticCoordinates eclCoord;
         //axe condition for inner planets
-        eclCoord = axe < 1d ? innerPlanetsEclGeocentricCoord(radius, lon, phi, R, L)
-                : outerPlanetsEclGeocentricCoord(radius, lon, phi, R, L);
+        eclCoord = axe < 1d ? innerPlanetsEclGeocentricCoord(radius2, lon, phi, R, L)
+                : outerPlanetsEclGeocentricCoord(radius2, lon, phi, R, L);
 
         double distanceToEarth = computeDistanceToEarth(radius, lon, R, L, phi);
         float angularSize = (float) (this.angularSize1UA / distanceToEarth);
@@ -107,13 +105,13 @@ public enum PlanetModel implements CelestialObjectModel<Planet> {
      * @return
      */
 
-    private static double computeDistanceToEarth(double r, double l, double R, double L, double phi) {
+    private double computeDistanceToEarth(double r, double l, double R, double L, double phi) {
         return Math.sqrt(R * R + r * r - 2 * R * r * Math.cos(l - L) * Math.cos(phi));
     }
 
     private double computeMagnitude(double r, double l, double lambda, double distanceToEarth, double phi) {
         double F = (1 + Math.cos(lambda - l)) / 2.0;
-        return magnitude + 5 * Math.log10((r * distanceToEarth) / Math.sqrt(F));
+        return magnitude + 5d * Math.log10((r * distanceToEarth) / Math.sqrt(F));
     }
 
     /**
@@ -124,7 +122,7 @@ public enum PlanetModel implements CelestialObjectModel<Planet> {
      */
     private double computeTrueAnomaly(double daysSinceJ2010) {
         double meanAnomaly = Angle.normalizePositive((SunModel.SPEED) * (daysSinceJ2010 / period)) + lonJ2010 - lonPerigee;
-        double trueAnomaly = (meanAnomaly) + 2 * this.eccentricity * Math.sin(meanAnomaly);
+        double trueAnomaly = (meanAnomaly) + 2d * eccentricity * Math.sin(meanAnomaly);
         return Angle.normalizePositive(trueAnomaly);
     }
 
@@ -135,7 +133,7 @@ public enum PlanetModel implements CelestialObjectModel<Planet> {
      * @return
      */
     private double computeRadius(double trueAnomaly) {
-        return (axe * (1 - eccentricity * eccentricity)) / (1 + eccentricity * Math.cos(trueAnomaly));
+        return (axe * (1d - eccentricity * eccentricity)) / (1d + eccentricity * Math.cos(trueAnomaly));
     }
 
     /**
@@ -145,7 +143,7 @@ public enum PlanetModel implements CelestialObjectModel<Planet> {
      */
     private double computeLongitude(double trueAnomaly) {
         //Pas besoin de la normaliser.
-        return (trueAnomaly + this.lonPerigee);
+        return (trueAnomaly + lonPerigee);
     }
 
     /**
@@ -154,7 +152,7 @@ public enum PlanetModel implements CelestialObjectModel<Planet> {
      * @return
      */
     private double computeLatitude(double longitude) {
-        return Math.asin(Math.sin(longitude - this.lon_nod) * Math.sin(this.obliquity));
+        return Math.asin(Math.sin(longitude - lon_nod) * Math.sin(obliquity));
     }
 
 
@@ -184,7 +182,7 @@ public enum PlanetModel implements CelestialObjectModel<Planet> {
      * @param L
      * @return
      */
-    private static EclipticCoordinates outerPlanetsEclGeocentricCoord(double planetRadius, double lon, double phi, double R, double L) {
+    private EclipticCoordinates outerPlanetsEclGeocentricCoord(double planetRadius, double lon, double phi, double R, double L) {
         double lambda = lon + Math.atan2(R * Math.sin(lon - L), planetRadius - R * Math.cos(lon - L));
         double beta = Math.atan((planetRadius * Math.tan(phi) * Math.sin(lambda - lon)) / (R * Math.sin(lon - L)));
         return EclipticCoordinates.of(Angle.normalizePositive(lambda), beta);

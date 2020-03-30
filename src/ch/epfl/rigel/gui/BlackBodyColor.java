@@ -4,8 +4,10 @@ import java.awt.*;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 
-//TODO : non instanciable == finale ?
-public final class BlackBodyColor {
+//TODO : non instanciable == constructeur prive ?
+public class BlackBodyColor {
+
+    private BlackBodyColor() {}
 /*
     public Color colorForTemperature(double temperatureInDeg) {
         //if n appartient pas exception.
