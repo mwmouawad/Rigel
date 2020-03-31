@@ -67,6 +67,7 @@ public enum PlanetModel implements CelestialObjectModel<Planet> {
         double trueAnomaly = computeTrueAnomaly(daysSinceJ2010);
         double radius = computeRadius(trueAnomaly);
         double lon = computeLongitude(trueAnomaly);
+        double lon2 = lon;
         double phi = computeLatitude(lon);
         double radius2 = radius * Math.cos(phi);
         lon = Math.atan2(Math.sin(lon - lon_nod) * Math.cos(obliquity), Math.cos(lon - lon_nod)) + lon_nod;
@@ -84,9 +85,10 @@ public enum PlanetModel implements CelestialObjectModel<Planet> {
         eclCoord = axe < 1d ? innerPlanetsEclGeocentricCoord(radius2, lon, phi, R, L)
                 : outerPlanetsEclGeocentricCoord(radius2, lon, phi, R, L);
 
-        double distanceToEarth = computeDistanceToEarth(radius, lon, R, L, phi);
+        double distanceToEarth = computeDistanceToEarth(radius, lon2, R, L, phi);
+        System.out.println("Distance to earth: "  + distanceToEarth);
         float angularSize = (float) (this.angularSize1UA / distanceToEarth);
-        float magnitude = (float) computeMagnitude(radius, lon, eclCoord.lon(), distanceToEarth, phi);
+        float magnitude = (float) computeMagnitude(radius, lon2, eclCoord.lon(), distanceToEarth, phi);
 
         EquatorialCoordinates equatorialPos = eclipticToEquatorialConversion.apply(eclCoord);
 
