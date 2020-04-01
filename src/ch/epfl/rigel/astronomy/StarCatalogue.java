@@ -26,7 +26,7 @@ public final class StarCatalogue {
      * @throws IllegalArgumentException if a star in one of the asterisms is not contained in the stars list.
      */
     public StarCatalogue(List<Star> stars, List<Asterism> asterisms) {
-        Map<Star, Integer> starIndexMap = new HashMap<Star, Integer>();
+        HashMap<Star, Integer> starIndexMap = new HashMap<Star, Integer>();
         Map<Asterism, List<Integer>> catalogue = new HashMap<Asterism, List<Integer>>();
 
         for(Star s: stars){
@@ -39,12 +39,8 @@ public final class StarCatalogue {
         for(Asterism ast: asterisms){
             indexList.clear();
             for(Star s: ast.stars()){
-                try{
-                    starIndex = (starIndexMap.get(s));
-                }
-                catch(NullPointerException e){
-                    throw new IllegalArgumentException();
-                }
+                starIndex = (starIndexMap.getOrDefault(s, -1));
+                Preconditions.checkArgument(starIndex >= 0);
                 indexList.add(starIndex);
             }
             //TODO : not necessary to add copyOf ?

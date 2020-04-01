@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class TestAsterismLoader {
+public class MyAsterismLoaderTest {
 
     private static final String HYG_CATALOGUE_NAME = "/hygdata_v3.csv";
     private static final String ASTERISMS_CATALOGUE_NAME = "/asterisms.txt";
