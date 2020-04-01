@@ -29,7 +29,7 @@ public enum MoonModel implements CelestialObjectModel<Moon> {
 
         //computes Moon constants
         double meanLon = Angle.ofDeg(13.1763966) * daysSinceJ2010 + Angle.ofDeg(91.929336);
-        double meanAnomaly = meanLon - Angle.ofDeg(0.1114041) * daysSinceJ2010 - Angle.ofDeg(130.143076);
+        double meanAnomaly = Angle.normalizePositive(meanLon - Angle.ofDeg(0.1114041) * daysSinceJ2010 - Angle.ofDeg(130.143076));
         double evection = Angle.ofDeg(1.2739) * Math.sin(2*(meanLon - lonSun) - meanAnomaly);
         double annualCorrection = Angle.ofDeg(0.1858) * sinSun;
         double correction3 = Angle.ofDeg(0.37) * sinSun;
@@ -48,7 +48,6 @@ public enum MoonModel implements CelestialObjectModel<Moon> {
         double latEcliptic = Math.asin(Math.sin(trueLonMoon - lonAscCorrected) * Math.sin(TILT));
 
         //computes the phase
-        //TODO : should we normalize it?
         double phase = ( 1 - Math.cos(trueLonMoon - lonSun) )/ 2;
 
         //computes angular size
