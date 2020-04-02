@@ -93,8 +93,16 @@ public class ObservedSky {
 
     public List<Integer> asterismIndices(Asterism asterism) { return catalogue.asterismIndices(asterism); }
 
-    //TODO: objectClosestTo.
+    //TODO: objectClosestTo
+    //   - Quel type de coord?
 
+    public CelestialObject objectClosestTo(GeographicCoordinates coordinates, double distance) {
+
+
+        return null;
+    }
+
+    //TODO: Comment faire pour pouvoir l'utiliser pour Planet et Stars ?
     /*
     private static double[] computePositions(List<Planet> celestial) {
         double[] positions = new double[celestial.size()*2];
