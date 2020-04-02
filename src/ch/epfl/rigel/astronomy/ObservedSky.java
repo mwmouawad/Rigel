@@ -15,22 +15,34 @@ public class ObservedSky {
     List<Planet> planets;
     List<Star> stars;
     Moon moon;
+    GeographicCoordinates position;
+    StereographicProjection projection;
     StarCatalogue catalogue;
 
-    ObservedSky(ZonedDateTime time, GeographicCoordinates position, StereographicProjection projection, StarCatalogue catalogue) {
+    public ObservedSky(ZonedDateTime time, GeographicCoordinates position, StereographicProjection projection, StarCatalogue catalogue) {
+        Preconditions.checkArgument(!(time == null));
+        Preconditions.checkArgument(!(position == null));
+        Preconditions.checkArgument(!(projection == null));
+        Preconditions.checkArgument(!(catalogue == null));
+        this.projection = projection;
+        this.position = position;
         double daysUntil = Epoch.J2010.daysUntil(time);
+
         EclipticToEquatorialConversion conversion = new EclipticToEquatorialConversion(time);
+
         sun = SunModel.SUN.at(daysUntil, conversion);
-        //TODO: liste ou set ?
+
         planets = new ArrayList<>();
         for (PlanetModel p : PlanetModel.values()) {
             planets.add(p.at(daysUntil, conversion));
         }
-        //TODO : better way to do it ?
         planets.remove(PlanetModel.EARTH);
-        planets = Collections.unmodifiableList(planets);
+        planets = List.copyOf(planets);
+
         stars = List.copyOf(catalogue.stars());
+
         this.catalogue = catalogue;
+
         moon = MoonModel.MOON.at(daysUntil, conversion);
     }
 
@@ -80,7 +92,6 @@ public class ObservedSky {
     }
 
     public List<Integer> asterismIndices(Asterism asterism) { return catalogue.asterismIndices(asterism); }
-
 
     //TODO: objectClosestTo.
 
