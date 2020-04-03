@@ -1,10 +1,12 @@
 package ch.epfl.astronomy;
 
 import ch.epfl.rigel.astronomy.*;
+import ch.epfl.rigel.coordinates.EclipticToEquatorialConversion;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.*;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
@@ -158,6 +160,27 @@ public class TestStep6 {
             assertNotNull(beltegeuse);
             assertEquals(2, astCount);
         }
+    }
+
+    @Test
+    public void coordinatesAreCorrect() {
+        //assertEquals(14.211456457836, MoonModel.MOON.at(-2313, new EclipticToEquatorialConversion(ZonedDateTime.of(LocalDate.of(2003,  Month.SEPTEMBER, 1),LocalTime.of(0,0), ZoneOffset.UTC))).equatorialPos().raHr());
+        assertEquals(-0.20114171346019355, MoonModel.MOON.at(-2313, new EclipticToEquatorialConversion(ZonedDateTime.of(LocalDate.of(2003,  Month.SEPTEMBER, 1),LocalTime.of(0,0), ZoneOffset.UTC))).equatorialPos().dec());
+    }
+
+    @Test
+    public void angularSizeIsCorrect() {
+        assertEquals(0.009225908666849136 , MoonModel.MOON.at(Epoch.J2010.daysUntil(ZonedDateTime.of(LocalDate.of(1979, 9, 1),LocalTime.of(0, 0),
+                ZoneOffset.UTC)), new EclipticToEquatorialConversion(ZonedDateTime.of(
+                LocalDate.of(1979, 9, 1), LocalTime.of(0, 0), ZoneOffset.UTC))).
+                angularSize());
+    }
+
+    @Test
+    public void phaseIsCorrect() {
+        assertEquals("Lune (22.5%)" , MoonModel.MOON.at(Epoch.J2010.daysUntil(ZonedDateTime.of(LocalDate.of(2003, 9, 1),LocalTime.of(0, 0),
+                ZoneOffset.UTC)), new EclipticToEquatorialConversion(ZonedDateTime.of( LocalDate.of(2003, 9, 1),
+                LocalTime.of(0, 0),ZoneOffset.UTC))).info());
     }
 
 
