@@ -54,7 +54,7 @@ public enum HygDatabaseLoader implements StarCatalogue.Loader {
     }
 
     /**
-     * Get's star name if proper name exists. Otherwise use bayer ( "?" default) and WHITESPACE
+     * Gets star name if proper name exists. Otherwise use bayer ( "?" default) and WHITESPACE
      * and Con.
      * @param properName database csv String corresponding to the proper name.
      * @param bayer database csv String corresponding to the bayer.

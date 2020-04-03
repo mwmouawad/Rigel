@@ -18,7 +18,6 @@ public class BlackBodyColor {
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
-
         return Color.web(null);
     }
 

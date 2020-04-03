@@ -71,7 +71,7 @@ public final class StarCatalogue {
      */
     public List<Integer> asterismIndices(Asterism asterism) {
         List<Integer> indexList = this.catalogue.get(asterism);
-        //TODO: We need to make sure no null is stored in the catalogue.
+        //We need to make sure no null is stored in the catalogue.
         Preconditions.checkArgument(indexList != null);
 
         return indexList;
@@ -85,7 +85,7 @@ public final class StarCatalogue {
      * @author Leah Uzzan (302829)
      */
     public static final class Builder {
-        //TODO : faux, creer attributs stars et asterisms.
+        //TODO : check
         private List<Star> stars = new ArrayList<Star>();
         private List<Asterism> asterisms = new ArrayList<Asterism>();
 
