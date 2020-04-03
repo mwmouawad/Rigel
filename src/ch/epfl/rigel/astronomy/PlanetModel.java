@@ -53,7 +53,6 @@ public enum PlanetModel implements CelestialObjectModel<Planet> {
         this.magnitude = magnitude;
     }
 
-
     /**
      * Computes the planet's position, it's angular size and magnitude at a given time and position.
      * It returns a Planet object.

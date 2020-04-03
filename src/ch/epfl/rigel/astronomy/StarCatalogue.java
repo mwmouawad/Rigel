@@ -15,8 +15,8 @@ import java.util.*;
  * @author Leah Uzzan (302829)
  */
 public final class StarCatalogue {
-    final private List<Star> starsCatalogue;
-    final private Map<Asterism, List<Integer>> catalogue;
+    private final List<Star> starsCatalogue;
+    private final Map<Asterism, List<Integer>> catalogue;
 
     /**
      * Constructs a catalogue of stars and corresponding asterisms.

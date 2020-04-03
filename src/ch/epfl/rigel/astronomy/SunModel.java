@@ -14,11 +14,11 @@ public enum SunModel implements CelestialObjectModel<Sun>{
 
     SUN;
 
-    private final static double LON_J2010 = Angle.ofDeg(279.557208);
-    private final static double LON_PERIGEE = Angle.ofDeg(283.112438);
-    private final static double ECCENTRICITY = 0.016705;
-    public final static double SPEED = Angle.TAU/365.242191;
-    private final static double THETA_0 = Angle.ofDeg(0.533128);
+    private final double LON_J2010 = Angle.ofDeg(279.557208);
+    private final double LON_PERIGEE = Angle.ofDeg(283.112438);
+    private final double ECCENTRICITY = 0.016705;
+    public static final double SPEED = Angle.TAU/365.242191;
+    private final double THETA_0 = Angle.ofDeg(0.533128);
 
     @Override
     /**

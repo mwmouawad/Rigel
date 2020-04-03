@@ -9,9 +9,8 @@ public enum MoonModel implements CelestialObjectModel<Moon> {
 
     MOON;
 
-    //TODO: static not necessary ?
-    private static final double ECCENTRICITY_MOON = 0.0549;
-    private static final double TILT = Angle.ofDeg(5.145396);
+    private final double ECCENTRICITY_MOON = 0.0549;
+    private final double TILT = Angle.ofDeg(5.145396);
     private final double MEAN_LON = Angle.ofDeg(91.929336);
     private final double MEAN_LON_PERI = Angle.ofDeg(130.143076);
     private final double LON_ASC = Angle.ofDeg(291.682547);
