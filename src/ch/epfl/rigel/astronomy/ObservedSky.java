@@ -9,17 +9,31 @@ import ch.epfl.rigel.coordinates.StereographicProjection;
 import java.time.ZonedDateTime;
 import java.util.*;
 
-public class ObservedSky {
+/**
+ * Represents a view of the sky in a given moment at a given place.
+ * @author Mark Mouawad (296508)
+ * @author Leah Uzzan (302829)
+ */
+public final class ObservedSky {
 
-    Sun sun;
-    List<Planet> planets;
-    List<Star> stars;
-    Moon moon;
-    GeographicCoordinates position;
-    StereographicProjection projection;
-    StarCatalogue catalogue;
+    private final Sun sun;
+    private final List<Planet> planets;
+    private final List<Star> stars;
+    private final Moon moon;
+    private final GeographicCoordinates position;
+    private final StereographicProjection projection;
+    private final StarCatalogue catalogue;
 
+    /**
+     * Constructs the observed skyline by computing the position of all planets in the solar system, the moon and
+     * the sun.
+     * @param time a Zoned Date time when it is observed.
+     * @param position the position of the observation.
+     * @param projection the StereoGraphic projection meant to be used to draw the sky view.
+     * @param catalogue the stars catalogue used.
+     */
     public ObservedSky(ZonedDateTime time, GeographicCoordinates position, StereographicProjection projection, StarCatalogue catalogue) {
+        //TODO: Are theses checks necessary?
         Preconditions.checkArgument(!(time == null));
         Preconditions.checkArgument(!(position == null));
         Preconditions.checkArgument(!(projection == null));
@@ -31,27 +45,26 @@ public class ObservedSky {
         EclipticToEquatorialConversion conversion = new EclipticToEquatorialConversion(time);
 
         sun = SunModel.SUN.at(daysUntil, conversion);
+        moon = MoonModel.MOON.at(daysUntil, conversion);
 
         planets = new ArrayList<>();
-        for (PlanetModel p : PlanetModel.values()) {
-            planets.add(p.at(daysUntil, conversion));
+        for (PlanetModel p : PlanetModel.ALL) {
+            if(!p.equals(PlanetModel.EARTH)){
+                planets.add(p.at(daysUntil, conversion));
+            }
         }
-        planets.remove(PlanetModel.EARTH);
-        planets = List.copyOf(planets);
 
         stars = List.copyOf(catalogue.stars());
 
         this.catalogue = catalogue;
 
-        moon = MoonModel.MOON.at(daysUntil, conversion);
     }
 
     public Sun sun(){ return sun; }
 
-    //TODO : getter pour  stars et planets ?
-    public  List<Planet> planets() { return planets; }
+    public  List<Planet> planets() { return Collections.unmodifiableList(planets); }
 
-    public List<Star> stars() { return stars; }
+    public List<Star> stars() { return Collections.unmodifiableList(stars); }
 
     public Moon moon() { return moon; }
 
@@ -86,7 +99,6 @@ public class ObservedSky {
         return positions;
     }
 
-    //TODO : this method or the one from the builder ?
     public Set<Asterism> asterisms() {
         return catalogue.asterisms();
     }
@@ -96,10 +108,10 @@ public class ObservedSky {
     //TODO: objectClosestTo
     //   - Quel type de coord?
 
-    public CelestialObject objectClosestTo(GeographicCoordinates coordinates, double distance) {
+    public Optional objectClosestTo(GeographicCoordinates coordinates, double distance) {
 
 
-        return null;
+        return Optional.empty();
     }
 
     //TODO: Comment faire pour pouvoir l'utiliser pour Planet et Stars ?

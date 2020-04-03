@@ -8,6 +8,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 
+/**
+ * @author Mark Mouawad (296508)
+ * @author Leah Uzzan (302829)
+ */
 public enum HygDatabaseLoader implements StarCatalogue.Loader {
 
     INSTANCE;
@@ -15,8 +19,9 @@ public enum HygDatabaseLoader implements StarCatalogue.Loader {
 
     /**
      * Loads from input stream the HYG Database to the builder star catalogue.
+     *
      * @param inputStream with file containing hyg database.
-     * @param builder of the star catalogue.
+     * @param builder     of the star catalogue.
      * @throws IOException
      */
     @Override
@@ -56,9 +61,10 @@ public enum HygDatabaseLoader implements StarCatalogue.Loader {
     /**
      * Gets star name if proper name exists. Otherwise use bayer ( "?" default) and WHITESPACE
      * and Con.
+     *
      * @param properName database csv String corresponding to the proper name.
-     * @param bayer database csv String corresponding to the bayer.
-     * @param con database csv String corresponding to the con column.
+     * @param bayer      database csv String corresponding to the bayer.
+     * @param con        database csv String corresponding to the con column.
      * @return the star name.
      */
     private static String parseStarName(String properName, String bayer, String con) {
@@ -79,7 +85,8 @@ public enum HygDatabaseLoader implements StarCatalogue.Loader {
 
     /**
      * Parses a string to integer. If string is empty, return default parameter.
-     * @param s string to be parsed.
+     *
+     * @param s   string to be parsed.
      * @param def default value.
      * @return parsed string to integer or default value.
      */
@@ -94,6 +101,7 @@ public enum HygDatabaseLoader implements StarCatalogue.Loader {
 
     /**
      * Parses a string to double.
+     *
      * @param s
      * @return
      */
@@ -104,7 +112,8 @@ public enum HygDatabaseLoader implements StarCatalogue.Loader {
 
     /**
      * Parse's a string to float. If string is empty, return default parameter.
-     * @param s string to be parsed.
+     *
+     * @param s   string to be parsed.
      * @param def default value.
      * @return parsed string to float or default value.
      */

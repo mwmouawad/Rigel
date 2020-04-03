@@ -11,14 +11,19 @@ import java.util.List;
 import ch.epfl.rigel.astronomy.HygDatabaseLoader.COLUMNS;
 
 
+/**
+ * @author Mark Mouawad (296508)
+ * @author Leah Uzzan (302829)
+ */
 public enum AsterismLoader implements StarCatalogue.Loader {
     INSTANCE;
 
 
     /**
      * Loads asterisms from input file in the input stream.
+     *
      * @param inputStream inputstream associated with the asterisms file.
-     * @param builder   star catalogue builder with stars loaded.
+     * @param builder     star catalogue builder with stars loaded.
      * @throws IOException
      */
     @Override
@@ -32,19 +37,19 @@ public enum AsterismLoader implements StarCatalogue.Loader {
         List<Star> starList = new ArrayList<Star>();
         Asterism asterism;
 
-        while(line != null){
+        while (line != null) {
             starList.clear();
             System.out.println("Adding asterism");
             charTable = line.split(",");
-            for(String s: charTable){
+            for (String s : charTable) {
 
                 Star star = getStarFromCatalogue(Integer.parseInt(s), builder.stars());
                 starList.add(star);
 
             }
 
-            builder.addAsterism( new Asterism(starList));
-            System.out.println( "Asterism added " + starList );
+            builder.addAsterism(new Asterism(starList));
+            System.out.println("Asterism added " + starList);
             line = buffReader.readLine();
 
 
@@ -55,15 +60,14 @@ public enum AsterismLoader implements StarCatalogue.Loader {
 
 
     /**
-     *
-     * @param id star id
+     * @param id            star id
      * @param starCatalogue catalogue of stars
      * @return returns the object star from the catalogue
      */
-    public static Star getStarFromCatalogue(int id, List<Star> starCatalogue){
+    public static Star getStarFromCatalogue(int id, List<Star> starCatalogue) {
 
-        for(Star s: starCatalogue){
-            if(s.hipparcosId() == id){
+        for (Star s : starCatalogue) {
+            if (s.hipparcosId() == id) {
                 return s;
             }
         }

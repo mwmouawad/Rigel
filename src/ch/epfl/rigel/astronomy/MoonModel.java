@@ -5,6 +5,10 @@ import ch.epfl.rigel.coordinates.EclipticToEquatorialConversion;
 import ch.epfl.rigel.coordinates.EquatorialCoordinates;
 import ch.epfl.rigel.math.Angle;
 
+/**
+ * @author Mark Mouawad (296508)
+ * @author Leah Uzzan (302829)
+ */
 public enum MoonModel implements CelestialObjectModel<Moon> {
 
     MOON;
@@ -17,10 +21,11 @@ public enum MoonModel implements CelestialObjectModel<Moon> {
     private final double THETA_0 = Angle.ofDeg(0.5181);
 
     /**
-     *
+     * Computes the moon position Equatorial Coordinates position at a given input time, its angular size and
+     * phase
      * @param daysSinceJ2010 time difference for the given date. ( can be negative )
      * @param eclipticToEquatorialConversion conversion to be used with.
-     * @return a Moon at a given time.
+     * @return a Moon instance at a given time.
      */
     @Override
     public Moon at(double daysSinceJ2010, EclipticToEquatorialConversion eclipticToEquatorialConversion) {
