@@ -9,17 +9,20 @@ import java.lang.reflect.Array;
 import java.util.*;
 
 /**
- * Star catalogue.
+ * A catalogue of stars and asterisms. Stores an ordered list of all the stars,
+ * and different asterisms containing some or all of this stars.
  *
  * @author Mark Mouawad (296508)
  * @author Leah Uzzan (302829)
  */
 public final class StarCatalogue {
-    private final List<Star> starsCatalogue;
+    private final List<Star> starList;
     private final Map<Asterism, List<Integer>> catalogue;
 
     /**
-     * Constructs a catalogue of stars and corresponding asterisms.
+     * Constructs a catalogue of stars and corresponding its corresponding asterisms.
+     * The stars list  and the asterisms are mapped with the corresponding index of the stars in the
+     * stars list they contain.
      *
      * @param stars     stars list.
      * @param asterisms asterisms list.
@@ -43,31 +46,37 @@ public final class StarCatalogue {
                 Preconditions.checkArgument(starIndex >= 0);
                 indexList.add(starIndex);
             }
-            //TODO : not necessary to add copyOf ?
-            //TODO: necessary to add new Asterism()??
             catalogue.put(ast, List.copyOf(indexList));
         }
 
 
         this.catalogue = Collections.unmodifiableMap(catalogue);
-        this.starsCatalogue = List.copyOf(Objects.requireNonNull(stars));
+        this.starList = List.copyOf(Objects.requireNonNull(stars));
 
     }
 
+    /**
+     * Returns the star list.
+     * @return the star list.
+     */
     public List<Star> stars() {
-        return this.starsCatalogue;
+        return this.starList;
     }
 
+    /**
+     * Returns a set of all asterisms.
+     * @return a set of all asterims.
+     */
     public Set<Asterism> asterisms() {
         return this.catalogue.keySet();
     }
 
     /**
-     * Get the index list of the stars for the input astermism.
+     * Returns a list with the index of the stars for the input astermism.
      *
      * @param asterism
-     * @return index list of stars.
-     * @throws IllegalArgumentException if the asterism is not contained in the instance.
+     * @return list with the index of the stars in the stars list.
+     * @throws IllegalArgumentException if the asterism is not stored in the StarCatalogue
      */
     public List<Integer> asterismIndices(Asterism asterism) {
         List<Integer> indexList = this.catalogue.get(asterism);
@@ -85,7 +94,7 @@ public final class StarCatalogue {
      * @author Leah Uzzan (302829)
      */
     public static final class Builder {
-        //TODO : check
+
         private List<Star> stars = new ArrayList<Star>();
         private List<Asterism> asterisms = new ArrayList<Asterism>();
 
@@ -150,7 +159,7 @@ public final class StarCatalogue {
         /**
          * Build the star catalogue.
          *
-         * @return
+         * @return Star Catalogue
          */
         public StarCatalogue build() {
             StarCatalogue starCatalogue = new StarCatalogue(this.stars, this.asterisms);

@@ -8,6 +8,12 @@ import ch.epfl.rigel.math.Angle;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Models and constructs all the planets of the solar system at a given date.
+ *
+ * @author Mark Mouawad (296508)
+ * @author Leah Uzzan (302829)
+ */
 public enum PlanetModel implements CelestialObjectModel<Planet> {
     MERCURY("Mercure", 0.24085, 75.5671, 77.612, 0.205627,
             0.387098, 7.0051, 48.449, 6.74, -0.42),
@@ -39,8 +45,22 @@ public enum PlanetModel implements CelestialObjectModel<Planet> {
     private final double magnitude;
 
 
-    PlanetModel(String name, double period, double lonJ2010, double lonPerigee, double eccentricity, double axe,
-                double obliquity, double lon_nod, double size, double magnitude) {
+    /**
+     * Constructs the planet Model. Private method as it is an enum.
+     *
+     * @param name
+     * @param period
+     * @param lonJ2010
+     * @param lonPerigee
+     * @param eccentricity
+     * @param axe
+     * @param obliquity
+     * @param lon_nod
+     * @param size
+     * @param magnitude
+     */
+    private PlanetModel(String name, double period, double lonJ2010, double lonPerigee, double eccentricity, double axe,
+                        double obliquity, double lon_nod, double size, double magnitude) {
         this.name = Objects.requireNonNull(name);
         this.period = period;
         this.lonJ2010 = Angle.ofDeg(lonJ2010);
@@ -55,16 +75,17 @@ public enum PlanetModel implements CelestialObjectModel<Planet> {
 
     /**
      * Computes the planet's position, it's angular size and magnitude at a given time and position.
-     * It returns a Planet object.
-     * @param daysSinceJ2010 time difference for the given date. ( can be negative )
+     * It returns a Planet instance at the input date.
+     *
+     * @param daysSinceJ2010                 time difference for the given date. ( can be negative )
      * @param eclipticToEquatorialConversion conversion to be used with.
-     * @return Planet instance with computed position, angular size and magnitude.
+     * @return Planet instance with computed position, angular size and magnitude for the input.
      */
     @Override
     public Planet at(double daysSinceJ2010, EclipticToEquatorialConversion eclipticToEquatorialConversion) {
 
         double trueAnomaly = computeTrueAnomaly(daysSinceJ2010);
-        double radius = computeRadius(trueAnomaly);
+        double radius = computeOrbitRadius(trueAnomaly);
         double lon = computeLongitude(trueAnomaly);
         double lon2 = lon;
         double phi = computeLatitude(lon);
@@ -76,7 +97,7 @@ public enum PlanetModel implements CelestialObjectModel<Planet> {
 
         //Earth's Coordinates
         double earthTrueAnomaly = EARTH.computeTrueAnomaly(daysSinceJ2010);
-        double R = EARTH.computeRadius(earthTrueAnomaly);
+        double R = EARTH.computeOrbitRadius(earthTrueAnomaly);
         double L = EARTH.computeLongitude(earthTrueAnomaly);
 
         EclipticCoordinates eclCoord;
@@ -85,7 +106,7 @@ public enum PlanetModel implements CelestialObjectModel<Planet> {
                 : outerPlanetsEclGeocentricCoord(radius2, lon, phi, R, L);
 
         double distanceToEarth = computeDistanceToEarth(radius, lon2, R, L, phi);
-        System.out.println("Distance to earth: "  + distanceToEarth);
+        System.out.println("Distance to earth: " + distanceToEarth);
         float angularSize = (float) (this.angularSize1UA / distanceToEarth);
         float magnitude = (float) computeMagnitude(radius, lon2, eclCoord.lon(), distanceToEarth, phi);
 
@@ -97,6 +118,7 @@ public enum PlanetModel implements CelestialObjectModel<Planet> {
 
     /**
      * Computes the distance of a planet to Earth.
+     * Helper method to assist computing and cleanliness.
      *
      * @param r
      * @param l
@@ -110,16 +132,29 @@ public enum PlanetModel implements CelestialObjectModel<Planet> {
         return Math.sqrt(R * R + r * r - 2 * R * r * Math.cos(l - L) * Math.cos(phi));
     }
 
+    /**
+     * Computes the magnitude of the planet.
+     * Helper method to assist computing and cleanliness.
+     *
+     * @param r
+     * @param l
+     * @param lambda
+     * @param distanceToEarth
+     * @param phi
+     * @return
+     */
     private double computeMagnitude(double r, double l, double lambda, double distanceToEarth, double phi) {
         double F = (1 + Math.cos(lambda - l)) / 2.0;
         return magnitude + 5d * Math.log10((r * distanceToEarth) / Math.sqrt(F));
     }
 
     /**
-     * Computes true anomaly of a Planet.
+     * Computes the true Anomaly of the planet.
+     * Helper method to assist computing and cleanliness.
+     * *
      *
      * @param daysSinceJ2010
-     * @return True anomaly in the interval [0,TAU]
+     * @return True anomaly in the interval [0,TAU].
      */
     private double computeTrueAnomaly(double daysSinceJ2010) {
         double meanAnomaly = Angle.normalizePositive((SunModel.SPEED) * (daysSinceJ2010 / period)) + lonJ2010 - lonPerigee;
@@ -128,19 +163,21 @@ public enum PlanetModel implements CelestialObjectModel<Planet> {
     }
 
     /**
-     * Computes the orbit radius of a planet.
+     * Computes the Orbit Radius of the planet.
+     * Helper method to assist computing and cleanliness.
      *
      * @param trueAnomaly
-     * @return
+     * @return the computed orbit radius.
      */
-    private double computeRadius(double trueAnomaly) {
+    private double computeOrbitRadius(double trueAnomaly) {
         return (axe * (1d - eccentricity * eccentricity)) / (1d + eccentricity * Math.cos(trueAnomaly));
     }
 
     /**
-     * Computes the longitude of a planet in its orbit plan.
-     * @param trueAnomaly
-     * @return
+     * Computes the longitude of the Planet in its plan.
+     * Helper method to assist computing and cleanliness.
+     *
+     * @return the computed longitude.
      */
     private double computeLongitude(double trueAnomaly) {
         //Pas besoin de la normaliser.
@@ -148,7 +185,9 @@ public enum PlanetModel implements CelestialObjectModel<Planet> {
     }
 
     /**
-     * Computes the ecliptic heliocentric latitude.
+     * Computes the latitude of the Planet.
+     * Helper method to assist computing and cleanliness.
+     *
      * @param longitude
      * @return
      */
@@ -159,6 +198,7 @@ public enum PlanetModel implements CelestialObjectModel<Planet> {
 
     /**
      * Computes the Ecliptic Geocentric Coordinates of an inner planet.
+     * Helper method to assist computing and cleanliness.
      *
      * @param planetRadius
      * @param lon
@@ -175,6 +215,7 @@ public enum PlanetModel implements CelestialObjectModel<Planet> {
 
     /**
      * Computes the Ecliptic Geocentric coordianters of an outer planet.
+     * Helper method to assist computing and cleanliness.
      *
      * @param planetRadius
      * @param lon

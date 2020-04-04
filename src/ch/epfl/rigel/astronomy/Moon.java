@@ -7,7 +7,8 @@ import ch.epfl.rigel.math.ClosedInterval;
 import java.util.Locale;
 
 /**
- * Represents the moon planet.
+ * Represents a star at a given date/position.
+ *
  * @author Mark Mouawad (296508)
  * @author Leah Uzzan (302829)
  */
@@ -17,6 +18,8 @@ public final class Moon extends CelestialObject {
     private final float phase;
 
     /**
+     * Constructs a Moon object at a given date/position.
+     *
      * @param equatorialPos equatorial position of the object at a given time
      * @param angularSize   size of the object
      * @param magnitude     magnitude of the object

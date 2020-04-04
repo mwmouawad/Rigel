@@ -9,7 +9,8 @@ import java.util.function.Function;
 
 /**
  * Tool to represent equatorial coordinates to horizontal coordinates.
- * The class is implements a function to enable chaining the conversions.
+ * The class is implements a Function to enable chaining the conversions.
+ *
  * @author Mark Mouawad (296508)
  * @author Leah Uzzan (302829)
  */
@@ -22,7 +23,13 @@ public final class EquatorialToHorizontalConversion implements Function<Equatori
     private final static RightOpenInterval ALT_INTERVAL = RightOpenInterval.symmetric(Math.PI);
 
 
-    public EquatorialToHorizontalConversion(ZonedDateTime when, GeographicCoordinates where){
+    /**
+     * Constructs the instance for the conversion in a given position and date.
+     *
+     * @param when
+     * @param where
+     */
+    public EquatorialToHorizontalConversion(ZonedDateTime when, GeographicCoordinates where) {
         phi = where.lat();
         localTime = SiderealTime.local(when, where);
         cosPhi = Math.cos(phi);
@@ -30,6 +37,7 @@ public final class EquatorialToHorizontalConversion implements Function<Equatori
     }
 
     /**
+     * Computes the horizontal coordinates of the input equatorial coordinates.
      *
      * @param equ equatorial coordinates input.
      * @return Horizontal Coordinates representation of the input.
@@ -50,7 +58,7 @@ public final class EquatorialToHorizontalConversion implements Function<Equatori
         );
         double az = Math.atan2(
                 -Math.cos(delta) * cosPhi * sinAngleHour
-                ,Math.sin(delta) - sinPhi * Math.sin(alt)
+                , Math.sin(delta) - sinPhi * Math.sin(alt)
         );
 
         //second conversion not necessary because of the arcsin.
@@ -60,8 +68,12 @@ public final class EquatorialToHorizontalConversion implements Function<Equatori
 
 
     @Override
-    public boolean equals(Object o) { throw new UnsupportedOperationException(); }
+    public boolean equals(Object o) {
+        throw new UnsupportedOperationException();
+    }
 
     @Override
-    public int hashCode() { throw new UnsupportedOperationException(); }
+    public int hashCode() {
+        throw new UnsupportedOperationException();
+    }
 }

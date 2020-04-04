@@ -3,6 +3,7 @@ package ch.epfl.rigel.astronomy;
 import ch.epfl.rigel.coordinates.EquatorialCoordinates;
 
 /**
+ * Represents a planet at a given date/position.
  * @author Mark Mouawad (296508)
  * @author Leah Uzzan (302829)
  */

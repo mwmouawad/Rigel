@@ -20,7 +20,7 @@ public enum AsterismLoader implements StarCatalogue.Loader {
 
 
     /**
-     * Loads asterisms from input file in the input stream.
+     * Loads asterisms from input file in into a star Catalogue Builder.
      *
      * @param inputStream inputstream associated with the asterisms file.
      * @param builder     star catalogue builder with stars loaded.
@@ -36,6 +36,7 @@ public enum AsterismLoader implements StarCatalogue.Loader {
         String[] charTable;
         List<Star> starList = new ArrayList<Star>();
         Asterism asterism;
+
 
         while (line != null) {
             starList.clear();
@@ -60,11 +61,13 @@ public enum AsterismLoader implements StarCatalogue.Loader {
 
 
     /**
+     * Helper method to get Star from the star catalogue.
+     *
      * @param id            star id
      * @param starCatalogue catalogue of stars
      * @return returns the object star from the catalogue
      */
-    public static Star getStarFromCatalogue(int id, List<Star> starCatalogue) {
+    private static Star getStarFromCatalogue(int id, List<Star> starCatalogue) {
 
         for (Star s : starCatalogue) {
             if (s.hipparcosId() == id) {

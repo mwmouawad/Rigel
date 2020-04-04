@@ -11,7 +11,7 @@ import ch.epfl.rigel.math.Interval;
 import javafx.scene.paint.Color;
 
 /**
- * Non instanciable class, meant to be used to get the corresponding color in degrees kelvin from a celestial object
+ * Non instantiable class, meant to be used to get the corresponding color in degrees kelvin from a celestial object
  * to it Color object representation.
  * Loads the information from 'bbr_color.txt'.
  * @author Mark Mouawad (296508)
@@ -43,7 +43,6 @@ public class BlackBodyColor {
             for (int i = 0; i < 18; i++) buffReader.readLine();
             line = buffReader.readLine();
             int lineNb = 19;
-
 
             while (line != null) {
 
@@ -91,17 +90,13 @@ public class BlackBodyColor {
      */
     public static Color colorForTemperature(double temperatureInDeg) {
 
-
         //Check if the temperature is in the right interval
         Preconditions.checkInInterval(tempInterval, temperatureInDeg);
 
         int roundedTemp = (int) Math.round(temperatureInDeg / 100.0d) * 100;
-
-
         String colorCode = colorMap.get(roundedTemp);
 
         return Color.web(colorCode);
-
 
     }
 
