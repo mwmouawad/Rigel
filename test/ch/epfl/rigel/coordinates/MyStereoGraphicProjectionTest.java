@@ -1,4 +1,4 @@
-package ch.epfl.astronomy;
+package ch.epfl.rigel.coordinates;
 
 import ch.epfl.rigel.coordinates.CartesianCoordinates;
 import ch.epfl.rigel.coordinates.HorizontalCoordinates;

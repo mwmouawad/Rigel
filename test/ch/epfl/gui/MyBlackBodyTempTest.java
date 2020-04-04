@@ -1,4 +1,4 @@
-package ch.epfl.astronomy;
+package ch.epfl.gui;
 import ch.epfl.rigel.gui.BlackBodyColor;
 import javafx.scene.paint.Color;
 import org.junit.jupiter.api.Test;
