@@ -7,6 +7,5 @@ public class MyObservedSkyTest {
     @Test
     void constructorWorksAsExpected(){
 
-        var obsSky = new ObservedSky(null, null, null, null);
     }
 }

@@ -1,10 +1,7 @@
 package ch.epfl.rigel.astronomy;
 
 import ch.epfl.rigel.Preconditions;
-import ch.epfl.rigel.coordinates.CartesianCoordinates;
-import ch.epfl.rigel.coordinates.EclipticToEquatorialConversion;
-import ch.epfl.rigel.coordinates.GeographicCoordinates;
-import ch.epfl.rigel.coordinates.StereographicProjection;
+import ch.epfl.rigel.coordinates.*;
 
 import java.time.ZonedDateTime;
 import java.util.*;
@@ -23,6 +20,7 @@ public final class ObservedSky {
     private final GeographicCoordinates position;
     private final StereographicProjection projection;
     private final StarCatalogue catalogue;
+    private final ZonedDateTime when;
 
     /**
      * Constructs the observed skyline by computing the position of all planets in the solar system, the moon and
@@ -40,6 +38,7 @@ public final class ObservedSky {
         Preconditions.checkArgument(!(catalogue == null));
         this.projection = projection;
         this.position = position;
+        this.when = time;
         double daysUntil = Epoch.J2010.daysUntil(time);
 
         EclipticToEquatorialConversion conversion = new EclipticToEquatorialConversion(time);
@@ -68,32 +67,49 @@ public final class ObservedSky {
 
     public Moon moon() { return moon; }
 
-    //TODO : looks weird.
     public CartesianCoordinates sunPosition() {
-        return CartesianCoordinates.of(sun.eclipticPos().lon(), sun.eclipticPos().lat());
+        return this.project(this.sun);
     }
 
+    //
     public CartesianCoordinates moonPosition() {
-        return CartesianCoordinates.of(moon.equatorialPos().ra(),moon.equatorialPos().dec());
+        return this.project(this.moon);
+    }
+
+    /**
+     * Helper method for projecting from Celestial Objects with Equatorial Coordinates.
+     * @param celestialObject the celestial object position to project with.
+     * @return steographic projection cartesian coordinates.
+     */
+    private CartesianCoordinates project(CelestialObject celestialObject){
+        HorizontalCoordinates horCoordinates = new EquatorialToHorizontalConversion(this.when, this.position).apply(celestialObject.equatorialPos());
+        return this.projection.apply(horCoordinates);
     }
 
     public double[] planetPositions() {
+
         double[] positions = new double[planets.size()*2];
+
         int j = 0;
-        for(int i = 0; i < planets.size(); i++){
-            positions[j] = planets.get(i).equatorialPos().ra();
-            positions[j+1] = planets.get(i).equatorialPos().dec();
-            j+=2;
+
+        for(int i = 0; i<planets.size(); i++){
+                CartesianCoordinates projCoord = this.project(planets.get(i));
+                positions[j] = projCoord.x();
+                positions[j+1] = projCoord.y();
+                j+=2;
         }
-        return positions;
+
+        return  positions;
+
     }
 
     public double[] starPositions() {
         double[] positions = new double[stars.size()*2];
         int j = 0;
         for(int i = 0; i < stars.size(); i++){
-            positions[j] = stars.get(i).equatorialPos().ra();
-            positions[j+1] = stars.get(i).equatorialPos().dec();
+            CartesianCoordinates starCoord = this.project(stars.get(i));
+            positions[j] = starCoord.x();
+            positions[j+1] = starCoord.y();
             j+=2;
         }
         return positions;
@@ -105,10 +121,9 @@ public final class ObservedSky {
 
     public List<Integer> asterismIndices(Asterism asterism) { return catalogue.asterismIndices(asterism); }
 
-    //TODO: objectClosestTo
-    //   - Quel type de coord?
 
-    public Optional objectClosestTo(GeographicCoordinates coordinates, double distance) {
+
+    public Optional objectClosestTo(CartesianCoordinates coordinates, double distance) {
 
 
         return Optional.empty();
