@@ -53,25 +53,51 @@ public final class ObservedSky {
             }
         }
 
-        stars = List.copyOf(catalogue.stars());
+        stars = Collections.unmodifiableList(catalogue.stars());
 
         this.catalogue = catalogue;
 
     }
 
+    /**
+     * Returns the sky's sun instance.
+     * @return Returns the sky's sun instance
+     */
     public Sun sun(){ return sun; }
 
+    /**
+     * Returns an array containing all of the  sky's planets.
+     *
+     * @return Returns an array containing all of the  sky's planets.
+     */
     public  List<Planet> planets() { return Collections.unmodifiableList(planets); }
 
+    /**
+     * Returns an array containing all of the  sky's stars.
+     *
+     * @return Returns an array containing all of the  sky's stars.
+     */
+    //TODO : when  did  we call it  ?
     public List<Star> stars() { return Collections.unmodifiableList(stars); }
 
+    /**
+     * Returns the sky's moon instance.
+     * @return Returns the sky's moon instance
+     */
     public Moon moon() { return moon; }
 
+    /**
+     * Returns the Observed sky's sun coordinates.
+     * @return Returns the Observed sky's sun coordinates.
+     */
     public CartesianCoordinates sunPosition() {
         return this.project(this.sun);
     }
 
-    //
+    /**
+     * Returns the Observed sky's moon coordinates.
+     * @return Returns the Observed sky's moon coordinates.
+     */
     public CartesianCoordinates moonPosition() {
         return this.project(this.moon);
     }
@@ -86,6 +112,13 @@ public final class ObservedSky {
         return this.projection.apply(horCoordinates);
     }
 
+    /**
+     * Returns an array with the planets' positions.
+     * For each planet of the sky, the coordinates are represented in a array of double,
+     * the x value is followed by the y value of the corresponding planet in  the array.
+     * This is used to make the manipulation of the coordinates easier.
+     * @return Returns an array with the decomposed planets' positions
+     */
     public double[] planetPositions() {
         double[] positions = new double[planets.size()*2];
         int j = 0;
@@ -98,6 +131,13 @@ public final class ObservedSky {
         return  positions;
     }
 
+    /**
+     * Returns an array with the Observed sky stars' positions.
+     * For each star of the sky, the coordinates are represented in a array of double,
+     * the x value is followed by the y value of the corresponding star in  the array.
+     * This is used to make the manipulation of the coordinates easier.
+     * @return Returns an array with the decomposed planets' positions
+     */
     public double[] starPositions() {
         double[] positions = new double[stars.size()*2];
         int j = 0;
@@ -110,10 +150,21 @@ public final class ObservedSky {
         return positions;
     }
 
+    /**
+     * Returns a set with  all of the Observed sky's asterisms.
+     * @return Returns the Observed sky's asterisms.
+     */
     public Set<Asterism> asterisms() {
         return catalogue.asterisms();
     }
 
+    /**
+     * Returns a list with the index of the stars for the input astermism.
+     *
+     * @param asterism
+     * @return list with the index of the stars in the stars list.
+     * @throws IllegalArgumentException if the asterism is not stored in the StarCatalogue
+     */
     public List<Integer> asterismIndices(Asterism asterism) { return catalogue.asterismIndices(asterism); }
 
     public Optional objectClosestTo(CartesianCoordinates coordinates, double distance) {

@@ -5,12 +5,14 @@ import ch.epfl.rigel.Preconditions;
 import java.lang.Math;
 
 /**
+ * Tools for angle conversions.
  * @author Mark Mouawad (296508)
  * @author Leah Uzzan (302829)
  */
 public final class Angle {
 
     public final static  double TAU = 2*Math.PI ;
+    private static final double DEG_PER_RAD = 360.0 / TAU;
     static private RightOpenInterval ZERO_TO_TAU =  RightOpenInterval.of(0, TAU);
 
 
@@ -18,8 +20,8 @@ public final class Angle {
 
     /**
      * Normalize the input rad angle to the interval [0, TAU[.
-     * @param rad
-     * @return normalized angle.
+     * @param rad angle to be normalized to the interval [0,TAU[
+     * @return normalized angle in the interval [0,TAU[
      */
     public static double normalizePositive(double rad){
         return ZERO_TO_TAU.reduce(rad);
@@ -30,29 +32,32 @@ public final class Angle {
      * @return
      */
     public static double ofArcsec(double sec){
+
         //Convert sec to degrees
         double deg = sec / 3600;
+
         return ofDeg(deg);
+
     }
 
     /**
-     * Converts the value in radian to degrees
-     * @param rad
-     * @return
+     * Consvert an angle of radian degrees to celsius degrees.
+     * @param rad  angle in radians to be converted.
+     * @return  the angle in celsius degrees.
      */
     public static double toDeg(double rad){
         return Math.toDegrees(rad);
     }
 
     /**
-     * Converts the value in degree in radians
-     * @param deg
-     * @return
+     * Convert an angle of celsius degrees to celsius radian.
+     * @param deg angle in celsius degrees.
+     * @return the angle in radian degrees.
      */
     public static double ofDeg(double deg){ return Math.toRadians(deg); }
 
     /**
-     * Converts the input angle to degrees.
+     * Convert the input angle to degrees.
      * @param hr input angles in hours.
      * @return
      */
@@ -61,13 +66,15 @@ public final class Angle {
     }
 
     /**
-     * Converts the input angle to hours.
+     * Convert the input angle to hours.
      * @param rad input angles in hours.
      * @return
      */
     public static double toHr(double rad){
+
         double deg = toDeg(rad);
         return deg / 15;
+
     }
 
     /**

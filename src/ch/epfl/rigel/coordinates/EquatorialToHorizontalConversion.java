@@ -25,7 +25,7 @@ public final class EquatorialToHorizontalConversion implements Function<Equatori
 
 
     /**
-     * Constructs the instance for the conversion in a given position and date.
+     * Constructs the instance for the conversion fore a given position and date.
      *
      * @param when
      * @param where
@@ -38,7 +38,7 @@ public final class EquatorialToHorizontalConversion implements Function<Equatori
     }
 
     /**
-     * Computes the horizontal coordinates of the input equatorial coordinates.
+     * Computes the horizontal coordinates for the equatorial coordinates input.
      *
      * @param equ equatorial coordinates input.
      * @return Horizontal Coordinates representation of the input.

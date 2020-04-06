@@ -46,7 +46,6 @@ public final class SiderealTime {
 
         double greenwichSiderealTimeInHours = S1 + S0;
 
-        System.out.println("Greenwhich hours: " + RightOpenInterval.of(0, 24).reduce(greenwichSiderealTimeInHours));
 
         //Normalize angle to the interval
         return Angle.normalizePositive(Angle.ofHr(greenwichSiderealTimeInHours));

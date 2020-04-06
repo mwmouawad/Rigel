@@ -90,7 +90,7 @@ public enum PlanetModel implements CelestialObjectModel<Planet> {
         double lon2 = lon;
         double phi = computeLatitude(lon);
         double radius2 = radius * Math.cos(phi);
-        //Pas besoin de la normaliser.
+        //No need to normalize because of the atan2 ans the trigonometric functions
         lon = Math.atan2(Math.sin(lon - lon_nod) * Math.cos(obliquity), Math.cos(lon - lon_nod)) + lon_nod;
 
         //Earth's Coordinates
@@ -99,7 +99,7 @@ public enum PlanetModel implements CelestialObjectModel<Planet> {
         double L = EARTH.computeLongitude(earthTrueAnomaly);
 
         EclipticCoordinates eclCoord;
-        //TODO  : compute beta externaly
+        //TODO  : compute beta externaly, or not necessary because we are going to compute it once ?
         //axe condition for inner planets
         eclCoord = axe < 1d ? innerPlanetsEclGeocentricCoord(radius2, lon, phi, R, L)
                 : outerPlanetsEclGeocentricCoord(radius2, lon, phi, R, L);
@@ -179,7 +179,6 @@ public enum PlanetModel implements CelestialObjectModel<Planet> {
      * @return the computed longitude.
      */
     private double computeLongitude(double trueAnomaly) {
-        //no need to normalize
         return (trueAnomaly + lonPerigee);
     }
 

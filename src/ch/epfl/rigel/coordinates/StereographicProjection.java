@@ -106,20 +106,38 @@ public final class StereographicProjection implements Function<HorizontalCoordin
         return HorizontalCoordinates.of(lambda, phi);
     }
 
+    /**
+     *
+     * @see Object#toString()
+     */
+    @Override
+    public String toString() {
+        return String.format(Locale.ROOT, "Stereographic Projection center : (x= %.4f, y= %.4f)", centerX,
+                centerY);
+    }
+
+    /**
+     * Not intended to be used. Will throw an exception.
+     *
+     * @param o object to be compared with.
+     * @throws UnsupportedOperationException
+     */
     @Override
     public boolean equals(Object o) {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * Not intended to be used. Will throw an exception.
+     *
+     * @throws UnsupportedOperationException
+     */
     @Override
     public int hashCode() {
         throw new UnsupportedOperationException();
     }
 
-    public String toString() {
-        return String.format(Locale.ROOT, "Stereographic Projection center : (x= %.4f, y= %.4f)", centerX,
-                centerY);
-    }
+
 
 
 }

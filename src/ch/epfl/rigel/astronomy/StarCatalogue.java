@@ -168,7 +168,9 @@ public final class StarCatalogue {
 
     }
 
-
+    /**
+     * Represents a loader that allows to load an input file.
+     */
     public interface Loader {
 
         /**Loads from input file in the input stream.

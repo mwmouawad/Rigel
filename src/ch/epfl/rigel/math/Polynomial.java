@@ -3,12 +3,16 @@ package ch.epfl.rigel.math;
 import ch.epfl.rigel.Preconditions;
 
 /**
+ * Represents a mathematical polynomial of the form.
+ * a0 + a1 * x + a2 * x^2 + ... an * x^N (degree N)
+ * Computes the output value for a given inout.
  * @author Mark Mouawad (296508)
  * @author Leah Uzzan (302829)
  */
 public final class Polynomial {
 
     private double coefficients[];
+
 
     private Polynomial(double coefficientN, double... coefficients){
         double[] newTable = new double[coefficients.length +1];
@@ -18,10 +22,10 @@ public final class Polynomial {
     }
 
     /**
-     * Constructs a Polynomial
-     * @param coefficientN
-     * @param coefficients
-     * @return
+     * Initializes  an instance of Polynomial of degree N of coefficients.
+     * @param coefficientN the coefficient of the N degree.
+     * @param coefficients the next coefficients from higher to lowest degree.
+     * @throws IllegalArgumentException if the coefficientN is equals to 0.
      */
     public static Polynomial of(double coefficientN, double... coefficients){
         Preconditions.checkArgument(coefficientN != 0);
@@ -29,9 +33,9 @@ public final class Polynomial {
     }
 
     /**
-     * Gives the value of the polynomial evaluated in x.
-     * @param x
-     * @return
+     * Computes the output value for the polynomial at the given input value x.
+     * @param x input value to be computed with the polynomial.
+     * @return computed ouput value for the input x.
      */
     public double at(double x) {
         //Take a look at the degree of the Polynomial
@@ -48,11 +52,10 @@ public final class Polynomial {
     }
 
 
-    //TODO
-
     /**
-     *
-     * @see Object#toString()
+     * Represents the polynomial of the form
+     * a0 + a1 * x + a2 * x^2 + ... an * x^N
+     * @return the String representation of the polynomial.
      */
     @Override
     public String toString() {
