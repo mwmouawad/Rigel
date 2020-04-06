@@ -22,8 +22,7 @@ public final class Asterism {
      */
     public Asterism(List<Star> stars){
         Preconditions.checkArgument(!stars.isEmpty());
-        //TODO: UnmodifiableList or copyOf?
-        this.list = Collections.unmodifiableList(stars);
+        this.list = List.copyOf(stars);
     }
 
     /**
