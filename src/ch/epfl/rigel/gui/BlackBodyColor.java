@@ -2,8 +2,8 @@ package ch.epfl.rigel.gui;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import ch.epfl.rigel.Preconditions;
 import ch.epfl.rigel.math.ClosedInterval;
@@ -21,52 +21,33 @@ public class BlackBodyColor {
 
     private static final String BBR_COLOR = "/bbr_color.txt";
     private static final Interval TEMP_INTERVAL = ClosedInterval.of(1000, 40000);
-    private static final Map<Integer, String> COLOR_MAP = loadColors();
+    private static final List<String> COLOR_LIST = loadColors();
 
-    private BlackBodyColor() {
-    }
+    private BlackBodyColor() { }
 
+    private static List<String> loadColors() {
 
-    private static Map loadColors() {
-
-        Map<Integer, String> map = new HashMap<Integer, String>();
+        List<String> colors = new ArrayList<>();
 
         try (InputStream inputStream = BlackBodyColor.class.getResourceAsStream(BBR_COLOR)) {
 
             InputStreamReader inStrReader = new InputStreamReader(inputStream, StandardCharsets.US_ASCII);
             BufferedReader buffReader = new BufferedReader(inStrReader);
+            String line = buffReader.readLine();
 
-            String line;
-
-            for (int i = 0; i < 18; i++) buffReader.readLine();
-            line = buffReader.readLine();
-            int lineNb = 19;
-
-            while (line != null) {
-
-                if (lineNb > 19 && lineNb < 802) {
-                    StringBuilder sb = new StringBuilder();
-
-                    for (int i = 0; i < 6; i++) {
-                      sb = line.charAt(i) != ' ' ? sb.append(line.charAt(i)) : sb;
-                    }
-
-                    int temp = Integer.parseInt(sb.toString());
-                    String colorCode = line.substring(80,87);
-
-                    map.put(temp, colorCode);
+            while(line != null) {
+                if(line.charAt(0) != '#') {
+                    System.out.println(line);
+                    colors.add(line.substring(80,87).strip());
                 }
-
-                lineNb += 2;
                 buffReader.readLine();
                 line = buffReader.readLine();
             }
-            return map;
+            return colors;
 
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
-
     }
 
 
@@ -76,15 +57,13 @@ public class BlackBodyColor {
      * @throws IllegalArgumentException if temp ( in kelvins ) is not in the interval [1000K, 40000K]
      */
     public static Color colorForTemperature(double temperatureInDeg) {
-
         //Check if the temperature is in the right interval
         Preconditions.checkInInterval(TEMP_INTERVAL, temperatureInDeg);
-
         int roundedTemp = (int) Math.round(temperatureInDeg / 100.0d) * 100;
-        String colorCode = COLOR_MAP.get(roundedTemp);
+        //the steps of the data are of 100 and the first value is a 1000. 
+        String colorCode = COLOR_LIST.get((roundedTemp - 1000)/ 100);
 
         return Color.web(colorCode);
-
     }
 
 }
