@@ -2,6 +2,9 @@ package ch.epfl.rigel.math;
 
 
 /**
+ * Mother class representing mathematical intervals, such as [a,b], [a,b[...
+ * with a < b.
+ *
  * @author Mark Mouawad (296508)
  * @author Leah Uzzan (302829)
  */
@@ -11,26 +14,46 @@ public abstract class Interval {
     private final double high;
 
 
-    protected Interval(double low, double high){
+    /**
+     * Creates an interval instance.
+     *
+     * @param low
+     * @param high
+     */
+    protected Interval(double low, double high) {
 
         this.low = low;
         this.high = high;
 
     }
 
-    public double low(){
+    /**
+     * Returns the lower bound of the interval.
+     *
+     * @return the lower bound of the interval.
+     */
+    public double low() {
         return this.low;
     }
 
-    public double high(){
+    /**
+     * Returns the higher bound of the interval.
+     *
+     * @return the higher bound of the interval.
+     */
+    public double high() {
         return this.high;
     }
 
-    public double size(){
+    /**
+     * Returns the size of the interval by computing higherBound - lowerBound.
+     *
+     * @return the size of the interval.
+     */
+    public double size() {
         return (this.high - this.low);
     }
 
-    //Should return true if and only if v belongs to the interval.
     public abstract boolean contains(double v);
 
     @Override

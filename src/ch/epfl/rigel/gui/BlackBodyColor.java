@@ -12,7 +12,7 @@ import javafx.scene.paint.Color;
 
 /**
  * Non instantiable class, meant to be used to get the corresponding color in degrees kelvin from a celestial object
- * to it Color object representation.
+ * to a Color object representation.
  * Loads the information from 'bbr_color.txt'.
  * @author Mark Mouawad (296508)
  * @author Leah Uzzan (302829)
@@ -21,7 +21,7 @@ public class BlackBodyColor {
 
     private static final String BBR_COLOR = "/bbr_color.txt";
     private static final Interval TEMP_INTERVAL = ClosedInterval.of(1000, 40000);
-    private static final Map<Integer, String> colorMap = loadColors();
+    private static final Map<Integer, String> COLOR_MAP = loadColors();
 
     private BlackBodyColor() {
     }
@@ -47,16 +47,14 @@ public class BlackBodyColor {
                 if (lineNb > 19 && lineNb < 802) {
                     StringBuilder sb = new StringBuilder();
 
-                    //TODO : Pourquoi ne fonctionne pas? String sb = line.substring(0,6);
                     for (int i = 0; i < 6; i++) {
                       sb = line.charAt(i) != ' ' ? sb.append(line.charAt(i)) : sb;
                     }
 
                     int temp = Integer.parseInt(sb.toString());
-                    String colorCode = line.substring(line.indexOf("#"));
+                    String colorCode = line.substring(80,87);
 
                     map.put(temp, colorCode);
-                    System.out.println(lineNb + " " + temp  + " " + colorCode);
                 }
 
                 lineNb += 2;
@@ -72,7 +70,7 @@ public class BlackBodyColor {
     }
 
 
-    /** Gets the corresponding web Color for the given tempetature in degrees.
+    /** Gets the corresponding web Color for the given temperature in degrees.
      * @param temperatureInDeg
      * @return
      * @throws IllegalArgumentException if temp ( in kelvins ) is not in the interval [1000K, 40000K]
@@ -83,7 +81,7 @@ public class BlackBodyColor {
         Preconditions.checkInInterval(TEMP_INTERVAL, temperatureInDeg);
 
         int roundedTemp = (int) Math.round(temperatureInDeg / 100.0d) * 100;
-        String colorCode = colorMap.get(roundedTemp);
+        String colorCode = COLOR_MAP.get(roundedTemp);
 
         return Color.web(colorCode);
 

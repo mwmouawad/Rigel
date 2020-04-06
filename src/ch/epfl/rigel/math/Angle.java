@@ -5,6 +5,7 @@ import ch.epfl.rigel.Preconditions;
 import java.lang.Math;
 
 /**
+ * Tools for angle conversions.
  * @author Mark Mouawad (296508)
  * @author Leah Uzzan (302829)
  */
@@ -21,8 +22,8 @@ public final class Angle {
 
     /**
      * Normalize the input rad angle to the interval [0, TAU[.
-     * @param rad
-     * @return normalized angle.
+     * @param rad angle to be normalized to the interval [0,TAU[
+     * @return normalized angle in the interval [0,TAU[
      */
     public static double normalizePositive(double rad){
         return ZERO_TO_TAU.reduce(rad);
@@ -41,10 +42,20 @@ public final class Angle {
 
     }
 
+    /**
+     * Consvert an angle of radian degrees to celsius degrees.
+     * @param rad  angle in radians to be converted.
+     * @return  the angle in celsius degrees.
+     */
     public static double toDeg(double rad){
         return Math.toDegrees(rad);
     }
 
+    /**
+     * Convert an angle of celsius degrees to celsius radian.
+     * @param deg angle in celsius degrees.
+     * @return the angle in radian degrees.
+     */
     public static double ofDeg(double deg){ return Math.toRadians(deg); }
 
     /**
