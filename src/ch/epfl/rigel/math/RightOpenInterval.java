@@ -15,15 +15,24 @@ public final class RightOpenInterval extends Interval {
         super(low, high);
     }
 
-
+    /**
+     * Constructs an Interval open on the right with the given arguments
+     * @param low
+     * @param high
+     * @return
+     * @throws IllegalArgumentException
+     */
     public static RightOpenInterval of(double low, double high){
-
         Preconditions.checkArgument(low < high);
-
         return new RightOpenInterval(low, high);
     }
 
-
+    /**
+     * Constructs an Interval open on the right centered around zero of the given size.
+     * @param size
+     * @return
+     * @throws IllegalArgumentException
+     */
     public static RightOpenInterval symmetric(double size){
 
         Preconditions.checkArgument( size > 0);
@@ -36,14 +45,12 @@ public final class RightOpenInterval extends Interval {
 
     }
 
+    /**
+     *
+     * @see Interval#contains(double)
+     */
     @Override
-    public boolean contains(double v) {
-        if( v < this.high() && v >= this.low() ){
-            return true;
-        }
-
-        return false;
-    }
+    public boolean contains(double v) { return v < this.high() && v >= this.low(); }
 
     /**
      * Method based on reducing interval.
@@ -51,7 +58,6 @@ public final class RightOpenInterval extends Interval {
      * @return
      */
     public double reduce(double v){
-
         double a = this.low();
         double b = this.high();
         double x = v - a;
@@ -60,9 +66,12 @@ public final class RightOpenInterval extends Interval {
         double floorModResult = x - y * Math.floor(x/y);
 
         return (a + floorModResult);
-
     }
 
+    /**
+     *
+     * @see Object#toString()
+     */
     @Override
     public String toString() {
         return String.format(Locale.ROOT,

@@ -59,7 +59,7 @@ public enum PlanetModel implements CelestialObjectModel<Planet> {
      * @param size
      * @param magnitude
      */
-    private PlanetModel(String name, double period, double lonJ2010, double lonPerigee, double eccentricity, double axe,
+     PlanetModel(String name, double period, double lonJ2010, double lonPerigee, double eccentricity, double axe,
                         double obliquity, double lon_nod, double size, double magnitude) {
         this.name = Objects.requireNonNull(name);
         this.period = period;
@@ -90,10 +90,8 @@ public enum PlanetModel implements CelestialObjectModel<Planet> {
         double lon2 = lon;
         double phi = computeLatitude(lon);
         double radius2 = radius * Math.cos(phi);
-        lon = Math.atan2(Math.sin(lon - lon_nod) * Math.cos(obliquity), Math.cos(lon - lon_nod)) + lon_nod;
-
         //Pas besoin de la normaliser.
-        lon = (lon);
+        lon = Math.atan2(Math.sin(lon - lon_nod) * Math.cos(obliquity), Math.cos(lon - lon_nod)) + lon_nod;
 
         //Earth's Coordinates
         double earthTrueAnomaly = EARTH.computeTrueAnomaly(daysSinceJ2010);
@@ -101,12 +99,13 @@ public enum PlanetModel implements CelestialObjectModel<Planet> {
         double L = EARTH.computeLongitude(earthTrueAnomaly);
 
         EclipticCoordinates eclCoord;
+        //TODO  : compute beta externaly
         //axe condition for inner planets
         eclCoord = axe < 1d ? innerPlanetsEclGeocentricCoord(radius2, lon, phi, R, L)
                 : outerPlanetsEclGeocentricCoord(radius2, lon, phi, R, L);
 
         double distanceToEarth = computeDistanceToEarth(radius, lon2, R, L, phi);
-        System.out.println("Distance to earth: " + distanceToEarth);
+
         float angularSize = (float) (this.angularSize1UA / distanceToEarth);
         float magnitude = (float) computeMagnitude(radius, lon2, eclCoord.lon(), distanceToEarth, phi);
 
@@ -180,7 +179,7 @@ public enum PlanetModel implements CelestialObjectModel<Planet> {
      * @return the computed longitude.
      */
     private double computeLongitude(double trueAnomaly) {
-        //Pas besoin de la normaliser.
+        //no need to normalize
         return (trueAnomaly + lonPerigee);
     }
 

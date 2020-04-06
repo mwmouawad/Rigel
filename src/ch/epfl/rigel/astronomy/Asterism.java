@@ -2,6 +2,7 @@ package ch.epfl.rigel.astronomy;
 
 import ch.epfl.rigel.Preconditions;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -21,11 +22,12 @@ public final class Asterism {
      */
     public Asterism(List<Star> stars){
         Preconditions.checkArgument(!stars.isEmpty());
-        this.list = List.copyOf(stars);
+        //TODO: UnmodifiableList or copyOf?
+        this.list = Collections.unmodifiableList(stars);
     }
 
     /**
-     *
+     * Returns the list of stars of the class
      * @return the list of stars.
      */
     public List<Star> stars(){ return list; }

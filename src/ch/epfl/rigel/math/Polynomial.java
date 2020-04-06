@@ -8,8 +8,7 @@ import ch.epfl.rigel.Preconditions;
  */
 public final class Polynomial {
 
-    double coefficients[];
-
+    private double coefficients[];
 
     private Polynomial(double coefficientN, double... coefficients){
         double[] newTable = new double[coefficients.length +1];
@@ -18,11 +17,22 @@ public final class Polynomial {
         this.coefficients = newTable;
     }
 
+    /**
+     * Constructs a Polynomial
+     * @param coefficientN
+     * @param coefficients
+     * @return
+     */
     public static Polynomial of(double coefficientN, double... coefficients){
         Preconditions.checkArgument(coefficientN != 0);
         return new Polynomial(coefficientN,coefficients);
     }
 
+    /**
+     * Gives the value of the polynomial evaluated in x.
+     * @param x
+     * @return
+     */
     public double at(double x) {
         //Take a look at the degree of the Polynomial
         int coeffLength = this.coefficients.length;
@@ -38,9 +48,13 @@ public final class Polynomial {
     }
 
 
-
-    @Override
     //TODO
+
+    /**
+     *
+     * @see Object#toString()
+     */
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
@@ -79,11 +93,19 @@ public final class Polynomial {
         return sb.toString();
     }
 
+    /**
+     * Operation not available
+     * @throws UnsupportedOperationException
+     */
     @Override
     public final int hashCode() {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * Operation not available
+     * @throws UnsupportedOperationException
+     */
     @Override
     public final boolean equals(Object obj) {
         throw new UnsupportedOperationException();

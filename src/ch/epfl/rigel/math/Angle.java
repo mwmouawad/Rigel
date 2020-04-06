@@ -11,13 +11,10 @@ import java.lang.Math;
 public final class Angle {
 
     public final static  double TAU = 2*Math.PI ;
-    private static final double DEG_PER_RAD = 360.0 / TAU;
     static private RightOpenInterval ZERO_TO_TAU =  RightOpenInterval.of(0, TAU);
 
 
-    private Angle(){
-
-    }
+    private Angle(){ }
 
     /**
      * Normalize the input rad angle to the interval [0, TAU[.
@@ -33,22 +30,29 @@ public final class Angle {
      * @return
      */
     public static double ofArcsec(double sec){
-
         //Convert sec to degrees
         double deg = sec / 3600;
-
         return ofDeg(deg);
-
     }
 
+    /**
+     * Converts the value in radian to degrees
+     * @param rad
+     * @return
+     */
     public static double toDeg(double rad){
         return Math.toDegrees(rad);
     }
 
+    /**
+     * Converts the value in degree in radians
+     * @param deg
+     * @return
+     */
     public static double ofDeg(double deg){ return Math.toRadians(deg); }
 
     /**
-     * Convert the input angle to degrees.
+     * Converts the input angle to degrees.
      * @param hr input angles in hours.
      * @return
      */
@@ -57,15 +61,13 @@ public final class Angle {
     }
 
     /**
-     * Convert the input angle to hours.
+     * Converts the input angle to hours.
      * @param rad input angles in hours.
      * @return
      */
     public static double toHr(double rad){
-
         double deg = toDeg(rad);
         return deg / 15;
-
     }
 
     /**
@@ -85,9 +87,7 @@ public final class Angle {
         //Convert arcseconds to Degrees
         double secInDeg = sec / 3600;
 
-
         return ofDeg(deg + minInDeg + secInDeg);
-
     }
 
 

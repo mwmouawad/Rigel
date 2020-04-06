@@ -35,25 +35,41 @@ public final class EclipticCoordinates extends SphericalCoordinates {
         );
     }
 
+    /**
+     * Returns the longitude of the coordinates
+     * @return
+     */
     public double lon(){
         return super.lon();
     }
 
+    /**
+     * Returns the latitude of the coordinates
+     * @return
+     */
     public double lat(){
         return super.lat();
     }
 
+    /**
+     * Returns the longitude of the coordinates in degrees
+     * @return
+     */
     public double lonDeg(){
         return super.lonDeg();
     }
 
+    /**
+     * Returns the latitude of the coordinates in degrees
+     * @return
+     */
     public double latDeg(){
         return super.latDeg();
     }
 
     /**
      *
-     * @see SphericalCoordinates#toString()
+     * @see Object#toString()
      */
     public String toString() {
         return String.format(Locale.ROOT, "(λ=%.4f°, β=%.4f°)", this.lonDeg(), this.latDeg());

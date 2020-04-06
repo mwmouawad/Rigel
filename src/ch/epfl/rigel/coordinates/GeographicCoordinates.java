@@ -19,7 +19,6 @@ public final class GeographicCoordinates extends SphericalCoordinates {
     private static final RightOpenInterval LON_DEG_INTERVAL = RightOpenInterval.of(-180, 180);
     private static final ClosedInterval LAT_DEG_INTERVAL = ClosedInterval.symmetric(180);
 
-
     private GeographicCoordinates(double longitude, double latitude) {
         super(longitude, latitude);
     }
@@ -60,18 +59,34 @@ public final class GeographicCoordinates extends SphericalCoordinates {
         return (LAT_DEG_INTERVAL.contains(latDeg));
     }
 
+    /**
+     * Returns the longitude of the coordinates
+     * @return
+     */
     public double lon() {
         return super.lon();
     }
 
+    /**
+     * Returns the latitude of the coordinates
+     * @return
+     */
     public double lat() {
         return super.lat();
     }
 
+    /**
+     * Returns the longitude of the coordinates in degrees
+     * @return
+     */
     public double lonDeg() {
         return super.lonDeg();
     }
 
+    /**
+     * Returns the latitude of the coordinates in degrees
+     * @return
+     */
     public double latDeg() {
         return super.latDeg();
     }

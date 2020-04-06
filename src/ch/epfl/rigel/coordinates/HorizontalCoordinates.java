@@ -15,7 +15,7 @@ import java.util.Locale;
  */
 public final class HorizontalCoordinates extends SphericalCoordinates {
 
-    private final  static RightOpenInterval AZ_INTERVAL = RightOpenInterval.of(0,Angle.TAU);
+    private final static RightOpenInterval AZ_INTERVAL = RightOpenInterval.of(0,Angle.TAU);
     private final static ClosedInterval ALT_INTERVAL = ClosedInterval.symmetric(Math.PI);
 
 
@@ -53,18 +53,34 @@ public final class HorizontalCoordinates extends SphericalCoordinates {
         );
     }
 
+    /**
+     * Returns the azimut of the coordinates
+     * @return
+     */
     public double az(){
         return super.lon();
     }
 
+    /**
+     * Returns the altitude of the coordinates
+     * @return
+     */
     public double alt(){
         return super.lat();
     }
 
+    /**
+     * Returns the azimut of the coordinates in degrees
+     * @return
+     */
     public double azDeg(){
         return super.lonDeg();
     }
 
+    /**
+     * Returns the altitude of the coordinates in degrees
+     * @return
+     */
     public double altDeg(){
         return super.latDeg();
     }

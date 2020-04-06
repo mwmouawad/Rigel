@@ -25,7 +25,16 @@ public final class CartesianCoordinates {
         return new CartesianCoordinates(x,y);
     }
 
+    /**
+     * Gives the x coordinates
+     * @return
+     */
     public double x() { return x; }
+
+    /**
+     * Gives the y coordinates
+     * @return
+     */
     public double y() { return y; }
 
     /**

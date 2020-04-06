@@ -14,22 +14,37 @@ public final class ClosedInterval extends Interval  {
         super(low, high);
     }
 
-
+    /**
+     * Constructs an instance of the class with an upper and lower bound for the interval.
+     * @param low
+     * @param high
+     * @return
+     * @throws IllegalArgumentException
+     */
     public static ClosedInterval of(double low, double high){
         Preconditions.checkArgument(low < high);
         return new ClosedInterval(low, high);
     }
 
-
+    /**
+     * Constructs an interval centered around zero of the size given in argument.
+     * @param size
+     * @return
+     * @throws IllegalArgumentException
+     */
     public static ClosedInterval symmetric(double size){
         Preconditions.checkArgument(size>0);
-        //Create low and high bounds centered around zero.
         double centeredLow = -(size / 2);
         double centeredHigh = -centeredLow;
         return new ClosedInterval(centeredLow, centeredHigh);
 
     }
 
+    /**
+     * 
+     * @param v
+     * @see Interval#contains(double) 
+     */
     @Override
     public boolean contains(double v) { return (v >= low() && v <= high()); }
 
@@ -48,6 +63,10 @@ public final class ClosedInterval extends Interval  {
         return v;
     }
 
+    /**
+     * 
+     * @see Object#toString() 
+     */
     @Override
     public String toString() {
         return String.format(Locale.ROOT, "[%.2f,%.2f]", this.low(), this.high());

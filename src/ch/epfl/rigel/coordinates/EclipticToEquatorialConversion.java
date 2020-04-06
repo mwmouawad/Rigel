@@ -17,7 +17,7 @@ import static ch.epfl.rigel.astronomy.Epoch.J2000;
  */
 public final class EclipticToEquatorialConversion implements Function<EclipticCoordinates, EquatorialCoordinates> {
 
-    private final Polynomial epsi = Polynomial.of(
+    private final Polynomial EPSI = Polynomial.of(
             Angle.ofArcsec(0.00181),
             -Angle.ofArcsec(0.0006),
             -Angle.ofArcsec(46.815),
@@ -32,8 +32,8 @@ public final class EclipticToEquatorialConversion implements Function<EclipticCo
      */
     public EclipticToEquatorialConversion(ZonedDateTime when) {
         double time = J2000.julianCenturiesUntil(when);
-        cosEpsi = Math.cos(epsi.at(time));
-        sinEpsi = Math.sin(epsi.at(time));
+        cosEpsi = Math.cos(EPSI.at(time));
+        sinEpsi = Math.sin(EPSI.at(time));
     }
 
     /**
@@ -57,11 +57,22 @@ public final class EclipticToEquatorialConversion implements Function<EclipticCo
         return EquatorialCoordinates.of(Angle.normalizePositive(alpha), DEC_INTERVAL.reduce(delta));
     }
 
+    /**
+     * Not intended to be used. Will throw an exception.
+     *
+     * @param o object to be compared with.
+     * @throws UnsupportedOperationException
+     */
     @Override
     public boolean equals(Object o) {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * Not intended to be used. Will throw an exception.
+     *
+     * @throws UnsupportedOperationException
+     */
     @Override
     public int hashCode() {
         throw new UnsupportedOperationException();

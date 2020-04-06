@@ -16,8 +16,9 @@ import java.util.function.Function;
  */
 public final class EquatorialToHorizontalConversion implements Function<EquatorialCoordinates, HorizontalCoordinates> {
 
-    public final double phi;
-    public final double localTime;
+    //TODO : Pourquoi etaient en public?
+    private final double phi;
+    private final double localTime;
     private final double cosPhi;
     private final double sinPhi;
     private final static RightOpenInterval ALT_INTERVAL = RightOpenInterval.symmetric(Math.PI);
@@ -48,8 +49,6 @@ public final class EquatorialToHorizontalConversion implements Function<Equatori
         //As seen from the book page 24 to find the hour angle.
         double hourAngle = Angle.normalizePositive(localTime - equ.ra());
 
-        System.out.println("Hour Angle: " + Angle.toHr(hourAngle));
-
         double cosAngleHour = Math.cos(hourAngle);
         double sinAngleHour = Math.sin(hourAngle);
 
@@ -61,17 +60,25 @@ public final class EquatorialToHorizontalConversion implements Function<Equatori
                 , Math.sin(delta) - sinPhi * Math.sin(alt)
         );
 
-        //second conversion not necessary because of the arcsin.
-
         return HorizontalCoordinates.of(Angle.normalizePositive(az), ALT_INTERVAL.reduce(alt));
     }
 
-
+    /**
+     * Not intended to be used. Will throw an exception.
+     *
+     * @param o object to be compared with.
+     * @throws UnsupportedOperationException
+     */
     @Override
     public boolean equals(Object o) {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * Not intended to be used. Will throw an exception.
+     *
+     * @throws UnsupportedOperationException
+     */
     @Override
     public int hashCode() {
         throw new UnsupportedOperationException();

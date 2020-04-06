@@ -87,20 +87,15 @@ public final class ObservedSky {
     }
 
     public double[] planetPositions() {
-
         double[] positions = new double[planets.size()*2];
-
         int j = 0;
-
         for(int i = 0; i<planets.size(); i++){
                 CartesianCoordinates projCoord = this.project(planets.get(i));
                 positions[j] = projCoord.x();
                 positions[j+1] = projCoord.y();
                 j+=2;
         }
-
         return  positions;
-
     }
 
     public double[] starPositions() {
@@ -121,12 +116,13 @@ public final class ObservedSky {
 
     public List<Integer> asterismIndices(Asterism asterism) { return catalogue.asterismIndices(asterism); }
 
-
-
     public Optional objectClosestTo(CartesianCoordinates coordinates, double distance) {
 
-
         return Optional.empty();
+    }
+
+    private double distance(double x1, double y1, double x2, double y2){
+        return Math.sqrt((x1 - x2) * (x1 - x2 ) + (y1 - y2) * (y1 - y2 ));
     }
 
     //TODO: Comment faire pour pouvoir l'utiliser pour Planet et Stars ?
@@ -143,6 +139,8 @@ public final class ObservedSky {
     }
 
      */
+
+
 
 
 }

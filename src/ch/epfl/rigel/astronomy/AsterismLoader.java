@@ -35,24 +35,16 @@ public enum AsterismLoader implements StarCatalogue.Loader {
         String line = buffReader.readLine();
         String[] charTable;
         List<Star> starList = new ArrayList<Star>();
-        Asterism asterism;
-
 
         while (line != null) {
             starList.clear();
-            System.out.println("Adding asterism");
             charTable = line.split(",");
             for (String s : charTable) {
-
                 Star star = getStarFromCatalogue(Integer.parseInt(s), builder.stars());
                 starList.add(star);
-
             }
-
             builder.addAsterism(new Asterism(starList));
-            System.out.println("Asterism added " + starList);
             line = buffReader.readLine();
-
 
         }
 
@@ -68,14 +60,12 @@ public enum AsterismLoader implements StarCatalogue.Loader {
      * @return returns the object star from the catalogue
      */
     private static Star getStarFromCatalogue(int id, List<Star> starCatalogue) {
-
         for (Star s : starCatalogue) {
             if (s.hipparcosId() == id) {
                 return s;
             }
         }
         return null;
-
     }
 
 
