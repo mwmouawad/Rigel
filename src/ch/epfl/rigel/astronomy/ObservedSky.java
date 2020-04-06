@@ -13,9 +13,14 @@ import java.util.*;
  */
 public final class ObservedSky {
 
+    private enum SkyObjects {
+        MOON,
+        SUN,
+        PLANETS,
+        STARS;
+    }
     private final Sun sun;
     private final List<Planet> planets;
-    private final List<Star> stars;
     private final Moon moon;
     private final GeographicCoordinates position;
     private final StereographicProjection projection;
@@ -31,7 +36,6 @@ public final class ObservedSky {
      * @param catalogue the stars catalogue used.
      */
     public ObservedSky(ZonedDateTime time, GeographicCoordinates position, StereographicProjection projection, StarCatalogue catalogue) {
-        //TODO: Are theses checks necessary?
         Preconditions.checkArgument(!(time == null));
         Preconditions.checkArgument(!(position == null));
         Preconditions.checkArgument(!(projection == null));
@@ -52,8 +56,6 @@ public final class ObservedSky {
                 planets.add(p.at(daysUntil, conversion));
             }
         }
-
-        stars = Collections.unmodifiableList(catalogue.stars());
 
         this.catalogue = catalogue;
 
@@ -77,8 +79,7 @@ public final class ObservedSky {
      *
      * @return Returns an array containing all of the  sky's stars.
      */
-    //TODO : when  did  we call it  ?
-    public List<Star> stars() { return Collections.unmodifiableList(stars); }
+    public List<Star> stars() { return catalogue.stars(); }
 
     /**
      * Returns the sky's moon instance.
@@ -139,10 +140,10 @@ public final class ObservedSky {
      * @return Returns an array with the decomposed planets' positions
      */
     public double[] starPositions() {
-        double[] positions = new double[stars.size()*2];
+        double[] positions = new double[stars().size()*2];
         int j = 0;
-        for(int i = 0; i < stars.size(); i++){
-            CartesianCoordinates starCoord = this.project(stars.get(i));
+        for(int i = 0; i < stars().size(); i++){
+            CartesianCoordinates starCoord = this.project(stars().get(i));
             positions[j] = starCoord.x();
             positions[j+1] = starCoord.y();
             j+=2;
@@ -167,7 +168,7 @@ public final class ObservedSky {
      */
     public List<Integer> asterismIndices(Asterism asterism) { return catalogue.asterismIndices(asterism); }
 
-    public Optional objectClosestTo(CartesianCoordinates coordinates, double distance) {
+    public Optional<CelestialObject> objectClosestTo(CartesianCoordinates coordinates, double distance) {
 
         return Optional.empty();
     }
@@ -177,8 +178,8 @@ public final class ObservedSky {
     }
 
     //TODO: Comment faire pour pouvoir l'utiliser pour Planet et Stars ?
-    /*
-    private static double[] computePositions(List<Planet> celestial) {
+
+    private static double[] computePositions(List<CelestialObject> celestial) {
         double[] positions = new double[celestial.size()*2];
         int j = 0;
         for(int i = 0; i < celestial.size(); i++){
@@ -189,7 +190,7 @@ public final class ObservedSky {
         return positions;
     }
 
-     */
+
 
 
 

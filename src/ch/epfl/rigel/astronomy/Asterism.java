@@ -29,6 +29,7 @@ public final class Asterism {
      * Returns the list of stars of the class
      * @return the list of stars.
      */
+
     public List<Star> stars(){ return list; }
 
 

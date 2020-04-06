@@ -20,7 +20,7 @@ public abstract class SphericalCoordinates {
      * @param longitude
      * @param latitude
      */
-    //TODO: constructeur public ou  private ?
+    //TODO: package private ?
     SphericalCoordinates(double longitude, double latitude) {
         this.longitude = longitude;
         this.latitude = latitude;

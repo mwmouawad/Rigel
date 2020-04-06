@@ -16,7 +16,7 @@ public abstract class CelestialObject {
     private final float angularSize;
     private final float magnitude;
 
-    //TODO : constructeur public ?
+
     /**
      * @param name          of the celestial object
      * @param equatorialPos equatorial position of the object
@@ -25,7 +25,7 @@ public abstract class CelestialObject {
      * @throws NullPointerException     if the name or the equatorial position are null
      * @throws IllegalArgumentException if the angular size is less than 0.
      */
-    public CelestialObject(String name, EquatorialCoordinates equatorialPos, float angularSize, float magnitude) {
+    CelestialObject(String name, EquatorialCoordinates equatorialPos, float angularSize, float magnitude) {
         Preconditions.checkArgument(angularSize >= 0);
 
         this.name = Objects.requireNonNull(name);
