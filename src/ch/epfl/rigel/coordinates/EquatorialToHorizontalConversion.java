@@ -16,7 +16,6 @@ import java.util.function.Function;
  */
 public final class EquatorialToHorizontalConversion implements Function<EquatorialCoordinates, HorizontalCoordinates> {
 
-    //TODO : Pourquoi etaient en public?
     private final double phi;
     private final double localTime;
     private final double cosPhi;

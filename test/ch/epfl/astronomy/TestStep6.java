@@ -76,7 +76,6 @@ public class TestStep6 {
             List<Star> allStar = new ArrayList<Star>();
             allStar.addAll(catalogue.stars());
 
-            System.out.println("LIST OF STARS :");
             for (Star s : allStar) {
                 System.out.printf("%6d ", s.hipparcosId());
             } //should print out the same star IDS as in the fichier (check visually)

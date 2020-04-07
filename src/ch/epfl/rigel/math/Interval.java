@@ -10,7 +10,6 @@ package ch.epfl.rigel.math;
  */
 public abstract class Interval {
 
-    //TODO: check  if privatte
     private final double low;
     private final double high;
 

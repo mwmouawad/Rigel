@@ -71,9 +71,6 @@ public enum HygDatabaseLoader implements StarCatalogue.Loader {
 
         //Check if proper name is non empty.
         if (!properName.isEmpty()) {
-            if (properName.equals("Rigel")) {
-                System.out.println("Heu");
-            }
             return properName;
         } else if (!bayer.isEmpty()) {
             return (bayer + " " + con);

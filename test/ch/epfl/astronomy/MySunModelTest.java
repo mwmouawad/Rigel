@@ -25,7 +25,6 @@ public class MySunModelTest {
                 LocalTime.of(0, 0),
                 ZoneOffset.UTC);
 
-        System.out.println(J2010.daysUntil(dateTime));
         Sun sunPo = SunModel.SUN.at(-2349.0, new EclipticToEquatorialConversion(dateTime));
 
         assertEquals(Angle.ofDeg(201.159131), sunPo.meanAnomaly(), 10e-7);
@@ -52,7 +51,6 @@ public class MySunModelTest {
                 LocalTime.of(0, 0),
                 ZoneOffset.UTC);
 
-        System.out.println(J2010.daysUntil(dateTime));
         Sun sunPo = SunModel.SUN.at(-2349.0, new EclipticToEquatorialConversion(dateTime));
 
         assertEquals(Angle.ofDeg(201.159131), sunPo.meanAnomaly(), 10e-7);
