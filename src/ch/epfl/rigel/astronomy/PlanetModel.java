@@ -99,7 +99,6 @@ public enum PlanetModel implements CelestialObjectModel<Planet> {
         double L = EARTH.computeLongitude(earthTrueAnomaly);
 
         EclipticCoordinates eclCoord;
-        //TODO  : compute beta externaly.
         //axe condition for inner planets
         eclCoord = axe < 1d ? innerPlanetsEclGeocentricCoord(radius2, lon, phi, R, L)
                 : outerPlanetsEclGeocentricCoord(radius2, lon, phi, R, L);

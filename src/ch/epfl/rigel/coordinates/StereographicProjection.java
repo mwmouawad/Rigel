@@ -23,10 +23,10 @@ public final class StereographicProjection implements Function<HorizontalCoordin
      * @param center coordinates where the projection is centered.
      */
     public StereographicProjection(HorizontalCoordinates center) {
-        centerX = center.az();
-        centerY = center.alt();
-        sinCenterY = Math.sin(centerY);
-        cosCenterY = Math.cos(centerY);
+        this.centerX = center.az();
+        this.centerY = center.alt();
+        this.sinCenterY = Math.sin(centerY);
+        this.cosCenterY = Math.cos(centerY);
     }
 
     /**
@@ -40,14 +40,14 @@ public final class StereographicProjection implements Function<HorizontalCoordin
 
         double coordX = azAlt.az();
         double coordY = azAlt.alt();
-        double varX = coordX - centerX;
+        double varX = coordX - this.centerX;
 
 
-        double d = 1 / (1 + Math.sin(coordY) * sinCenterY + Math.cos(coordY) * cosCenterY * Math.cos(varX));
+        double d = 1 / (1 + Math.sin(coordY) * this.sinCenterY + Math.cos(coordY) * this.cosCenterY * Math.cos(varX));
 
         //computes the new coordinates
         double x = d * Math.cos(coordY) * Math.sin(varX);
-        double y = d * (Math.sin(coordY) * cosCenterY - Math.cos(coordY) * sinCenterY * Math.cos(varX));
+        double y = d * (Math.sin(coordY) * this.cosCenterY - Math.cos(coordY) * this.sinCenterY * Math.cos(varX));
 
         return CartesianCoordinates.of(x, y);
     }
@@ -61,7 +61,7 @@ public final class StereographicProjection implements Function<HorizontalCoordin
      */
     public CartesianCoordinates circleCenterForParallel(HorizontalCoordinates hor) {
         double sin2 = Math.sin(hor.alt());
-        double coordY = cosCenterY / (sin2 + sinCenterY);
+        double coordY = this.cosCenterY / (sin2 + this.sinCenterY);
         return CartesianCoordinates.of(0, coordY);
     }
 
@@ -73,7 +73,7 @@ public final class StereographicProjection implements Function<HorizontalCoordin
      * Infinity.
      */
     public double circleRadiusForParallel(HorizontalCoordinates parallel) {
-        return (Math.cos(parallel.alt()) / (Math.sin(parallel.alt()) + sinCenterY));
+        return (Math.cos(parallel.alt()) / (Math.sin(parallel.alt()) + this.sinCenterY));
     }
 
     /**
@@ -83,7 +83,7 @@ public final class StereographicProjection implements Function<HorizontalCoordin
      * @param rad angular size of the sphere to be projected.
      * @return diameter of the projected sphere.
      */
-    public double applyToAngle(double rad) {
+    static public double applyToAngle(double rad) {
         return 2 * Math.tan(rad / 4);
     }
 
@@ -101,8 +101,8 @@ public final class StereographicProjection implements Function<HorizontalCoordin
         double cosc = (1 - rho * rho) / (rho * rho + 1);
 
         //computes inverse coordinates with the above constants
-        double lambda = Angle.normalizePositive(Math.atan2(x * sinc, rho * cosCenterY * cosc - y * sinCenterY * sinc) + centerX);
-        double phi = Math.asin(cosc * sinCenterY + (y * sinc * cosCenterY) / rho);
+        double lambda = Angle.normalizePositive(Math.atan2(x * sinc, rho * this.cosCenterY * cosc - y * this.sinCenterY * sinc) + this.centerX);
+        double phi = Math.asin(cosc * this.sinCenterY + (y * sinc * this.cosCenterY) / rho);
         return HorizontalCoordinates.of(lambda, phi);
     }
 
@@ -112,8 +112,8 @@ public final class StereographicProjection implements Function<HorizontalCoordin
      */
     @Override
     public String toString() {
-        return String.format(Locale.ROOT, "Stereographic Projection center : (x= %.4f, y= %.4f)", centerX,
-                centerY);
+        return String.format(Locale.ROOT, "Stereographic Projection center : (x= %.4f, y= %.4f)", this.centerX,
+                this.centerY);
     }
 
     /**

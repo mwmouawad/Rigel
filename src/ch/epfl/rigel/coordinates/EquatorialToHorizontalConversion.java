@@ -31,10 +31,10 @@ public final class EquatorialToHorizontalConversion implements Function<Equatori
      * @param where
      */
     public EquatorialToHorizontalConversion(ZonedDateTime when, GeographicCoordinates where) {
-        phi = where.lat();
-        localTime = SiderealTime.local(when, where);
-        cosPhi = Math.cos(phi);
-        sinPhi = Math.sin(phi);
+        this.phi = where.lat();
+        this.localTime = SiderealTime.local(when, where);
+        this.cosPhi = Math.cos(phi);
+        this.sinPhi = Math.sin(phi);
     }
 
     /**
@@ -47,17 +47,17 @@ public final class EquatorialToHorizontalConversion implements Function<Equatori
     public HorizontalCoordinates apply(EquatorialCoordinates equ) {
         double delta = equ.dec();
         //As seen from the book page 24 to find the hour angle.
-        double hourAngle = Angle.normalizePositive(localTime - equ.ra());
+        double hourAngle = Angle.normalizePositive(this.localTime - equ.ra());
 
         double cosAngleHour = Math.cos(hourAngle);
         double sinAngleHour = Math.sin(hourAngle);
 
         double alt = Math.asin(
-                Math.sin(delta) * sinPhi + Math.cos(delta) * cosPhi * cosAngleHour
+                Math.sin(delta) * this.sinPhi + Math.cos(delta) * this.cosPhi * cosAngleHour
         );
         double az = Math.atan2(
-                -Math.cos(delta) * cosPhi * sinAngleHour
-                , Math.sin(delta) - sinPhi * Math.sin(alt)
+                -Math.cos(delta) * this.cosPhi * sinAngleHour
+                , Math.sin(delta) - this.sinPhi * Math.sin(alt)
         );
 
         return HorizontalCoordinates.of(Angle.normalizePositive(az), ALT_INTERVAL.reduce(alt));
