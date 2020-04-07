@@ -37,7 +37,6 @@ public class BlackBodyColor {
 
             while(line != null) {
                 if(line.charAt(0) != '#') {
-                    System.out.println(line);
                     colors.add(line.substring(80,87).strip());
                 }
                 buffReader.readLine();
@@ -60,7 +59,7 @@ public class BlackBodyColor {
         //Check if the temperature is in the right interval
         Preconditions.checkInInterval(TEMP_INTERVAL, temperatureInDeg);
         int roundedTemp = (int) Math.round(temperatureInDeg / 100.0d) * 100;
-        //the steps of the data are of 100 and the first value is a 1000. 
+        //the steps of the data are of 100 and the first value is a 1000.
         String colorCode = COLOR_LIST.get((roundedTemp - 1000)/ 100);
 
         return Color.web(colorCode);
