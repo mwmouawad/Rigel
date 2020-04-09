@@ -33,7 +33,6 @@ public class SkyCanvasPainter {
     }
 
     public void drawStars(ObservedSky sky, StereographicProjection projection, Transform planeToCanvas) {
-
         double[] transformedStarPos = new double[sky.starPositions().length];
         planeToCanvas.transform2DPoints(sky.starPositions(), 0, transformedStarPos,0,sky.stars().size() );
 
@@ -49,11 +48,29 @@ public class SkyCanvasPainter {
 
             i+=2;
         }
-
-
     }
 
-    public void drawPlanets(ObservedSky sky, StereographicProjection projection, Transform planeToCanvas) {}
+    public void drawPlanets(ObservedSky sky, StereographicProjection projection, Transform planeToCanvas) {
+        /*
+        double[] transformedStarPos = new double[sky.starPositions().length];
+        planeToCanvas.transform2DPoints(sky.starPositions(), 0, transformedStarPos, 0, sky.stars().size());
+
+        int i = 0;
+        for (Star s : sky.stars()) {
+            Color starColor = BlackBodyColor.colorForTemperature(s.colorTemperature());
+
+            //Draw the element
+            double diameter = SCALE_FACTOR * magnitudeSize(s);
+            double x = transformedStarPos[i];
+            double y = transformedStarPos[i + 1];
+            this.fillCircle(x, y, diameter, starColor);
+
+            i += 2;
+        }
+
+         */
+    }
+
 
     public void drawSun(ObservedSky sky, StereographicProjection projection, Transform planeToCanvas) {
     }
