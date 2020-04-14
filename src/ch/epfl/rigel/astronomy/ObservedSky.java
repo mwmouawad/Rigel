@@ -21,6 +21,7 @@ public final class ObservedSky {
         SUN,
         PLANETS,
         STARS;
+
     }
     private final Sun sun;
     private final List<Planet> planets;
@@ -30,6 +31,7 @@ public final class ObservedSky {
     private final StarCatalogue catalogue;
     private final ZonedDateTime when;
     private final Map<SkyObjects, double[]> celObjPositions;
+
 
     /**
      * Constructs the observed skyline by computing the position of all planets in the solar system, the moon and
@@ -65,17 +67,10 @@ public final class ObservedSky {
 
         this.celObjPositions = new HashMap<SkyObjects, double[]>();
 
-
-
-        //TODO: It this good?
-        double[] moonPos = {this.computeMoonPosition().x(), this.computeMoonPosition().y()};
-        double[] sunPos = {this.computeSunPosition().x(), this.computeSunPosition().y()};
-
-        this.celObjPositions.put(SkyObjects.MOON, moonPos);
-        this.celObjPositions.put(SkyObjects.SUN, sunPos);
-        this.celObjPositions.put(SkyObjects.PLANETS, this.computePlanetPositions());
-        this.celObjPositions.put(SkyObjects.STARS, this.computeStarPositions());
-
+        this.celObjPositions.put(SkyObjects.MOON, computeMoonPosition());
+        this.celObjPositions.put(SkyObjects.SUN, computeSunPosition());
+        this.celObjPositions.put(SkyObjects.PLANETS, computePlanetPositions());
+        this.celObjPositions.put(SkyObjects.STARS, computeStarPositions());
     }
 
 
@@ -113,10 +108,6 @@ public final class ObservedSky {
         return CartesianCoordinates.of(this.celObjPositions.get(SkyObjects.SUN)[0], this.celObjPositions.get(SkyObjects.SUN)[1]);
     }
 
-    private CartesianCoordinates computeSunPosition() {
-        return this.project(this.sun);
-    }
-
     /**
      * Returns the Observed sky's moon coordinates.
      * @return Returns the Observed sky's moon coordinates.
@@ -125,9 +116,6 @@ public final class ObservedSky {
         return CartesianCoordinates.of(this.celObjPositions.get(SkyObjects.MOON)[0], this.celObjPositions.get(SkyObjects.MOON)[1]);
     }
 
-    private CartesianCoordinates computeMoonPosition() {
-        return this.project(this.moon);
-    }
 
 
     /**
@@ -142,21 +130,7 @@ public final class ObservedSky {
     }
 
 
-    /**
-     * Intended to be used only during init.
-     * @return
-     */
-    private double[] computePlanetPositions() {
-        double[] positions = new double[planets.size()*2];
-        int j = 0;
-        for(int i = 0; i<planets.size(); i++){
-                CartesianCoordinates projCoord = this.project(planets.get(i));
-                positions[j] = projCoord.x();
-                positions[j+1] = projCoord.y();
-                j+=2;
-        }
-        return  positions;
-    }
+
 
     /**
      * Returns an array with the Observed sky stars' positions.
@@ -169,28 +143,6 @@ public final class ObservedSky {
         return this.celObjPositions.get(SkyObjects.STARS);
     }
 
-
-    private double[] computeStarPositions() {
-        double[] positions = new double[stars().size()*2];
-        int j = 0;
-        for(int i = 0; i < stars().size(); i++){
-            CartesianCoordinates starCoord = this.project(stars().get(i));
-            positions[j] = starCoord.x();
-            positions[j+1] = starCoord.y();
-            j+=2;
-        }
-        return positions;
-    }
-
-    /**
-     * Helper method for projecting from Celestial Objects with Equatorial Coordinates.
-     * @param celestialObject the celestial object position to project with.
-     * @return steographic projection cartesian coordinates.
-     */
-    private CartesianCoordinates project(CelestialObject celestialObject){
-        HorizontalCoordinates horCoordinates = new EquatorialToHorizontalConversion(this.when, this.position).apply(celestialObject.equatorialPos());
-        return this.projection.apply(horCoordinates);
-    }
 
     /**
      * Returns a set with  all of the Observed sky's asterisms.
@@ -216,17 +168,22 @@ public final class ObservedSky {
      * @param distance
      * @return
      */
-    public Optional<CelestialObject> objectClosestTo(CartesianCoordinates coordinates, double distance) {
+    //TODO : Optional<CelestialObject> ou optional ?
+    public Optional objectClosestTo(CartesianCoordinates coordinates, double distance) {
 
         //TODO: Je ne sais pas comment utiliser sky objects et repérér l'instance de Celestial Object correspondant de manière performante.
-        CelestialObject closestObject = null;
+        SkyObjects closestObject = null;
         double objDistance;
         double lowestDistance = distance;
 
         for(SkyObjects obj: SkyObjects.values()){
-
-
+            objDistance = distance(coordinates, CartesianCoordinates.of(celObjPositions.get(obj)[0], celObjPositions.get(obj)[1] ));
+            lowestDistance =  objDistance <  lowestDistance ? objDistance : lowestDistance;
+            closestObject = objDistance <  lowestDistance ?  obj : closestObject;
         }
+
+        //TODO : inf ou egal ?
+        if(lowestDistance  < distance) { return Optional.of(closestObject); }
 
         return Optional.empty();
     }
@@ -235,9 +192,65 @@ public final class ObservedSky {
         return Math.sqrt((obj1.x() - obj2.x()) * (obj1.x() - obj2.x() ) + (obj1.y() - obj2.y()) * (obj1.y() - obj2.y()));
     }
 
+
+    private double[]  computeSunPosition() {
+        return new double[]{this.project(this.sun).x(), this.project(this.sun).y()};
+    }
+
+    private double[] computeMoonPosition() {
+        return new double[]{this.project(this.moon).x(), this.project(this.moon).y()};
+    }
+
+    /**
+     * Intended to be used only during init.
+     * @return
+     */
+    private double[] computePlanetPositions() {
+        double[] positions = new double[planets.size()*2];
+        int j = 0;
+        for(int i = 0; i<planets.size(); i++){
+            CartesianCoordinates projCoord = this.project(planets.get(i));
+            positions[j] = projCoord.x();
+            positions[j+1] = projCoord.y();
+            j+=2;
+        }
+        return  positions;
+    }
+
+    private double[] computeStarPositions() {
+        double[] positions = new double[stars().size()*2];
+        int j = 0;
+        for(int i = 0; i < stars().size(); i++){
+            CartesianCoordinates starCoord = this.project(stars().get(i));
+            positions[j] = starCoord.x();
+            positions[j+1] = starCoord.y();
+            j+=2;
+        }
+        return positions;
+    }
+
+    /**
+     * Helper method for projecting from Celestial Objects with Equatorial Coordinates.
+     * @param celestialObject the celestial object position to project with.
+     * @return steographic projection cartesian coordinates.
+     */
+    private CartesianCoordinates project(CelestialObject celestialObject){
+        HorizontalCoordinates horCoordinates = new EquatorialToHorizontalConversion(this.when, this.position).apply(celestialObject.equatorialPos());
+        return this.projection.apply(horCoordinates);
+    }
+
+
+
+
+
+
+
+
+    /*
+
     //TODO: Comment faire pour pouvoir l'utiliser pour Planet et Stars ?
 
-    private static double[] computePositions(List<CelestialObject> celestial) {
+    private static double[] computePositions() {
         double[] positions = new double[celestial.size()*2];
         int j = 0;
         for(int i = 0; i < celestial.size(); i++){
@@ -247,6 +260,8 @@ public final class ObservedSky {
         }
         return positions;
     }
+
+     */
 
 
 
