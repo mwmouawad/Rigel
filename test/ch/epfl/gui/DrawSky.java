@@ -1,5 +1,6 @@
 package ch.epfl.gui;
 
+import ch.epfl.rigel.astronomy.AsterismLoader;
 import ch.epfl.rigel.astronomy.HygDatabaseLoader;
 import ch.epfl.rigel.astronomy.ObservedSky;
 import ch.epfl.rigel.astronomy.StarCatalogue;
@@ -34,16 +35,19 @@ public final class DrawSky extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         try (InputStream hs = resourceStream("/hygdata_v3.csv")) {
+            InputStream astStream = getClass().getResourceAsStream("/asterisms.txt");
+
             StarCatalogue catalogue = new StarCatalogue.Builder()
                     .loadFrom(hs, HygDatabaseLoader.INSTANCE)
+                    .loadFrom(astStream, AsterismLoader.INSTANCE)
                     .build();
 
             ZonedDateTime when =
-                    ZonedDateTime.parse("2020-02-17T20:15:00+01:00");
+                    ZonedDateTime.parse("2020-02-17T20:17:08+01:00");
             GeographicCoordinates where =
                     GeographicCoordinates.ofDeg(6.57, 46.52);
             HorizontalCoordinates projCenter =
-                    HorizontalCoordinates.ofDeg(180, 45);
+                    HorizontalCoordinates.ofDeg(186, 35);
             StereographicProjection projection =
                     new StereographicProjection(projCenter);
             ObservedSky sky =
@@ -56,6 +60,8 @@ public final class DrawSky extends Application {
 
             painter.clear();
             painter.drawStars(sky, projection, planeToCanvas);
+            //painter.drawPlanets(sky, projection, planeToCanvas);
+            //painter.drawMoon(sky,projection,planeToCanvas);
 
             WritableImage fxImage =
                     canvas.snapshot(null, null);
