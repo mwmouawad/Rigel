@@ -145,35 +145,25 @@ public class SkyCanvasPainter {
         HorizontalCoordinates parallel = HorizontalCoordinates.of(0,0);
         double diameter = 2 * projection.circleRadiusForParallel(parallel);
         double transformedDiameter = planeToCanvas.deltaTransform(diameter, 0).getX();
+        double radius = transformedDiameter/2;
 
         CartesianCoordinates coordinates  = projection.circleCenterForParallel(parallel);
         Point2D transformedPos = planeToCanvas.transform(coordinates.x(), coordinates.y());
 
         graphicContext.setStroke(Color.RED);
         graphicContext.setLineWidth(2);
-        graphicContext.strokeOval(transformedPos.getX() - transformedDiameter/2,
-                transformedPos.getY() - transformedDiameter/2, transformedDiameter, transformedDiameter);
+        graphicContext.strokeOval(transformedPos.getX() - radius,
+                transformedPos.getY() - radius, transformedDiameter, transformedDiameter);
 
         //TODO : cardinal points.
-        /*
-        CartesianCoordinates northCoord = projection.apply(HorizontalCoordinates.of(0, 0));
-        Point2D northPoint = planeToCanvas.transform(northCoord.x(), northCoord.y());
-        graphicContext.fillText(HorizontalCoordinates.of(0,0)
-                .azOctantName("N", "E", "S", "O"),
-                northPoint.getX(), northPoint.getX());
-        CartesianCoordinates northEastCoord = projection.apply(HorizontalCoordinates.of(90, 0));
-        Point2D northEastPoint = planeToCanvas.transform(northEastCoord.x(), northEastCoord.y());
-        graphicContext.fillText(HorizontalCoordinates.of(45,0)
-                        .azOctantName("N", "E", "S", "O"),
-                northEastPoint.getX(), northEastPoint.getX());
-        CartesianCoordinates southCoord = projection.apply(HorizontalCoordinates.of(180, 0));
-        Point2D southPoint = planeToCanvas.transform(southCoord.x(), southCoord.y());
-        graphicContext.fillText(HorizontalCoordinates.of(0,0)
-                        .azOctantName("N", "E", "S", "O"),
-                southPoint.getX(), southPoint.getX());
-        //graphicContext.setTextBaseline(VPos.TOP);
-         */
-
+        for(int i = 0; i < 8; i++){
+            HorizontalCoordinates horiz = HorizontalCoordinates.ofDeg(i*45, 0);
+            CartesianCoordinates coord = projection.apply(horiz);
+            Point2D point = planeToCanvas.transform(coord.x(), coord.y());
+            graphicContext.setFill(Color.RED);
+            graphicContext.fillText(horiz.azOctantName("N", "E", "S", "O"), point.getX(), point.getY());
+            graphicContext.setTextBaseline(VPos.TOP);
+        }
     }
 
 
