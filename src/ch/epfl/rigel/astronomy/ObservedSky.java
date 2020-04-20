@@ -3,7 +3,6 @@ package ch.epfl.rigel.astronomy;
 import ch.epfl.rigel.Preconditions;
 import ch.epfl.rigel.coordinates.*;
 
-import javax.xml.catalog.Catalog;
 import java.time.ZonedDateTime;
 import java.util.*;
 
@@ -168,22 +167,22 @@ public final class ObservedSky {
      * @param distance
      * @return
      */
-    //TODO : Optional<CelestialObject> ou optional ?
-    public Optional objectClosestTo(CartesianCoordinates coordinates, double distance) {
+    public Optional<CelestialObject> objectClosestTo(CartesianCoordinates coordinates, double distance) {
 
-        //TODO: Je ne sais pas comment utiliser sky objects et repérér l'instance de Celestial Object correspondant de manière performante.
-        SkyObjects closestObject = null;
+        //TODO: performant?
+        CelestialObject closestObject = null;
         double objDistance;
-        double lowestDistance = distance;
+        double lowestDistance = Double.POSITIVE_INFINITY;
 
         for(SkyObjects obj: SkyObjects.values()){
-            objDistance = distance(coordinates, CartesianCoordinates.of(celObjPositions.get(obj)[0], celObjPositions.get(obj)[1] ));
-            lowestDistance =  objDistance <  lowestDistance ? objDistance : lowestDistance;
-            closestObject = objDistance <  lowestDistance ?  obj : closestObject;
+            for(int i = 0; i < celObjPositions.get(obj).length; i+=2) {
+                objDistance = distance(coordinates, CartesianCoordinates.of(celObjPositions.get(obj)[i], celObjPositions.get(obj)[i+1] ));
+                lowestDistance = Math.min(objDistance, lowestDistance);
+                closestObject = objDistance <= lowestDistance ?  celestialObjectOf(obj, i/2) : closestObject;
+            }
         }
-
         //TODO : inf ou egal ?
-        if(lowestDistance  < distance) { return Optional.of(closestObject); }
+        if(closestObject != null && lowestDistance <= distance) { return Optional.of(closestObject); }
 
         return Optional.empty();
     }
@@ -200,6 +199,7 @@ public final class ObservedSky {
     private double[] computeMoonPosition() {
         return new double[]{this.project(this.moon).x(), this.project(this.moon).y()};
     }
+
 
     /**
      * Intended to be used only during init.
@@ -240,7 +240,19 @@ public final class ObservedSky {
     }
 
 
-
+    private CelestialObject celestialObjectOf(SkyObjects obj, int index) {
+        switch (obj) {
+            case PLANETS:
+                return planets.get(index);
+            case STARS:
+                return stars().get(index);
+            case SUN:
+                return sun;
+            case MOON:
+                return moon;
+        }
+        return null;
+    }
 
 
 
