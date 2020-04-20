@@ -142,13 +142,37 @@ public class SkyCanvasPainter {
     }
 
     public void drawHorizon(ObservedSky sky, StereographicProjection projection, Transform planeToCanvas) {
-        double diameter = 2 * projection.circleRadiusForParallel(HorizontalCoordinates.of(0,0));
-        CartesianCoordinates coordinates  = projection.circleCenterForParallel(HorizontalCoordinates.of(0,0));
+        HorizontalCoordinates parallel = HorizontalCoordinates.of(0,0);
+        double diameter = 2 * projection.circleRadiusForParallel(parallel);
+        double transformedDiameter = planeToCanvas.deltaTransform(diameter, 0).getX();
+
+        CartesianCoordinates coordinates  = projection.circleCenterForParallel(parallel);
         Point2D transformedPos = planeToCanvas.transform(coordinates.x(), coordinates.y());
+
         graphicContext.setStroke(Color.RED);
         graphicContext.setLineWidth(2);
-        graphicContext.strokeOval(transformedPos.getX() - diameter/2, transformedPos.getY() - diameter/2, 0, 0);
+        graphicContext.strokeOval(transformedPos.getX() - transformedDiameter/2,
+                transformedPos.getY() - transformedDiameter/2, transformedDiameter, transformedDiameter);
+
+        //TODO : cardinal points.
+        /*
+        CartesianCoordinates northCoord = projection.apply(HorizontalCoordinates.of(0, 0));
+        Point2D northPoint = planeToCanvas.transform(northCoord.x(), northCoord.y());
+        graphicContext.fillText(HorizontalCoordinates.of(0,0)
+                .azOctantName("N", "E", "S", "O"),
+                northPoint.getX(), northPoint.getX());
+        CartesianCoordinates northEastCoord = projection.apply(HorizontalCoordinates.of(90, 0));
+        Point2D northEastPoint = planeToCanvas.transform(northEastCoord.x(), northEastCoord.y());
+        graphicContext.fillText(HorizontalCoordinates.of(45,0)
+                        .azOctantName("N", "E", "S", "O"),
+                northEastPoint.getX(), northEastPoint.getX());
+        CartesianCoordinates southCoord = projection.apply(HorizontalCoordinates.of(180, 0));
+        Point2D southPoint = planeToCanvas.transform(southCoord.x(), southCoord.y());
+        graphicContext.fillText(HorizontalCoordinates.of(0,0)
+                        .azOctantName("N", "E", "S", "O"),
+                southPoint.getX(), southPoint.getX());
         //graphicContext.setTextBaseline(VPos.TOP);
+         */
 
     }
 

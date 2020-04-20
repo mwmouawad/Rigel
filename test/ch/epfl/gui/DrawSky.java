@@ -43,11 +43,11 @@ public final class DrawSky extends Application {
                     .build();
 
             ZonedDateTime when =
-                    ZonedDateTime.parse("2020-07-20T12:10:00+01:00");
+                    ZonedDateTime.parse("2020-02-17T20:15:00+01:00");
             GeographicCoordinates where =
                     GeographicCoordinates.ofDeg(6.57, 46.52);
             HorizontalCoordinates projCenter =
-                    HorizontalCoordinates.ofDeg(186, 70);
+                    HorizontalCoordinates.ofDeg(180, 45);
             StereographicProjection projection =
                     new StereographicProjection(projCenter);
             ObservedSky sky =
