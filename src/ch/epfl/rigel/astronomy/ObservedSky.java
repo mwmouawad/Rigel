@@ -182,9 +182,9 @@ public final class ObservedSky {
             }
         }
         //TODO : inf ou egal ?
-        if(closestObject != null && lowestDistance <= distance) { return Optional.of(closestObject); }
+        return (closestObject != null && lowestDistance <= distance) ? Optional.of(closestObject)
+                : Optional.empty();
 
-        return Optional.empty();
     }
 
     private double distance(CartesianCoordinates obj1, CartesianCoordinates obj2){
