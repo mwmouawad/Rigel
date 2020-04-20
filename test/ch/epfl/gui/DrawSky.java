@@ -63,13 +63,14 @@ public final class DrawSky extends Application {
             painter.drawPlanets(sky, projection, planeToCanvas);
             painter.drawSun(sky,projection,planeToCanvas);
             painter.drawMoon(sky,projection,planeToCanvas);
+            painter.drawHorizon(sky,projection,planeToCanvas);
 
 
             WritableImage fxImage =
                     canvas.snapshot(null, null);
             BufferedImage swingImage =
                     SwingFXUtils.fromFXImage(fxImage, null);
-            ImageIO.write(swingImage, "png", new File("sky.png"));
+            ImageIO.write(swingImage, "png", new File("skyHorizon.png"));
         }
         Platform.exit();
     }

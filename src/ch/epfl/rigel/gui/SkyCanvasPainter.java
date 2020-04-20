@@ -3,10 +3,12 @@ package ch.epfl.rigel.gui;
 
 import ch.epfl.rigel.astronomy.*;
 import ch.epfl.rigel.coordinates.CartesianCoordinates;
+import ch.epfl.rigel.coordinates.HorizontalCoordinates;
 import ch.epfl.rigel.coordinates.StereographicProjection;
 import ch.epfl.rigel.math.Angle;
 import ch.epfl.rigel.math.ClosedInterval;
 import javafx.geometry.Point2D;
+import javafx.geometry.VPos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -140,7 +142,13 @@ public class SkyCanvasPainter {
     }
 
     public void drawHorizon(ObservedSky sky, StereographicProjection projection, Transform planeToCanvas) {
-        
+        double diameter = 2 * projection.circleRadiusForParallel(HorizontalCoordinates.of(0,0));
+        CartesianCoordinates coordinates  = projection.circleCenterForParallel(HorizontalCoordinates.of(0,0));
+        Point2D transformedPos = planeToCanvas.transform(coordinates.x(), coordinates.y());
+        graphicContext.setStroke(Color.RED);
+        graphicContext.setLineWidth(2);
+        graphicContext.strokeOval(transformedPos.getX() - diameter/2, transformedPos.getY() - diameter/2, 0, 0);
+        //graphicContext.setTextBaseline(VPos.TOP);
 
     }
 
