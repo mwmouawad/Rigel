@@ -141,7 +141,7 @@ public class SkyCanvasPainter {
         this.fillCircle(transformedPos.getX(), transformedPos.getY(), diameter, moonColor);
     }
 
-    public void drawHorizon(ObservedSky sky, StereographicProjection projection, Transform planeToCanvas) {
+    public void drawHorizon(StereographicProjection projection, Transform planeToCanvas) {
         HorizontalCoordinates parallel = HorizontalCoordinates.of(0,0);
         double diameter = 2 * projection.circleRadiusForParallel(parallel);
         double transformedDiameter = planeToCanvas.deltaTransform(diameter, 0).getX();

@@ -63,7 +63,7 @@ public final class DrawSky extends Application {
             painter.drawPlanets(sky, projection, planeToCanvas);
             painter.drawSun(sky,projection,planeToCanvas);
             painter.drawMoon(sky,projection,planeToCanvas);
-            painter.drawHorizon(sky,projection,planeToCanvas);
+            painter.drawHorizon(projection,planeToCanvas);
 
 
             WritableImage fxImage =

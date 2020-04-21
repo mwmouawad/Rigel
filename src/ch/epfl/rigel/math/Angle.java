@@ -87,7 +87,7 @@ public final class Angle {
      */
     public static double ofDMS(int deg, int min, double sec){
 
-        Preconditions.checkArgument(min<60 && min>=0 && sec<60 && sec>=0);
+        Preconditions.checkArgument(min<60 && min>=0 && sec<60 && sec>=0 && deg >= 0);
 
         //Convert arcminutes to Degrees
         double minInDeg = (double)min / 60;
