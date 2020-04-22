@@ -60,7 +60,7 @@ public class SkyCanvasPainter {
 
     }
 
-    public void drawStars(ObservedSky sky, StereographicProjection projection, Transform planeToCanvas) {
+    public void drawStars(ObservedSky sky, Transform planeToCanvas) {
         double[] transformedStarPos = new double[sky.starPositions().length];
         planeToCanvas.transform2DPoints(sky.starPositions(), 0, transformedStarPos, 0, sky.stars().size());
         this.drawAsterisms(sky, transformedStarPos);
@@ -81,7 +81,8 @@ public class SkyCanvasPainter {
         }
     }
 
-    public void drawPlanets(ObservedSky sky, StereographicProjection projection, Transform planeToCanvas) {
+    //TODO : check if right
+    public void drawPlanets(ObservedSky sky, Transform planeToCanvas) {
 
         double[] transformedPlanetPos = new double[sky.planetPositions().length];
         planeToCanvas.transform2DPoints(sky.planetPositions(), 0, transformedPlanetPos, 0, sky.planets().size());
@@ -155,7 +156,6 @@ public class SkyCanvasPainter {
         graphicContext.strokeOval(transformedPos.getX() - radius,
                 transformedPos.getY() - radius, transformedDiameter, transformedDiameter);
 
-        //TODO : cardinal points.
         for(int i = 0; i < 8; i++){
             HorizontalCoordinates horiz = HorizontalCoordinates.ofDeg(i*45, 0);
             CartesianCoordinates coord = projection.apply(horiz);
@@ -176,8 +176,7 @@ public class SkyCanvasPainter {
     static private double magnitudeSize(CelestialObject celestialObject) {
         double clippedMag = ClosedInterval.of(-2, 5).clip(celestialObject.magnitude());
         double sizeFactor = (99.0 - 17.0 * clippedMag) / 144.0;
-        double diameter = sizeFactor * StereographicProjection.applyToAngle(Angle.ofDeg(0.5));
-        return diameter;
+        return sizeFactor * StereographicProjection.applyToAngle(Angle.ofDeg(0.5));
     }
 
 }
