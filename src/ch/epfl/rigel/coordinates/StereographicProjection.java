@@ -102,10 +102,14 @@ public final class StereographicProjection implements Function<HorizontalCoordin
 
         //computes inverse coordinates with the above constants
 
-        double lambda = Angle.normalizePositive(Math.atan2(x * sinc, rho * this.cosCenterY * cosc - y * this.sinCenterY * sinc) + this.centerX);
+        double lambda = Angle.normalizePositive(
+                Math.atan2(x * sinc, rho * this.cosCenterY * cosc - y * this.sinCenterY * sinc) + this.centerX
+        );
         double phi = Math.asin(cosc * this.sinCenterY + (y * sinc * this.cosCenterY) / rho);
-        //TODO : check if right
-        return !(x == 0 && y == 0) ? HorizontalCoordinates.of(lambda, phi) : HorizontalCoordinates.of(Angle.normalizePositive(this.centerX), this.centerY);
+
+        return (x == 0 && y == 0) ?
+                HorizontalCoordinates.of(Angle.normalizePositive(this.centerX), this.centerY):
+                HorizontalCoordinates.of(lambda, phi);
     }
 
     /**
