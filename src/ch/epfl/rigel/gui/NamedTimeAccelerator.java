@@ -1,8 +1,9 @@
 package ch.epfl.rigel.gui;
 
 import java.time.Duration;
+import java.time.ZonedDateTime;
 
-public enum NamedTimeAccelerator {
+public enum NamedTimeAccelerator{
     TIMES_1("1x", TimeAccelerator.continuous(1)),
     TIMES_30("30x", TimeAccelerator.continuous(30)),
     TIMES_300("300x", TimeAccelerator.continuous(300)),
@@ -21,7 +22,9 @@ public enum NamedTimeAccelerator {
 
     public String getName() { return name; }
 
-    public TimeAccelerator getAccelerator() { return accelerator; }
+    public TimeAccelerator getAccelerator() {
+        return accelerator;
+    }
 
     @Override
     public String toString() { return getName(); }
