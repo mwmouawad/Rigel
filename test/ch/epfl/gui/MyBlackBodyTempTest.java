@@ -1,7 +1,11 @@
 package ch.epfl.gui;
 import ch.epfl.rigel.gui.BlackBodyColor;
+import ch.epfl.rigel.gui.TimeAccelerator;
 import javafx.scene.paint.Color;
 import org.junit.jupiter.api.Test;
+
+import java.time.Duration;
+import java.time.ZonedDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
