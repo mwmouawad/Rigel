@@ -19,7 +19,7 @@ public interface TimeAccelerator {
 
     static TimeAccelerator discrete(Duration step, long frequence) {
         return (initialTime, timeNanoSec) -> {
-            long steps = (long) Math.floor(frequence * timeNanoSec) * step.toNanos();
+            long steps = (long) Math.floor(frequence * 1e-9 * timeNanoSec) * step.toNanos();
             return initialTime.plus(steps, ChronoUnit.NANOS);
         };
     }
