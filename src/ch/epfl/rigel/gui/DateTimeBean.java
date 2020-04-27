@@ -3,7 +3,6 @@ package ch.epfl.rigel.gui;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
@@ -11,13 +10,10 @@ import java.time.ZonedDateTime;
 
 public final class DateTimeBean {
 
-    //private ?
-     private ObjectProperty<LocalDate>  date = null;
-     private ObjectProperty<LocalTime> time = null;
-     private ObjectProperty<ZoneId> zone = null;
+     private final ObjectProperty<LocalDate>  date;
+     private final ObjectProperty<LocalTime> time;
+     private final ObjectProperty<ZoneId> zone;
 
-
-     //TODO: is it the proper way?
      public DateTimeBean(){
          this.date = new SimpleObjectProperty<>();
          this.time = new SimpleObjectProperty<>();

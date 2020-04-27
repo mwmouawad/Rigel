@@ -98,8 +98,6 @@ public class EclipticToEquatorialConversionTest {
 
         HorizontalCoordinates hor = eclToHor.apply(ecl);
 
-        //TODO: Find a test for this.
-
 
     }
 

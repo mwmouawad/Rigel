@@ -19,7 +19,6 @@ public class EquatorialCoordinatesTest {
 
         var coord1 = EquatorialCoordinates.of(Angle.ofHr(4.0), Angle.ofDeg(55.3));
         assertEquals(Angle.ofHr(4),coord1.ra());
-        //TODO: Find out why conversion not working past 1e-15.
         assertEquals(4.0,coord1.raHr(), 1e-15);
         assertEquals(55.3,coord1.decDeg());
         assertEquals(Angle.toDeg(Angle.ofHr(4.0)), coord1.raDeg());

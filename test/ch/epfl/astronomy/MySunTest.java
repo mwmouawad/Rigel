@@ -32,7 +32,6 @@ public class MySunTest {
     @Test
     void magnitudeReturnsExpectedValue(){
         var sun = new Sun(EclipticCoordinates.of(0,0), EquatorialCoordinates.of(0,0), 10, 0);
-        //TODO: Getter is casting the value to double. Is it okay like this?
         assertEquals((double)-26.7f, sun.magnitude());
     }
 

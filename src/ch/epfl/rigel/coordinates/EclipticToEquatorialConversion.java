@@ -17,7 +17,7 @@ import static ch.epfl.rigel.astronomy.Epoch.J2000;
  */
 public final class EclipticToEquatorialConversion implements Function<EclipticCoordinates, EquatorialCoordinates> {
 
-    private final Polynomial EPSI = Polynomial.of(
+    private static final Polynomial EPSI = Polynomial.of(
             Angle.ofArcsec(0.00181),
             -Angle.ofArcsec(0.0006),
             -Angle.ofArcsec(46.815),

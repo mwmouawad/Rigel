@@ -17,7 +17,7 @@ public enum Epoch {
     J2000(ZonedDateTime.of(LocalDate.of(2000, Month.JANUARY, 1),
             LocalTime.of(12, 0), ZoneOffset.UTC));
 
-    private ZonedDateTime time;
+    private final ZonedDateTime time;
     private static final double MILLIS_TO_DAYS = Duration.ofDays(1).toMillis();
     private static final double MILLIS_TO_CENTURIES = Duration.ofDays(36525).toMillis();
 

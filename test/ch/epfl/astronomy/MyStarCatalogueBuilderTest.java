@@ -89,6 +89,5 @@ public class MyStarCatalogueBuilderTest {
 
     @Test
     void loaderWorks(){
-        //TODO: What to to test in loader.
     }
 }

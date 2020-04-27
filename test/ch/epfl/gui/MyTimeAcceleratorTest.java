@@ -33,7 +33,7 @@ public class MyTimeAcceleratorTest extends Application {
 
         dateTimeB.dateProperty().addListener((p, o, n) -> {
             System.out.printf(" Nouvelle date : %s%n", n);
-            //Platform.exit();
+            Platform.exit();
         });
         dateTimeB.timeProperty().addListener((p, o, n) -> {
             System.out.printf("Nouvelle heure : %s%n", n);

@@ -12,9 +12,6 @@ import java.util.*;
  * @author Leah Uzzan (302829)
  */
 public final class ObservedSky {
-    //TODO  : idée :
-    // + avoir une Map qui associe a chaque objet de l enum sa position dans le ciel de la meme forme que pour planets et stars,
-    // map créée dans le constructeur de observedsky, chaque getter renvoie la position.
     private enum SkyObjects {
         MOON,
         SUN,
