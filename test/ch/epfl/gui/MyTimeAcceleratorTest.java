@@ -9,6 +9,7 @@ import javafx.application.Platform;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.Test;
 
+import java.sql.Time;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 
@@ -39,7 +40,10 @@ public class MyTimeAcceleratorTest extends Application {
             System.out.printf("Nouvelle heure : %s%n", n);
         });
         timeAnimator.start();
+
     }
+
+
 
     @Test
     void timeAcceleratorContinuous() {

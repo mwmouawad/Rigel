@@ -6,7 +6,7 @@ import java.util.Locale;
 
 /**
  * Represents a mathematical closed interval
- * of the form [a,b]. Also offers methods for clipping
+ * of the form [a,b]. Also offers methods for clipping.
  *
  * @author Mark Mouawad (296508)
  * @author Leah Uzzan (302829)
