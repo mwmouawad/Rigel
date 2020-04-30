@@ -63,8 +63,8 @@ public final class TimeAnimator extends AnimationTimer {
             //double deltaSec = delta * 1e-9; utile?
             ZonedDateTime updatedTime = this.timeAccelerator.get().adjust(dateTimeBean.getZonedDateTime(), delta);
             this.dateTimeBean.setZonedDateTime(updatedTime);
-            this.lastTimestampNano = now;
-        } this.lastTimestampNano = now;
+        }
+        this.lastTimestampNano = now;
     }
 
     /**
