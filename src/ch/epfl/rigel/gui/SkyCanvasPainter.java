@@ -35,7 +35,7 @@ public class SkyCanvasPainter {
         this.graphicContext.fillRect(0, 0, this.canvas.getWidth(), this.canvas.getHeight());
     }
 
-    //TODO: Add feature to not draw star path when they are outside of canvas!
+    // TODO: Add feature to not draw star path when they are outside of canvas!
     private void drawAsterisms(ObservedSky sky, double[] transformedStarPos) {
 
         Set<Asterism> asterismSet = sky.asterisms();
