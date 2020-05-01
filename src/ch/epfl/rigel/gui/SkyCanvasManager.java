@@ -3,7 +3,6 @@ package ch.epfl.rigel.gui;
 import ch.epfl.rigel.astronomy.CelestialObject;
 import ch.epfl.rigel.astronomy.ObservedSky;
 import ch.epfl.rigel.astronomy.StarCatalogue;
-<<<<<<< HEAD
 import ch.epfl.rigel.coordinates.CartesianCoordinates;
 import ch.epfl.rigel.coordinates.HorizontalCoordinates;
 import ch.epfl.rigel.coordinates.StereographicProjection;
@@ -37,46 +36,18 @@ public class SkyCanvasManager {
         this.mousePosition = new SimpleObjectProperty();
     }
 
-    private void initBindings(StarCatalogue catalogue, DateTimeBean dateTime, ViewingParametersBean viewingParameters, ObserverLocationBean observerLocation){
+    private void initBindings(StarCatalogue catalogue, DateTimeBean dateTime, ViewingParametersBean viewingParameters, ObserverLocationBean observerLocation) {
 
-        this.projection = Bindings.createObjectBinding( () -> new StereographicProjection(viewingParameters.getCenter()), viewingParameters.centerProperty() );
+        this.projection = Bindings.createObjectBinding(() -> new StereographicProjection(viewingParameters.getCenter()), viewingParameters.centerProperty());
         this.planeToCanvas = Bindings.createObjectBinding(
-                () ->  (canvas.widthProperty().get() / 2 * Math.tan(viewingParameters.getFieldOfViewDeg()))
-                ,canvas.widthProperty(), canvas.heightProperty(), viewingParameters.fieldOfViewDegProperty()
+                () -> (canvas.widthProperty().get() / 2 * Math.tan(viewingParameters.getFieldOfViewDeg()))
+                , canvas.widthProperty(), canvas.heightProperty(), viewingParameters.fieldOfViewDegProperty()
         );
         this.observedSky = Bindings.createObjectBinding(
-                () -> new  ObservedSky(dateTime.getZonedDateTime(), observerLocation.getCoordinates(), this.projection.getValue(), catalogue )
-                ,dateTime.dateProperty(), observerLocation.coordinatesProperty(), this.projection);
-        this.mouseHorizontalPosition = Bindings.createObjectBinding(
-                () -> observedSky.getValue();
-        );
-=======
-import ch.epfl.rigel.coordinates.HorizontalCoordinates;
-import ch.epfl.rigel.coordinates.StereographicProjection;
-import javafx.beans.binding.Bindings;
-import javafx.beans.property.ObjectProperty;
-import javafx.scene.canvas.Canvas;
-
-
-public class SkyCanvasManager {
-
-    public SkyCanvasManager(StarCatalogue catalogue, DateTimeBean dateTime, ViewingParametersBean viewingParameters,
-                            ObserverLocationBean observerLocation) {
-        Canvas canvas = new Canvas();
-        SkyCanvasPainter painter = new SkyCanvasPainter(canvas);
-
-        canvas.setOnMouseMoved((event) ->  {
-            if(event.isPrimaryButtonDown()) canvas.requestFocus();
-        });
-
-        StereographicProjection projection = new StereographicProjection(viewingParameters.getCenter());
-
-        //ObjectProperty<HorizontalCoordinates> mousePosition = Bindings.createObjectBinding(() -> )
-
-
->>>>>>> 6e24c4fd34cfca2d923716225f2159d7deca6611
-
+                () -> new ObservedSky(dateTime.getZonedDateTime(), observerLocation.getCoordinates(), this.projection.getValue(), catalogue)
+                , dateTime.dateProperty(), observerLocation.coordinatesProperty(), this.projection);
     }
+
 
     private void initListeners(){
         this.canvas.setOnKeyPressed( event -> {

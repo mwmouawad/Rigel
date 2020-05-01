@@ -19,8 +19,6 @@ public class ObserverLocationBean {
     private final ObjectProperty<Double> lonDeg;
     private final ObjectProperty<Double> latDeg;
     private final ObjectProperty<GeographicCoordinates> coordinates;
-    private final ObjectBinding<GeographicCoordinates> binding
-
 
     public ObserverLocationBean(double lonDeg, double latDeg) {
         this.lonDeg = new SimpleObjectProperty(latDeg);
@@ -34,7 +32,8 @@ public class ObserverLocationBean {
                 () -> (GeographicCoordinates.ofDeg(this.lonDeg.getValue(), this.latDeg.getValue())),
                 this.lonDeg, this.latDeg);
 
-        this.coordinates.bi(objectValue.get());
+        //TODO: Other way to bind values? Maybe biderection?
+        this.coordinates.bind(objectValue);
 
 
     }
