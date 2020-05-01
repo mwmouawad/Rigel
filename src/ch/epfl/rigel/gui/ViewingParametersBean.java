@@ -1,15 +1,16 @@
 package ch.epfl.rigel.gui;
 
 import ch.epfl.rigel.coordinates.CartesianCoordinates;
+import ch.epfl.rigel.coordinates.HorizontalCoordinates;
 import javafx.beans.property.ObjectProperty;
 
 public class ViewingParametersBean {
 
     private final ObjectProperty<Double> fieldOfViewDeg;
     //TODO: what type of coord ?
-    private final ObjectProperty<CartesianCoordinates> center;
+    private final ObjectProperty<HorizontalCoordinates> center;
 
-    public ViewingParametersBean(ObjectProperty<Double> fieldOfViewDeg, ObjectProperty<CartesianCoordinates> center) {
+    public ViewingParametersBean(ObjectProperty<Double> fieldOfViewDeg, ObjectProperty<HorizontalCoordinates> center) {
         this.fieldOfViewDeg = fieldOfViewDeg;
         this.center = center;
     }
@@ -18,7 +19,7 @@ public class ViewingParametersBean {
 
     public double getFieldOfViewDeg() { return fieldOfViewDeg.get().doubleValue(); }
 
-    public ObjectProperty<CartesianCoordinates> centerProperty() { return center; }
+    public ObjectProperty<HorizontalCoordinates> centerProperty() { return center; }
 
-    public CartesianCoordinates getCenter() { return center.get(); }
+    public HorizontalCoordinates getCenter() { return center.get(); }
 }
