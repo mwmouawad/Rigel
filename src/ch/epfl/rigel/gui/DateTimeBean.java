@@ -14,6 +14,7 @@ import java.time.ZonedDateTime;
  */
 public final class DateTimeBean {
 
+    //TODO: Should it be final?
      private final ObjectProperty<LocalDate>  date;
      private final ObjectProperty<LocalTime> time;
      private final ObjectProperty<ZoneId> zone;

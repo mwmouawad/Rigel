@@ -15,7 +15,8 @@ public final class UseCreateBinding {
 
         ObservableStringValue ss = Bindings.createStringBinding(
                 () -> s.getValue().substring(b.get(), e.get()),
-                s, b, e);
+                s,b,e);
+
         ss.addListener(o -> System.out.println(ss.get()));
 
         System.out.println("----");
