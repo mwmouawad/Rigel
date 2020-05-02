@@ -3,6 +3,7 @@ package ch.epfl.rigel.gui;
 import ch.epfl.rigel.coordinates.CartesianCoordinates;
 import ch.epfl.rigel.coordinates.HorizontalCoordinates;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 
 public class ViewingParametersBean {
 
@@ -12,9 +13,9 @@ public class ViewingParametersBean {
     private final ObjectProperty<Double> fieldOfViewDeg;
     private final ObjectProperty<HorizontalCoordinates> center;
 
-    public ViewingParametersBean(ObjectProperty<Double> fieldOfViewDeg, ObjectProperty<HorizontalCoordinates> center) {
-        this.fieldOfViewDeg = fieldOfViewDeg;
-        this.center = center;
+    public ViewingParametersBean() {
+        this.fieldOfViewDeg = new SimpleObjectProperty<>();
+        this.center = new SimpleObjectProperty<>();
     }
 
     public ObjectProperty<Double> fieldOfViewDegProperty() { return fieldOfViewDeg; }
@@ -33,4 +34,7 @@ public class ViewingParametersBean {
         this.center.set(coordinates);
     }
 
+    public void setFieldOfViewDeg(int i) {
+
+    }
 }

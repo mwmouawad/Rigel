@@ -6,6 +6,7 @@ import ch.epfl.rigel.astronomy.StarCatalogue;
 import ch.epfl.rigel.coordinates.CartesianCoordinates;
 import ch.epfl.rigel.coordinates.HorizontalCoordinates;
 import ch.epfl.rigel.coordinates.StereographicProjection;
+import com.sun.javafx.collections.MapListenerHelper;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.binding.ObjectBinding;
@@ -70,5 +71,8 @@ public class SkyCanvasManager {
     }
 
 
+    //public MapListenerHelper<Object, Object> objectUnderMouseProperty() { }
+
+    public Canvas canvas() { return canvas; }
 }
 
