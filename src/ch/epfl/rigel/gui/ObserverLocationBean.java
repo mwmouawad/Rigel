@@ -19,23 +19,18 @@ public class ObserverLocationBean {
     private final ObjectProperty<Double> lonDeg;
     private final ObjectProperty<Double> latDeg;
     private final ObjectProperty<GeographicCoordinates> coordinates;
+    private final ObjectBinding<GeographicCoordinates> binding;
 
-    public ObserverLocationBean(double lonDeg, double latDeg) {
-        this.lonDeg = new SimpleObjectProperty(latDeg);
-        this.latDeg = new SimpleObjectProperty(lonDeg);
-        this.coordinates = new SimpleObjectProperty(
-                GeographicCoordinates.ofDeg(lonDeg, latDeg)
-        );
+    public ObserverLocationBean() {
+        this.lonDeg = new SimpleObjectProperty();
+        this.latDeg = new SimpleObjectProperty();
+        this.coordinates = new SimpleObjectProperty();
 
-
-        ObservableObjectValue objectValue = Bindings.createObjectBinding(
+        this.binding = Bindings.createObjectBinding(
                 () -> (GeographicCoordinates.ofDeg(this.lonDeg.getValue(), this.latDeg.getValue())),
                 this.lonDeg, this.latDeg);
 
-        //TODO: Other way to bind values? Maybe biderection?
-        this.coordinates.bind(objectValue);
-
-
+        this.coordinates.bind(this.binding);
     }
 
     public ObjectProperty<Double> lonDegProperty() { return lonDeg; }
@@ -58,7 +53,6 @@ public class ObserverLocationBean {
     public void setCoordinates(GeographicCoordinates geoCoordinates){
         this.setLonDeg(geoCoordinates.lonDeg());
         this.setLatDeg(geoCoordinates.latDeg());
-        //this.coordinates.set(geoCoordinates);
     }
 
 }
