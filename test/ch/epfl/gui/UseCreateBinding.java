@@ -24,6 +24,6 @@ public final class UseCreateBinding {
         s.setValue("Bonjour, monde !");
         e.set(16);
         b.set(9);
-        System.out.println("----");
+        System.out.println(ss.getValue());
     }
 }
