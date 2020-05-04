@@ -6,6 +6,7 @@ import ch.epfl.rigel.astronomy.StarCatalogue;
 import ch.epfl.rigel.coordinates.CartesianCoordinates;
 import ch.epfl.rigel.coordinates.HorizontalCoordinates;
 import ch.epfl.rigel.coordinates.StereographicProjection;
+import ch.epfl.rigel.math.Angle;
 import ch.epfl.rigel.math.ClosedInterval;
 import ch.epfl.rigel.math.RightOpenInterval;
 import com.sun.javafx.collections.MapListenerHelper;
@@ -14,6 +15,7 @@ import javafx.beans.binding.DoubleBinding;
 import javafx.beans.binding.ObjectBinding;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
@@ -21,6 +23,7 @@ import javafx.scene.transform.NonInvertibleTransformException;
 import javafx.scene.transform.Transform;
 import javafx.geometry.Point2D;
 
+import java.util.Objects;
 import java.util.Optional;
 
 public class SkyCanvasManager {
@@ -49,25 +52,21 @@ public class SkyCanvasManager {
     public SkyCanvasManager(StarCatalogue catalogue, DateTimeBean dateTime, ObserverLocationBean observerLocation, ViewingParametersBean viewingParameters) {
         this.canvas = new Canvas();
         this.viewingParameters = viewingParameters;
-        this.initProperties();
+        this.skyCanvasPainter = new SkyCanvasPainter(this.canvas);
+        this.mousePosition = new SimpleObjectProperty(Point2D.ZERO);
         this.initBindings(catalogue, dateTime, observerLocation);
         this.initListeners();
-        this.skyCanvasPainter = new SkyCanvasPainter(this.canvas);
 
     }
 
     public void drawSky(){
         this.skyCanvasPainter.clear();
         Transform planeToCanvas = this.planeToCanvas.get();
-        this.skyCanvasPainter.drawStars(this.observedSky.get(), this.planeToCanvas.get());
-        this.skyCanvasPainter.drawPlanets(this.observedSky.get(), this.planeToCanvas.get());
-        this.skyCanvasPainter.drawSun(this.observedSky.get(), this.projection.get(), this.planeToCanvas.get());
-        this.skyCanvasPainter.drawMoon(this.observedSky.get(),this.projection.get(), this.planeToCanvas.get());
-        this.skyCanvasPainter.drawHorizon(this.projection.get(), this.planeToCanvas.get());
-    }
-
-    private void initProperties() {
-        this.mousePosition = new SimpleObjectProperty();
+        this.skyCanvasPainter.drawStars(this.observedSky.get(), planeToCanvas);
+        this.skyCanvasPainter.drawPlanets(this.observedSky.get(), planeToCanvas);
+        this.skyCanvasPainter.drawSun(this.observedSky.get(), this.projection.get(), planeToCanvas);
+        this.skyCanvasPainter.drawMoon(this.observedSky.get(),this.projection.get(), planeToCanvas);
+        this.skyCanvasPainter.drawHorizon(this.projection.get(), planeToCanvas);
     }
 
 
@@ -114,24 +113,20 @@ public class SkyCanvasManager {
             }
         });
 
-        this.viewingParameters.centerProperty().addListener((e) -> {
-            System.out.println(String.format("Changing center property: %s", this.viewingParameters.getCenter()));
-            this.drawSky();
-        });
+        this.viewingParameters.centerProperty().addListener((e) -> { this.drawSky(); });
 
-        this.viewingParameters.fieldOfViewDegProperty().addListener((e) -> {
-            System.out.println(String.format("Changing FOV: %s", this.viewingParameters.getFieldOfViewDeg()));
-            this.drawSky();
-        });
+        this.viewingParameters.fieldOfViewDegProperty().addListener((e) -> { this.drawSky(); });
+
+        this.observedSky.addListener((e) -> this.drawSky());
+
+        this.planeToCanvas.addListener((e) -> this.drawSky());
 
     }
 
     private void initBindings(StarCatalogue catalogue, DateTimeBean dateTime, ObserverLocationBean observerLocation) {
 
         this.projection = Bindings.createObjectBinding(
-                () -> {
-                    System.out.println("New Projection");return new StereographicProjection(this.viewingParameters.getCenter());
-                },
+                () -> { return new StereographicProjection(this.viewingParameters.getCenter()); },
                 viewingParameters.centerProperty()
         );
 
@@ -165,13 +160,13 @@ public class SkyCanvasManager {
         );
     }
 
-    private CelestialObject computeObjectUnderMouse(){
+    private CelestialObject  computeObjectUnderMouse(){
         Point2D mousePosInverse = new Point2D(0,0);
         double inverseDistance = 0.0;
 
         //TODO: Find a better exception handling is correct!
         try {
-             inverseDistance = this.planeToCanvas.get().inverseDeltaTransform(new Point2D(this.OBJECT_MOUSE_DISTANCE, 0)).getX();
+             inverseDistance = this.planeToCanvas.get().inverseDeltaTransform(new Point2D(OBJECT_MOUSE_DISTANCE, 0)).getX();
              mousePosInverse = this.planeToCanvas.get().inverseTransform(this.mousePosition.get());
         }
         catch (NonInvertibleTransformException error){
@@ -181,10 +176,9 @@ public class SkyCanvasManager {
         }
 
         Optional<CelestialObject> celObj = this.observedSky.get().objectClosestTo(
-                this.toCartesian(mousePosInverse), inverseDistance
-        );
+                toCartesian(mousePosInverse), inverseDistance);
 
-        return celObj.get();
+        return celObj.orElse(null);
     }
 
     private HorizontalCoordinates computeMouseHorizontalPosition(){
@@ -212,11 +206,9 @@ public class SkyCanvasManager {
 
         double width = canvas.widthProperty().get();
         double height = canvas.heightProperty().get();
-        double scale = width / 2 * Math.tan(viewingParameters.getFieldOfViewDeg());
+        double scale = width / projection.get().applyToAngle(Angle.ofDeg(viewingParameters.getFieldOfViewDeg()));
 
-        Transform transform = Transform.affine(scale, 0, 0, -scale, width/2, height/2);
-
-        return transform;
+        return Transform.affine(scale, 0, 0, -scale, width/2, height/2);
     }
 
 
@@ -228,7 +220,7 @@ public class SkyCanvasManager {
     private void addFOV(double fovDeg){
         double currentFOVDeg = this.viewingParameters.getFieldOfViewDeg();
         this.viewingParameters.setFieldOfViewDeg(
-                this.FOV_INTERVAL.clip(currentFOVDeg + fovDeg)
+                FOV_INTERVAL.clip(currentFOVDeg + fovDeg)
         );
     }
 
@@ -255,8 +247,8 @@ public class SkyCanvasManager {
     }
 
 
-    public ObjectProperty objectUnderMouseProperty() {
-        return new SimpleObjectProperty(this.objectUnderMouse);
+    public ObservableValue<CelestialObject> objectUnderMouseProperty() {
+        return this.objectUnderMouse;
     }
 
     public Canvas canvas() {

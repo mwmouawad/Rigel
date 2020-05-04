@@ -49,13 +49,13 @@ public final class UseSkyCanvasManager extends Application {
             viewingParametersBean.setFieldOfViewDeg(70);
 
             SkyCanvasManager canvasManager = new SkyCanvasManager(
-                                catalogue,
-                                dateTimeBean,
-                    viewingParametersBean,
-                    observerLocationBean);
+                                            catalogue,
+                                            dateTimeBean,
+                    observerLocationBean,
+                    viewingParametersBean);
 
-            //canvasManager.objectUnderMouseProperty().addListener(
-                    //(p, o, n) -> {if (n != null) System.out.println(n);});
+            canvasManager.objectUnderMouseProperty().addListener(
+                    (p, o, n) -> {if (n != null) System.out.println(n);});
 
             Canvas sky = canvasManager.canvas();
             BorderPane root = new BorderPane(sky);

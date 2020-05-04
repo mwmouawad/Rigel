@@ -13,35 +13,38 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableDoubleValue;
 import javafx.beans.value.ObservableObjectValue;
 
+import java.util.Objects;
+
 public class ObserverLocationBean {
 
     //TODO: final?
-    private final ObjectProperty<Double> lonDeg;
-    private final ObjectProperty<Double> latDeg;
+    private final DoubleProperty lonDeg;
+    private final DoubleProperty latDeg;
     private final ObjectProperty<GeographicCoordinates> coordinates;
     private final ObjectBinding<GeographicCoordinates> binding;
 
     public ObserverLocationBean() {
-        this.lonDeg = new SimpleObjectProperty();
-        this.latDeg = new SimpleObjectProperty();
+        this.lonDeg = new SimpleDoubleProperty(0);
+        this.latDeg = new SimpleDoubleProperty(0);
         this.coordinates = new SimpleObjectProperty();
 
         this.binding = Bindings.createObjectBinding(
-                () -> (GeographicCoordinates.ofDeg(this.lonDeg.getValue(), this.latDeg.getValue())),
+                () -> (GeographicCoordinates.ofDeg(Objects.requireNonNull(this.lonDeg.getValue()),
+                        Objects.requireNonNull(this.latDeg.getValue()))),
                 this.lonDeg, this.latDeg);
 
         this.coordinates.bind(this.binding);
     }
 
-    public ObjectProperty<Double> lonDegProperty() { return lonDeg; }
+    public DoubleProperty lonDegProperty() { return lonDeg; }
 
-    public double getLonDeg() { return lonDeg.get().doubleValue(); }
+    public double getLonDeg() { return lonDeg.get(); }
 
     public void setLonDeg(double lonDeg) {this.lonDeg.set(lonDeg);}
 
-    public ObjectProperty<Double> latDegProperty() { return latDeg; }
+    public DoubleProperty latDegProperty() { return latDeg; }
 
-    public double getLatDeg() { return latDeg.get().doubleValue(); }
+    public double getLatDeg() { return latDeg.get(); }
 
     public void setLatDeg(double latDeg) {this.latDeg.set(latDeg);}
 

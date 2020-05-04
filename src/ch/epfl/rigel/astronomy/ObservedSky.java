@@ -170,12 +170,16 @@ public final class ObservedSky {
         CelestialObject closestObject = null;
         double objDistance;
         double lowestDistance = Double.POSITIVE_INFINITY;
+        double lowestDistanceX = Double.POSITIVE_INFINITY;
 
         for(SkyObjects obj: SkyObjects.values()){
             for(int i = 0; i < celObjPositions.get(obj).length; i+=2) {
-                objDistance = distance(coordinates, CartesianCoordinates.of(celObjPositions.get(obj)[i], celObjPositions.get(obj)[i+1] ));
-                lowestDistance = Math.min(objDistance, lowestDistance);
-                closestObject = objDistance <= lowestDistance ?  celestialObjectOf(obj, i/2) : closestObject;
+                if(Math.abs(coordinates.x() - celObjPositions.get(obj)[i]) <= lowestDistanceX) {
+                    lowestDistanceX = Math.abs(coordinates.x() - celObjPositions.get(obj)[i]);
+                    objDistance = distance(coordinates, CartesianCoordinates.of(celObjPositions.get(obj)[i], celObjPositions.get(obj)[i+1] ));
+                    lowestDistance = Math.min(objDistance, lowestDistance);
+                    closestObject = objDistance <= lowestDistance ?  celestialObjectOf(obj, i/2) : closestObject;
+                }
             }
         }
         //TODO : inf ou egal ?
@@ -250,8 +254,6 @@ public final class ObservedSky {
         }
         return null;
     }
-
-
 
 
 
