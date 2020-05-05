@@ -32,7 +32,6 @@ public final class HorizontalCoordinates extends SphericalCoordinates {
      * @return HorizontalCoordinates object.
      */
     public static HorizontalCoordinates of(double az, double alt){
-
         return  new HorizontalCoordinates(
                 Preconditions.checkInInterval(AZ_INTERVAL, az),
                 Preconditions.checkInInterval(ALT_INTERVAL, alt)

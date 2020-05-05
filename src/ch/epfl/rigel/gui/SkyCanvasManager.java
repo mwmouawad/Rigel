@@ -9,22 +9,18 @@ import ch.epfl.rigel.coordinates.StereographicProjection;
 import ch.epfl.rigel.math.Angle;
 import ch.epfl.rigel.math.ClosedInterval;
 import ch.epfl.rigel.math.RightOpenInterval;
-import com.sun.javafx.collections.MapListenerHelper;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.binding.ObjectBinding;
-import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.input.KeyCode;
-import javafx.scene.paint.Color;
 import javafx.scene.transform.NonInvertibleTransformException;
 import javafx.scene.transform.Transform;
 import javafx.geometry.Point2D;
-
-import java.util.Objects;
 import java.util.Optional;
+
 
 public class SkyCanvasManager {
     //Constants
@@ -32,7 +28,8 @@ public class SkyCanvasManager {
     private final static ClosedInterval FOV_INTERVAL = ClosedInterval.of(30,150);
     private final static double STEP_HORIZONTAL_PROJECTION_DEG = 10;
     private final static double STEP_VERTICAL_PROJECTION_DEG = 5;
-    private final static RightOpenInterval CENTER_AZDEG_INTERVAL = RightOpenInterval.of(0,360);
+    //TODO: Use it with 360?
+    private final static RightOpenInterval CENTER_AZDEG_INTERVAL = RightOpenInterval.of(0,359);
     private final static ClosedInterval CENTER_ALTDEG_INTERVAL = ClosedInterval.of(5,90);
     private final ViewingParametersBean viewingParameters;
     //Private bindings
@@ -41,10 +38,10 @@ public class SkyCanvasManager {
     private ObjectBinding<StereographicProjection> projection;
     private SimpleObjectProperty<Point2D> mousePosition;
     private ObjectBinding<HorizontalCoordinates> mouseHorizontalPosition;
+    private ObjectBinding<CelestialObject> objectUnderMouse;
     //Public bindings
     public DoubleBinding mouseAzDeg;
     public DoubleBinding mouseAltDeg;
-    public ObjectBinding<CelestialObject> objectUnderMouse;
     private final Canvas canvas;
     private SkyCanvasPainter skyCanvasPainter;
 
@@ -56,7 +53,6 @@ public class SkyCanvasManager {
         this.mousePosition = new SimpleObjectProperty(Point2D.ZERO);
         this.initBindings(catalogue, dateTime, observerLocation);
         this.initListeners();
-
     }
 
     public void drawSky(){
@@ -99,7 +95,7 @@ public class SkyCanvasManager {
 
         this.canvas.setOnMousePressed(event -> {
             if(event.isPrimaryButtonDown()){
-                //TODO: What to do?
+                this.canvas().requestFocus();
             }
         });
 
@@ -126,13 +122,13 @@ public class SkyCanvasManager {
     private void initBindings(StarCatalogue catalogue, DateTimeBean dateTime, ObserverLocationBean observerLocation) {
 
         this.projection = Bindings.createObjectBinding(
-                () -> { return new StereographicProjection(this.viewingParameters.getCenter()); },
+                () ->  new StereographicProjection(this.viewingParameters.getCenter()),
                 viewingParameters.centerProperty()
         );
 
         this.planeToCanvas = Bindings.createObjectBinding(
                 () -> computePlaneToCanvas(this.viewingParameters)
-                , canvas.widthProperty(), canvas.heightProperty(), this.viewingParameters.fieldOfViewDegProperty()
+                , canvas.widthProperty(), canvas.heightProperty(), this.viewingParameters.fieldOfViewDegProperty(), this.projection
         );
 
         this.observedSky = Bindings.createObjectBinding(
@@ -171,7 +167,7 @@ public class SkyCanvasManager {
         }
         catch (NonInvertibleTransformException error){
             System.out.println(
-                    String.format("Erreur de transformation inverse du point: %s) avec erreur: %s", this.mousePosition.get(), error)
+                    String.format("Erreur de transformation inverse du point: %s avec erreur: %s", this.mousePosition.get(), error)
             );
         }
 
@@ -192,7 +188,7 @@ public class SkyCanvasManager {
         //TODO: See if exception handling is correct!
         catch (NonInvertibleTransformException error){
             System.out.println(
-                    String.format("Erreur de transformation inverse du point: %s) avec erreur: %s", this.mousePosition.get(), error)
+                    String.format("Erreur de transformation inverse du point: %s avec erreur: %s", this.mousePosition.get(), error)
             );
         }
 
@@ -204,11 +200,12 @@ public class SkyCanvasManager {
 
     private Transform computePlaneToCanvas(ViewingParametersBean viewingParameters) {
 
+        //TODO: How handle when canvas are still width and height are still 0
         double width = canvas.widthProperty().get();
         double height = canvas.heightProperty().get();
         double scale = width / projection.get().applyToAngle(Angle.ofDeg(viewingParameters.getFieldOfViewDeg()));
-
         return Transform.affine(scale, 0, 0, -scale, width/2, height/2);
+
     }
 
 
@@ -227,14 +224,22 @@ public class SkyCanvasManager {
     private void translateHorizontalProjectCenter(double stepDeg){
         HorizontalCoordinates currentCenter = this.viewingParameters.getCenter();
         double newAzDeg = CENTER_AZDEG_INTERVAL.reduce(currentCenter.azDeg() + stepDeg);
+        System.out.println("New AZ DEf: "  + newAzDeg);
+
         HorizontalCoordinates newCenter = HorizontalCoordinates.ofDeg(newAzDeg,currentCenter.altDeg());
+        System.out.println("New Horizontal coordinates: " + newCenter );
+
         this.viewingParameters.setCenter(newCenter);
     }
 
     private void translateVerticalProjectCenter(double stepDeg){
+        System.out.println("Translating vertical with step: " + stepDeg);
         HorizontalCoordinates currentCenter = this.viewingParameters.getCenter();
-        double newAltDeg = CENTER_ALTDEG_INTERVAL.clip(currentCenter.alt() + stepDeg);
+        double newAltDeg = CENTER_ALTDEG_INTERVAL.clip(currentCenter.altDeg() + stepDeg);
+
         HorizontalCoordinates newCenter = HorizontalCoordinates.ofDeg(currentCenter.azDeg(),newAltDeg);
+        System.out.println("New Horizontal coordinates: " + newCenter );
+
         this.viewingParameters.setCenter(newCenter);
     }
 
