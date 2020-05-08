@@ -60,9 +60,7 @@ public final class ObservedSky {
         }
 
         this.catalogue = catalogue;
-
         this.celObjPositions = new HashMap<SkyObjects, double[]>();
-
         this.celObjPositions.put(SkyObjects.MOON, computeMoonPosition());
         this.celObjPositions.put(SkyObjects.SUN, computeSunPosition());
         this.celObjPositions.put(SkyObjects.PLANETS, computePlanetPositions());
@@ -254,29 +252,6 @@ public final class ObservedSky {
         }
         return null;
     }
-
-
-
-    /*
-
-    //TODO: Comment faire pour pouvoir l'utiliser pour Planet et Stars ?
-
-    private static double[] computePositions() {
-        double[] positions = new double[celestial.size()*2];
-        int j = 0;
-        for(int i = 0; i < celestial.size(); i++){
-            positions[j] = celestial.get(i).equatorialPos().ra();
-            positions[j+1] = celestial.get(i).equatorialPos().dec();
-            j+=2;
-        }
-        return positions;
-    }
-
-     */
-
-
-
-
 
 
 }

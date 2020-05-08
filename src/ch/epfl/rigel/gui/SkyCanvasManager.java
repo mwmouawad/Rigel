@@ -24,7 +24,8 @@ import java.util.Optional;
 
 public class SkyCanvasManager {
     //Constants
-    private final static double OBJECT_MOUSE_DISTANCE = 10;
+    //TODO: What distance to use?
+    private final static double OBJECT_MOUSE_DISTANCE = 30;
     private final static ClosedInterval FOV_INTERVAL = ClosedInterval.of(30,150);
     private final static double STEP_HORIZONTAL_PROJECTION_DEG = 10;
     private final static double STEP_VERTICAL_PROJECTION_DEG = 5;
@@ -32,6 +33,7 @@ public class SkyCanvasManager {
     private final static RightOpenInterval CENTER_AZDEG_INTERVAL = RightOpenInterval.of(0,359);
     private final static ClosedInterval CENTER_ALTDEG_INTERVAL = ClosedInterval.of(5,90);
     private final ViewingParametersBean viewingParameters;
+    private final DateTimeBean dateTimeBean;
     //Private bindings
     private ObjectBinding<Transform> planeToCanvas;
     private ObjectBinding<ObservedSky> observedSky;
@@ -49,6 +51,7 @@ public class SkyCanvasManager {
     public SkyCanvasManager(StarCatalogue catalogue, DateTimeBean dateTime, ObserverLocationBean observerLocation, ViewingParametersBean viewingParameters) {
         this.canvas = new Canvas();
         this.viewingParameters = viewingParameters;
+        this.dateTimeBean = dateTime;
         this.skyCanvasPainter = new SkyCanvasPainter(this.canvas);
         this.mousePosition = new SimpleObjectProperty(Point2D.ZERO);
         this.initBindings(catalogue, dateTime, observerLocation);
@@ -93,6 +96,7 @@ public class SkyCanvasManager {
             }
         });
 
+        //TODO: What is expected to do here?
         this.canvas.setOnMousePressed(event -> {
             if(event.isPrimaryButtonDown()){
                 this.canvas().requestFocus();
@@ -109,9 +113,9 @@ public class SkyCanvasManager {
             }
         });
 
-        this.viewingParameters.centerProperty().addListener((e) -> { this.drawSky(); });
+        this.viewingParameters.centerProperty().addListener((e) ->  this.drawSky() );
 
-        this.viewingParameters.fieldOfViewDegProperty().addListener((e) -> { this.drawSky(); });
+        this.viewingParameters.fieldOfViewDegProperty().addListener((e) -> this.drawSky() );
 
         this.observedSky.addListener((e) -> this.drawSky());
 
@@ -133,7 +137,7 @@ public class SkyCanvasManager {
 
         this.observedSky = Bindings.createObjectBinding(
                 () -> new ObservedSky(dateTime.getZonedDateTime(), observerLocation.getCoordinates(), this.projection.getValue(), catalogue)
-                , dateTime.dateProperty(), observerLocation.coordinatesProperty(), this.projection);
+                , dateTime.dateProperty(), dateTime.zoneProperty(), dateTime.timeProperty(), observerLocation.coordinatesProperty(), this.projection);
 
         this.mouseHorizontalPosition = Bindings.createObjectBinding(
                 () -> this.computeMouseHorizontalPosition()
@@ -160,7 +164,8 @@ public class SkyCanvasManager {
         Point2D mousePosInverse = new Point2D(0,0);
         double inverseDistance = 0.0;
 
-        //TODO: Find a better exception handling is correct!
+        //TODO: Find a better exception handling is correct! Exceptions are being thrown
+        //
         try {
              inverseDistance = this.planeToCanvas.get().inverseDeltaTransform(new Point2D(OBJECT_MOUSE_DISTANCE, 0)).getX();
              mousePosInverse = this.planeToCanvas.get().inverseTransform(this.mousePosition.get());
