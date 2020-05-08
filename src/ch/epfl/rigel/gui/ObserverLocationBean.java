@@ -96,6 +96,11 @@ public class ObserverLocationBean {
 
 
    //TODO: Should it be possible to set directly?
+
+    /**
+     * Sets the Geographic coordinates in degrees of the observer.
+     * @param geoCoordinates
+     */
     public void setCoordinates(GeographicCoordinates geoCoordinates){
         this.setLonDeg(geoCoordinates.lonDeg());
         this.setLatDeg(geoCoordinates.latDeg());

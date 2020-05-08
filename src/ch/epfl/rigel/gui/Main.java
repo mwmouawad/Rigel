@@ -39,12 +39,12 @@ public class Main extends Application {
     private final double STAGE_MIN_HEIGHT = 600;
 
     //TODO: Create other class to handle all of this?
-    private static final String HYG_PATH = "/hygdata_v3.csv";
-    private static final String AST_PATH = "asterisms.txt";
-    private static final ZonedDateTime INIT_DATETIME = ZonedDateTime.parse("2020-02-17T20:15:00-03:00");
-    private static final HorizontalCoordinates INIT_VIEW_PARAM = HorizontalCoordinates.ofDeg(180.000000000001, 15);
+    private final String HYG_PATH = "/hygdata_v3.csv";
+    private final String AST_PATH = "asterisms.txt";
+    private final ZonedDateTime INIT_DATETIME = ZonedDateTime.parse("2020-02-17T20:15:00-03:00");
+    private final HorizontalCoordinates INIT_VIEW_PARAM = HorizontalCoordinates.ofDeg(180.000000000001, 15);
     private static final double INIT_FOVDEG = 100.0;
-    private static final StarCatalogue starCatalogue = loadCatalogue();
+    private final StarCatalogue starCatalogue = loadCatalogue();
 
 
     public static void main(String[] args) {
@@ -54,6 +54,8 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        //TODO: should the beans be attributes ?
+
         BorderPane mainPane = new BorderPane();
         primaryStage.setTitle("Rigel");
         primaryStage.minWidthProperty().setValue(STAGE_MIN_WIDTH);
@@ -64,7 +66,8 @@ public class Main extends Application {
         ViewingParametersBean viewParams = buildViewingParamBean();
         ObserverLocationBean obsLocation = buildObserverLocationBean();
         DateTimeBean dateTimeBean = buildDateTimeBean();
-        SkyCanvasManager skyCanvasManager = buildSkyCanvasManager(Objects.requireNonNull(starCatalogue),dateTimeBean,obsLocation,viewParams);
+        SkyCanvasManager skyCanvasManager = buildSkyCanvasManager(Objects.requireNonNull(starCatalogue),
+                dateTimeBean,obsLocation,viewParams);
 
 
         Canvas sky = skyCanvasManager.canvas();
@@ -88,19 +91,19 @@ public class Main extends Application {
         sky.requestFocus();
     }
 
-    private static ObserverLocationBean buildObserverLocationBean() {
+    private ObserverLocationBean buildObserverLocationBean() {
         ObserverLocationBean observerLocationBean = new ObserverLocationBean();
         observerLocationBean.setCoordinates(GeographicCoordinates.ofDeg(6.57, 46.52));
         return observerLocationBean;
     }
 
-    private static DateTimeBean buildDateTimeBean(){
+    private DateTimeBean buildDateTimeBean(){
         DateTimeBean dateTimeBean = new DateTimeBean();
         dateTimeBean.setZonedDateTime(INIT_DATETIME);
         return dateTimeBean;
     }
 
-    private static ViewingParametersBean buildViewingParamBean() {
+    private ViewingParametersBean buildViewingParamBean() {
         ViewingParametersBean viewingParametersBean =
                 new ViewingParametersBean();
         viewingParametersBean.setCenter(INIT_VIEW_PARAM);
@@ -110,15 +113,15 @@ public class Main extends Application {
 
     }
 
-    private static SkyCanvasManager buildSkyCanvasManager(
+
+    private SkyCanvasManager buildSkyCanvasManager(
             StarCatalogue catalogue, DateTimeBean dateTimeBean,
-            ObserverLocationBean observerLocationBean, ViewingParametersBean viewingParametersBean
-    ) {
+            ObserverLocationBean observerLocationBean, ViewingParametersBean viewingParametersBean) {
 
         return new SkyCanvasManager(catalogue, dateTimeBean, observerLocationBean, viewingParametersBean);
     }
 
-    private static BorderPane buildInformationBar(ViewingParametersBean viewParamBean, ObservableValue<CelestialObject> objMouse, DoubleBinding mouseAzDeg, DoubleBinding mouseAltDeg){
+    private BorderPane buildInformationBar(ViewingParametersBean viewParamBean, ObservableValue<CelestialObject> objMouse, DoubleBinding mouseAzDeg, DoubleBinding mouseAltDeg){
 
         BorderPane informationBar = new BorderPane();
         informationBar.setStyle("-fx-padding: 4; -fx-background-color: white;");
@@ -128,13 +131,11 @@ public class Main extends Application {
                 Bindings.format("Champ de vue : %.2f°", viewParamBean.fieldOfViewDegProperty())
         );
 
-        //TODO: Is it good?
+        //TODO: Is it good? empty string or new string?
         ObjectBinding celObjString = Bindings.createObjectBinding( () -> {
             if (objMouse.getValue() == null) {
-                return new String();
-            } else {
-                return objMouse.getValue().name();
-            }
+                return "";
+            } return objMouse.getValue().name();
         }, objMouse);
 
 
@@ -160,15 +161,13 @@ public class Main extends Application {
 
 
     private HBox buildControlBar(DateTimeBean dateTimeBean, ObserverLocationBean obsLocationBean) {
-        HBox controlBar = new HBox(10);
-        controlBar.getChildren().addAll(controlBarPosition(obsLocationBean), controlBarInstant(dateTimeBean), controlBarTimeAnimator());
+        HBox controlBar = new HBox(10, controlBarPosition(obsLocationBean),
+                controlBarInstant(dateTimeBean), controlBarTimeAnimator());
         controlBar.setStyle("-fx-spacing: 4; -fx-padding: 4;");
         return controlBar;
     }
 
     private HBox controlBarPosition(ObserverLocationBean obsLocationBean) {
-        HBox controlBarPosition = new HBox();
-        controlBarPosition.setStyle("-fx-spacing: inherit; -fx-alignment: baseline-left;");
         Label longitudeLabel = new Label("Longitude (°) :");
         TextField longitudeTextField = new TextField();
         longitudeTextField.setStyle("-fx-pref-width: 60; -fx-alignment: baseline-right;");
@@ -187,16 +186,14 @@ public class Main extends Application {
         ObjectProperty longProperty = longitudeTextField.getTextFormatter().valueProperty();
         longProperty.bindBidirectional(obsLocationBean.lonDegProperty());
 
-        //Add children
-        controlBarPosition.getChildren().addAll(longitudeLabel,longitudeTextField, latitudeLabel,latitudeTextField);
+        //Create control bar
+        HBox controlBarPosition = new HBox(longitudeLabel,longitudeTextField, latitudeLabel,latitudeTextField);
+        controlBarPosition.setStyle("-fx-spacing: inherit; -fx-alignment: baseline-left;");
 
         return controlBarPosition;
     }
 
     private HBox controlBarInstant(DateTimeBean dateTimeBean) {
-        HBox controlBarInstant = new HBox();
-        controlBarInstant.setStyle("-fx-spacing: inherit; -fx-alignment: baseline-left;");
-
         Label dateLabel = new Label("Date : ");
         DatePicker datePicker = new DatePicker();
         datePicker.getValue();
@@ -209,8 +206,6 @@ public class Main extends Application {
         //Set Zone combo Box
         ComboBox zoneComboBox = new ComboBox();
         //TODO: Sort itens
-
-
 
         List<String> sortedList = new ArrayList<>(ZoneId.getAvailableZoneIds());
         Collections.sort(sortedList);
@@ -230,34 +225,31 @@ public class Main extends Application {
 
         //Bind values
         ObjectProperty hourProperty = hourTextField.getTextFormatter().valueProperty();
+        //TODO: what to do?
         hourProperty.bindBidirectional(dateTimeBean.timeProperty());
         zoneComboBox.valueProperty().bind(dateTimeBean.zoneProperty());
         
         datePicker.valueProperty().bindBidirectional(dateTimeBean.dateProperty());
 
-        controlBarInstant.getChildren().addAll(dateLabel,datePicker, hourLabel,hourTextField, zoneComboBox);
+        HBox controlBarInstant = new HBox(dateLabel,datePicker, hourLabel,hourTextField, zoneComboBox);
+        controlBarInstant.setStyle("-fx-spacing: inherit; -fx-alignment: baseline-left;");
 
         return controlBarInstant;
     }
 
 
     private HBox controlBarTimeAnimator() {
-
-        HBox controlBarTimeAnimator = new HBox();
-        controlBarTimeAnimator.setStyle("-fx-spacing: inherit;");
-
         ChoiceBox choiceBox = new ChoiceBox();
         ObservableList obsList =  FXCollections.observableList(Arrays.asList( NamedTimeAccelerator.values()));
-        choiceBox.setItems(
-          obsList
-        );
+        choiceBox.setItems(obsList);
 
-        controlBarTimeAnimator.getChildren().add(choiceBox);
+        HBox controlBarTimeAnimator = new HBox(choiceBox);
+        controlBarTimeAnimator.setStyle("-fx-spacing: inherit;");
 
         return controlBarTimeAnimator;
     }
 
-    private static StarCatalogue loadCatalogue(){
+    private StarCatalogue loadCatalogue(){
 
         //TODO: Check exception handling
         try (InputStream hs = Main.class.getResourceAsStream("/hygdata_v3.csv")) {
@@ -283,7 +275,7 @@ public class Main extends Application {
     /**
      * Utility method.
      */
-    private static TextFormatter<Number> buildTextFormatter(NumberStringConverter nbStringConverter, boolean isLon) {
+    private TextFormatter<Number> buildTextFormatter(NumberStringConverter nbStringConverter, boolean isLon) {
         UnaryOperator<TextFormatter.Change> filter = (change -> {
             try {
                 String newText = change.getControlNewText();
