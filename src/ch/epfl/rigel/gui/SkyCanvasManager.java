@@ -108,7 +108,7 @@ public class SkyCanvasManager {
             if(Math.abs(event.getDeltaX()) > Math.abs(event.getDeltaY())){
                 this.addFOV(event.getDeltaX());
             }
-            else if(Math.abs(event.getDeltaX()) < Math.abs(event.getDeltaY())){
+            else if(Math.abs(event.getDeltaX()) <= Math.abs(event.getDeltaY())){
                 this.addFOV(event.getDeltaY());
             }
         });

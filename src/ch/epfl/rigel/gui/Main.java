@@ -205,7 +205,7 @@ public class Main extends Application {
 
         //Set Zone combo Box
         ComboBox zoneComboBox = new ComboBox();
-        //TODO: Sort itens
+        //TODO: Sort items
 
         List<String> sortedList = new ArrayList<>(ZoneId.getAvailableZoneIds());
         Collections.sort(sortedList);

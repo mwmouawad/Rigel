@@ -169,25 +169,38 @@ public final class ObservedSky {
         double objDistance;
         double lowestDistance = Double.POSITIVE_INFINITY;
         double lowestDistanceX = Double.POSITIVE_INFINITY;
+        double lowestDistanceY = Double.POSITIVE_INFINITY;
 
         for(SkyObjects obj: SkyObjects.values()){
             for(int i = 0; i < celObjPositions.get(obj).length; i+=2) {
-                if(Math.abs(coordinates.x() - celObjPositions.get(obj)[i]) <= lowestDistanceX) {
+                if(Math.abs(coordinates.x() - celObjPositions.get(obj)[i]) <= lowestDistanceX
+                    && Math.abs(coordinates.y() - celObjPositions.get(obj)[i+1]) <= lowestDistanceY) {
                     lowestDistanceX = Math.abs(coordinates.x() - celObjPositions.get(obj)[i]);
-                    objDistance = distance(coordinates, CartesianCoordinates.of(celObjPositions.get(obj)[i], celObjPositions.get(obj)[i+1] ));
+                    lowestDistanceY = Math.abs(coordinates.y() - celObjPositions.get(obj)[i + 1]);
+                    objDistance = distanceSqrd(coordinates, CartesianCoordinates.of(celObjPositions.get(obj)[i], celObjPositions.get(obj)[i+1] ));
                     lowestDistance = Math.min(objDistance, lowestDistance);
                     closestObject = objDistance <= lowestDistance ?  celestialObjectOf(obj, i/2) : closestObject;
                 }
             }
         }
         //TODO : inf ou egal ?
-        return (closestObject != null && lowestDistance <= distance) ? Optional.of(closestObject)
+        return (closestObject != null && Math.sqrt(lowestDistance) <= distance) ? Optional.of(closestObject)
                 : Optional.empty();
 
     }
 
-    private double distance(CartesianCoordinates obj1, CartesianCoordinates obj2){
-        return Math.sqrt((obj1.x() - obj2.x()) * (obj1.x() - obj2.x() ) + (obj1.y() - obj2.y()) * (obj1.y() - obj2.y()));
+    /*if(Math.abs(coordinates.x() - celObjPositions.get(obj)[i]) <= lowestDistanceX &&
+            Math.abs(coordinates.x() - celObjPositions.get(obj)[i+1]) <= lowestDistanceY) {
+        lowestDistanceX = Math.abs(coordinates.x() - celObjPositions.get(obj)[i]);
+        lowestDistanceY = Math.abs(coordinates.y() - celObjPositions.get(obj)[i + 1]);
+        objDistance = distance(coordinates, CartesianCoordinates.of(celObjPositions.get(obj)[i], celObjPositions.get(obj)[i+1] ));
+        lowestDistance = Math.min(objDistance, lowestDistance);
+        closestObject = objDistance <= lowestDistance ?  celestialObjectOf(obj, i/2) : closestObject;
+
+     */
+
+    private double distanceSqrd(CartesianCoordinates obj1, CartesianCoordinates obj2){
+        return ((obj1.x() - obj2.x()) * (obj1.x() - obj2.x() ) + (obj1.y() - obj2.y()) * (obj1.y() - obj2.y()));
     }
 
 
@@ -255,3 +268,30 @@ public final class ObservedSky {
 
 
 }
+
+
+    /*
+    public Optional<CelestialObject> objectClosestTo(CartesianCoordinates coordinates, double distance) {
+
+        //TODO: performant?
+        CelestialObject closestObject = null;
+        double objDistance;
+        double lowestDistance = Double.POSITIVE_INFINITY;
+        double lowestDistanceX = Double.POSITIVE_INFINITY;
+
+        for(SkyObjects obj: SkyObjects.values()){
+            for(int i = 0; i < celObjPositions.get(obj).length; i+=2) {
+                if(Math.abs(coordinates.x() - celObjPositions.get(obj)[i]) <= lowestDistanceX) {
+                    lowestDistanceX = Math.abs(coordinates.x() - celObjPositions.get(obj)[i]);
+                    objDistance = distance(coordinates, CartesianCoordinates.of(celObjPositions.get(obj)[i], celObjPositions.get(obj)[i+1] ));
+                    lowestDistance = Math.min(objDistance, lowestDistance);
+                    closestObject = objDistance <= lowestDistance ?  celestialObjectOf(obj, i/2) : closestObject;
+                }
+            }
+        }
+        //TODO : inf ou egal ?
+        return (closestObject != null && lowestDistance <= distance) ? Optional.of(closestObject)
+                : Optional.empty();
+
+    }
+     */
