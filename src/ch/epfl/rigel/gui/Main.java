@@ -8,7 +8,7 @@ import ch.epfl.rigel.coordinates.GeographicCoordinates;
 import ch.epfl.rigel.coordinates.HorizontalCoordinates;
 import javafx.application.Application;
 import javafx.beans.binding.*;
-import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.*;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -37,11 +37,10 @@ public class Main extends Application {
 
     private final double STAGE_MIN_WIDTH = 800;
     private final double STAGE_MIN_HEIGHT = 600;
-
     //TODO: Create other class to handle all of this?
     private final String HYG_PATH = "/hygdata_v3.csv";
     private final String AST_PATH = "asterisms.txt";
-    private final ZonedDateTime INIT_DATETIME = ZonedDateTime.parse("2020-02-17T20:15:00-03:00");
+    private final ZonedDateTime INIT_DATETIME = ZonedDateTime.parse("2020-02-17T20:15:00+01:00[Europe/Zurich]");
     private final HorizontalCoordinates INIT_VIEW_PARAM = HorizontalCoordinates.ofDeg(180.000000000001, 15);
     private static final double INIT_FOVDEG = 100.0;
     private final StarCatalogue starCatalogue = loadCatalogue();
@@ -69,7 +68,6 @@ public class Main extends Application {
         SkyCanvasManager skyCanvasManager = buildSkyCanvasManager(Objects.requireNonNull(starCatalogue),
                 dateTimeBean,obsLocation,viewParams);
 
-
         Canvas sky = skyCanvasManager.canvas();
         Pane skyViewPane = new Pane(sky);
         sky.widthProperty().bind(skyViewPane.widthProperty());
@@ -78,7 +76,6 @@ public class Main extends Application {
         //Sets control bar
         HBox controlBar = buildControlBar(dateTimeBean,obsLocation);
         BorderPane informationBar = buildInformationBar(viewParams, skyCanvasManager.objectUnderMouseProperty(), skyCanvasManager.mouseAzDeg, skyCanvasManager.mouseAltDeg);
-
 
         //Show the stage;
         mainPane.setTop(controlBar);
@@ -153,16 +150,15 @@ public class Main extends Application {
         informationBar.setCenter(closestCelObjLabel);
         informationBar.setRight(obsMousePositionLabel);
 
-
-
         return  informationBar;
-
     }
 
 
     private HBox buildControlBar(DateTimeBean dateTimeBean, ObserverLocationBean obsLocationBean) {
+        TimeAnimator timeAnimator = new TimeAnimator(dateTimeBean);
+
         HBox controlBar = new HBox(10, controlBarPosition(obsLocationBean),
-                controlBarInstant(dateTimeBean), controlBarTimeAnimator());
+                        controlBarInstant(dateTimeBean), controlBarTimeAnimator(NamedTimeAccelerator.DAY));
         controlBar.setStyle("-fx-spacing: 4; -fx-padding: 4;");
         return controlBar;
     }
@@ -207,11 +203,17 @@ public class Main extends Application {
         ComboBox zoneComboBox = new ComboBox();
         //TODO: Sort items
 
-        List<String> sortedList = new ArrayList<>(ZoneId.getAvailableZoneIds());
-        Collections.sort(sortedList);
+        List<String> zoneIdStringList = new ArrayList<>(ZoneId.getAvailableZoneIds());
+        List<ZoneId> zoneIdList = new ArrayList<ZoneId>();
+
+        Collections.sort(zoneIdStringList);
+
+        for(String s : zoneIdStringList){
+            zoneIdList.add(ZoneId.of(s));
+        }
 
         zoneComboBox.getItems().addAll(
-                sortedList
+                zoneIdList
         );
 
         zoneComboBox.setStyle("-fx-pref-width: 180;");
@@ -225,9 +227,8 @@ public class Main extends Application {
 
         //Bind values
         ObjectProperty hourProperty = hourTextField.getTextFormatter().valueProperty();
-        //TODO: what to do?
         hourProperty.bindBidirectional(dateTimeBean.timeProperty());
-        zoneComboBox.valueProperty().bind(dateTimeBean.zoneProperty());
+        zoneComboBox.valueProperty().bindBidirectional(dateTimeBean.zoneProperty());
         
         datePicker.valueProperty().bindBidirectional(dateTimeBean.dateProperty());
 
@@ -238,10 +239,22 @@ public class Main extends Application {
     }
 
 
-    private HBox controlBarTimeAnimator() {
+    private HBox controlBarTimeAnimator(NamedTimeAccelerator namedTimeAccelerator) {
         ChoiceBox choiceBox = new ChoiceBox();
-        ObservableList obsList =  FXCollections.observableList(Arrays.asList( NamedTimeAccelerator.values()));
+        ObjectProperty<NamedTimeAccelerator> p1 =
+                new SimpleObjectProperty<>(NamedTimeAccelerator.TIMES_1);
+        ObjectProperty<String> p2 =
+                new SimpleObjectProperty<>();
+
+        ObservableList<NamedTimeAccelerator> obsList =  FXCollections.observableList(Arrays.asList( NamedTimeAccelerator.values()));
         choiceBox.setItems(obsList);
+        choiceBox.setValue(obsList.get(0));
+
+
+        ObjectProperty<String> choiceBoxProperty = choiceBox.valueProperty();
+        p2.bind(choiceBoxProperty);
+
+
 
         HBox controlBarTimeAnimator = new HBox(choiceBox);
         controlBarTimeAnimator.setStyle("-fx-spacing: inherit;");
@@ -269,7 +282,6 @@ public class Main extends Application {
         }
 
     }
-
 
 
     /**
