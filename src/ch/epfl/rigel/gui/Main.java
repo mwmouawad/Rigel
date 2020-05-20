@@ -12,6 +12,8 @@ import javafx.beans.property.*;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
@@ -20,6 +22,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.converter.LocalTimeStringConverter;
 import javafx.util.converter.NumberStringConverter;
@@ -154,12 +157,13 @@ public class Main extends Application {
     }
 
 
-    private HBox buildControlBar(DateTimeBean dateTimeBean, ObserverLocationBean obsLocationBean) {
+    private HBox buildControlBar(DateTimeBean dateTimeBean, ObserverLocationBean obsLocationBean) throws IOException {
         TimeAnimator timeAnimator = new TimeAnimator(dateTimeBean);
 
         HBox controlBar = new HBox(10, controlBarPosition(obsLocationBean),
-                        controlBarInstant(dateTimeBean), controlBarTimeAnimator(NamedTimeAccelerator.DAY));
+                        controlBarInstant(dateTimeBean), controlBarTimeAnimator(timeAnimator));
         controlBar.setStyle("-fx-spacing: 4; -fx-padding: 4;");
+
         return controlBar;
     }
 
@@ -239,14 +243,14 @@ public class Main extends Application {
     }
 
 
-    private HBox controlBarTimeAnimator(NamedTimeAccelerator namedTimeAccelerator) {
+    private HBox controlBarTimeAnimator(TimeAnimator timeAnimator) {
         ChoiceBox choiceBox = new ChoiceBox();
         ObjectProperty<NamedTimeAccelerator> p1 =
                 new SimpleObjectProperty<>(NamedTimeAccelerator.TIMES_1);
         ObjectProperty<String> p2 =
                 new SimpleObjectProperty<>();
 
-        ObservableList<NamedTimeAccelerator> obsList =  FXCollections.observableList(Arrays.asList( NamedTimeAccelerator.values()));
+        ObservableList<NamedTimeAccelerator> obsList = FXCollections.observableList(Arrays.asList(NamedTimeAccelerator.values()));
         choiceBox.setItems(obsList);
         choiceBox.setValue(obsList.get(0));
 
@@ -254,9 +258,10 @@ public class Main extends Application {
         ObjectProperty<String> choiceBoxProperty = choiceBox.valueProperty();
         p2.bind(choiceBoxProperty);
 
-
+        timeAnimator.timeAcceleratorProperty().bind(Bindings.select(choiceBox.valueProperty(), "accelerator"));
 
         HBox controlBarTimeAnimator = new HBox(choiceBox);
+
         controlBarTimeAnimator.setStyle("-fx-spacing: inherit;");
 
         return controlBarTimeAnimator;

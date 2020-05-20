@@ -15,6 +15,7 @@ import java.time.ZonedDateTime;
  */
 public final class TimeAnimator extends AnimationTimer {
 
+    //TODO
 
     private SimpleObjectProperty<TimeAccelerator> timeAccelerator  = new SimpleObjectProperty<>();
     final private SimpleBooleanProperty running = new SimpleBooleanProperty(false);
@@ -75,6 +76,9 @@ public final class TimeAnimator extends AnimationTimer {
         this.timeAccelerator.set(timeAccelerator);
     }
 
+    public SimpleObjectProperty<TimeAccelerator> timeAcceleratorProperty() { return timeAccelerator; }
+
+    public TimeAccelerator getTimeAccelerator() { return timeAccelerator.getValue(); }
     /**
      * Returns the given running state of the animation timer.
      * @return state of the animation state.
@@ -83,5 +87,8 @@ public final class TimeAnimator extends AnimationTimer {
         return this.running;
     }
 
+    public boolean getRunning() { return running.getValue(); }
+
+    //TODO: check bean conventions
 
 }
