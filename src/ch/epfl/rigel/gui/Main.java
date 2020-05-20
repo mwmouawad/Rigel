@@ -7,8 +7,10 @@ import ch.epfl.rigel.astronomy.StarCatalogue;
 import ch.epfl.rigel.coordinates.GeographicCoordinates;
 import ch.epfl.rigel.coordinates.HorizontalCoordinates;
 import javafx.application.Application;
+import javafx.beans.Observable;
 import javafx.beans.binding.*;
 import javafx.beans.property.*;
+import javafx.beans.value.ObservableBooleanValue;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -38,15 +40,21 @@ import java.util.function.UnaryOperator;
 
 public class Main extends Application {
 
-    private final double STAGE_MIN_WIDTH = 800;
-    private final double STAGE_MIN_HEIGHT = 600;
-    //TODO: Create other class to handle all of this?
-    private final String HYG_PATH = "/hygdata_v3.csv";
-    private final String AST_PATH = "asterisms.txt";
-    private final ZonedDateTime INIT_DATETIME = ZonedDateTime.parse("2020-02-17T20:15:00+01:00[Europe/Zurich]");
-    private final HorizontalCoordinates INIT_VIEW_PARAM = HorizontalCoordinates.ofDeg(180.000000000001, 15);
+    private static final double STAGE_MIN_WIDTH = 800;
+    private static final double STAGE_MIN_HEIGHT = 600;
+    private static final String HYG_PATH = "/hygdata_v3.csv";
+    private static final String AST_PATH = "asterisms.txt";
+    private static final ZonedDateTime INIT_DATETIME = ZonedDateTime.parse("2020-02-17T20:15:00+01:00[Europe/Zurich]");
+    private static final HorizontalCoordinates INIT_VIEW_PARAM = HorizontalCoordinates.ofDeg(180.000000000001, 15);
     private static final double INIT_FOVDEG = 100.0;
+    private static final String UNICODE_RESET = "\uf0e2";
+    private static final String UNICODE_PLAY = "\uf04b";
+    private static final String UNICODE_PAUSE = "\uf04c";
+
+
+    private final Font fontAwesome = loadFont();
     private final StarCatalogue starCatalogue = loadCatalogue();
+
 
 
     public static void main(String[] args) {
@@ -62,12 +70,13 @@ public class Main extends Application {
         primaryStage.setTitle("Rigel");
         primaryStage.minWidthProperty().setValue(STAGE_MIN_WIDTH);
         primaryStage.minHeightProperty().setValue(STAGE_MIN_HEIGHT);
+        TimeAnimator timeAnimator = new TimeAnimator(buildDateTimeBean());
 
 
         //Sets SkyCanvasManager
         ViewingParametersBean viewParams = buildViewingParamBean();
         ObserverLocationBean obsLocation = buildObserverLocationBean();
-        DateTimeBean dateTimeBean = buildDateTimeBean();
+        DateTimeBean dateTimeBean = timeAnimator.getDateTimeProperty();
         SkyCanvasManager skyCanvasManager = buildSkyCanvasManager(Objects.requireNonNull(starCatalogue),
                 dateTimeBean,obsLocation,viewParams);
 
@@ -77,7 +86,7 @@ public class Main extends Application {
         sky.heightProperty().bind(skyViewPane.heightProperty());
 
         //Sets control bar
-        HBox controlBar = buildControlBar(dateTimeBean,obsLocation);
+        HBox controlBar = buildControlBar(dateTimeBean,obsLocation, timeAnimator);
         BorderPane informationBar = buildInformationBar(viewParams, skyCanvasManager.objectUnderMouseProperty(), skyCanvasManager.mouseAzDeg, skyCanvasManager.mouseAltDeg);
 
         //Show the stage;
@@ -157,8 +166,7 @@ public class Main extends Application {
     }
 
 
-    private HBox buildControlBar(DateTimeBean dateTimeBean, ObserverLocationBean obsLocationBean) throws IOException {
-        TimeAnimator timeAnimator = new TimeAnimator(dateTimeBean);
+    private HBox buildControlBar(DateTimeBean dateTimeBean, ObserverLocationBean obsLocationBean, TimeAnimator timeAnimator) throws IOException {
 
         HBox controlBar = new HBox(10, controlBarPosition(obsLocationBean),
                         controlBarInstant(dateTimeBean), controlBarTimeAnimator(timeAnimator));
@@ -244,34 +252,55 @@ public class Main extends Application {
 
 
     private HBox controlBarTimeAnimator(TimeAnimator timeAnimator) {
+
+        //Set the choice box
         ChoiceBox choiceBox = new ChoiceBox();
-        ObjectProperty<NamedTimeAccelerator> p1 =
-                new SimpleObjectProperty<>(NamedTimeAccelerator.TIMES_1);
-        ObjectProperty<String> p2 =
-                new SimpleObjectProperty<>();
 
         ObservableList<NamedTimeAccelerator> obsList = FXCollections.observableList(Arrays.asList(NamedTimeAccelerator.values()));
         choiceBox.setItems(obsList);
         choiceBox.setValue(obsList.get(0));
 
-
         ObjectProperty<String> choiceBoxProperty = choiceBox.valueProperty();
-        p2.bind(choiceBoxProperty);
-
         timeAnimator.timeAcceleratorProperty().bind(Bindings.select(choiceBox.valueProperty(), "accelerator"));
 
-        HBox controlBarTimeAnimator = new HBox(choiceBox);
+        Button resetButton = new Button(UNICODE_RESET);
+        resetButton.setFont(this.fontAwesome);
+        Button playButton = new Button(UNICODE_PLAY);
+        playButton.setFont(this.fontAwesome);
+        playButton.setOnAction(
+                (e) -> timeAnimator.start()
+        );
+        Binding conditionalBinding = Bindings.when(timeAnimator.runningProperty()).then( UNICODE_PAUSE).otherwise(UNICODE_PLAY);
+        playButton.textProperty().bind(conditionalBinding);
+        playButton.setOnAction((e) -> {
+            if(timeAnimator.getRunning()){ timeAnimator.stop(); return;}
+            timeAnimator.start();
 
+        } );
+
+        HBox controlBarTimeAnimator = new HBox(choiceBox, resetButton, playButton);
         controlBarTimeAnimator.setStyle("-fx-spacing: inherit;");
+
 
         return controlBarTimeAnimator;
     }
 
-    private StarCatalogue loadCatalogue(){
+    private Font loadFont(){
+        try (InputStream fontStream = getClass().getResourceAsStream("/Font Awesome 5 Free-Solid-900.otf")) {
+            Font font = Font.loadFont(fontStream, 15);
+            return  font;
+        }
+        catch (IOException ioException){
+            System.out.println(String.format("Got an error while loading Font. Error: %s", ioException));
+            return null;
+        }
+    }
+
+     private StarCatalogue loadCatalogue(){
 
         //TODO: Check exception handling
-        try (InputStream hs = Main.class.getResourceAsStream("/hygdata_v3.csv")) {
-            InputStream astStream = Main.class.getResourceAsStream("/asterisms.txt");
+        try (InputStream hs = getClass().getResourceAsStream("/hygdata_v3.csv")) {
+            InputStream astStream = getClass().getResourceAsStream("/asterisms.txt");
 
             StarCatalogue catalogue = new StarCatalogue.Builder()
                     .loadFrom(hs, HygDatabaseLoader.INSTANCE)

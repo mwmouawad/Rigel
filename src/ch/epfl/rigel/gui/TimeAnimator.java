@@ -89,6 +89,10 @@ public final class TimeAnimator extends AnimationTimer {
 
     public boolean getRunning() { return running.getValue(); }
 
+    public DateTimeBean getDateTimeProperty() {
+        return dateTimeBean;
+    }
+
     //TODO: check bean conventions
 
 }
