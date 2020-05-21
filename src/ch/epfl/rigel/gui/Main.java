@@ -44,9 +44,13 @@ public class Main extends Application {
     private static final double STAGE_MIN_HEIGHT = 600;
     private static final String HYG_PATH = "/hygdata_v3.csv";
     private static final String AST_PATH = "asterisms.txt";
-    private static final ZonedDateTime INIT_DATETIME = ZonedDateTime.parse("2020-02-17T20:15:00+01:00[Europe/Zurich]");
+    private static final ZonedDateTime INIT_DATETIME = getCurrentZonedDateTime();
     private static final HorizontalCoordinates INIT_VIEW_PARAM = HorizontalCoordinates.ofDeg(180.000000000001, 15);
     private static final double INIT_FOVDEG = 100.0;
+    //TODO: Remove before submission!
+    private static final boolean DEBUG_SAOPAULO = false;
+    private static final GeographicCoordinates INIT_COORDINATES = DEBUG_SAOPAULO ? GeographicCoordinates.ofDeg(-23.56, -46.66)
+            : GeographicCoordinates.ofDeg(6.57, 46.52);
     private static final String UNICODE_RESET = "\uf0e2";
     private static final String UNICODE_PLAY = "\uf04b";
     private static final String UNICODE_PAUSE = "\uf04c";
@@ -102,7 +106,7 @@ public class Main extends Application {
 
     private ObserverLocationBean buildObserverLocationBean() {
         ObserverLocationBean observerLocationBean = new ObserverLocationBean();
-        observerLocationBean.setCoordinates(GeographicCoordinates.ofDeg(6.57, 46.52));
+        observerLocationBean.setCoordinates(INIT_COORDINATES);
         return observerLocationBean;
     }
 
@@ -167,9 +171,18 @@ public class Main extends Application {
 
 
     private HBox buildControlBar(DateTimeBean dateTimeBean, ObserverLocationBean obsLocationBean, TimeAnimator timeAnimator) throws IOException {
+        //Disable nodes when time animator is running
+        Binding disableBinding = Bindings.when(timeAnimator.runningProperty()).then(true).otherwise(false);
 
-        HBox controlBar = new HBox(10, controlBarPosition(obsLocationBean),
-                        controlBarInstant(dateTimeBean), controlBarTimeAnimator(timeAnimator));
+        HBox controlBarPosition =  controlBarPosition(obsLocationBean);
+        //Pass the binding as argument, because we can't disable all of the children nodes.
+        HBox controlBarInstant = controlBarInstant(dateTimeBean);
+        HBox controlBarTimeAnimator = controlBarTimeAnimator(timeAnimator, disableBinding);
+        //Disable entire control bar for instant of observation.
+        controlBarInstant.disableProperty().bind(disableBinding);
+
+        HBox controlBar = new HBox(10, controlBarPosition,
+                       controlBarInstant, controlBarTimeAnimator);
         controlBar.setStyle("-fx-spacing: 4; -fx-padding: 4;");
 
         return controlBar;
@@ -197,7 +210,6 @@ public class Main extends Application {
         //Create control bar
         HBox controlBarPosition = new HBox(longitudeLabel,longitudeTextField, latitudeLabel,latitudeTextField);
         controlBarPosition.setStyle("-fx-spacing: inherit; -fx-alignment: baseline-left;");
-
         return controlBarPosition;
     }
 
@@ -247,11 +259,12 @@ public class Main extends Application {
         HBox controlBarInstant = new HBox(dateLabel,datePicker, hourLabel,hourTextField, zoneComboBox);
         controlBarInstant.setStyle("-fx-spacing: inherit; -fx-alignment: baseline-left;");
 
+
         return controlBarInstant;
     }
 
 
-    private HBox controlBarTimeAnimator(TimeAnimator timeAnimator) {
+    private HBox controlBarTimeAnimator(TimeAnimator timeAnimator, Binding disableBinding) {
 
         //Set the choice box
         ChoiceBox choiceBox = new ChoiceBox();
@@ -270,13 +283,19 @@ public class Main extends Application {
         playButton.setOnAction(
                 (e) -> timeAnimator.start()
         );
-        Binding conditionalBinding = Bindings.when(timeAnimator.runningProperty()).then( UNICODE_PAUSE).otherwise(UNICODE_PLAY);
-        playButton.textProperty().bind(conditionalBinding);
+        Binding playPauseBinding = Bindings.when(timeAnimator.runningProperty()).then( UNICODE_PAUSE).otherwise(UNICODE_PLAY);
+        playButton.textProperty().bind(playPauseBinding);
         playButton.setOnAction((e) -> {
             if(timeAnimator.getRunning()){ timeAnimator.stop(); return;}
             timeAnimator.start();
 
         } );
+
+        //Reset to the current computer DateTimeZone.
+        resetButton.setOnAction((e) -> timeAnimator.getDateTimeProperty().setZonedDateTime(getCurrentZonedDateTime()));
+
+        choiceBox.disableProperty().bind(disableBinding);
+        resetButton.disableProperty().bind(disableBinding);
 
         HBox controlBarTimeAnimator = new HBox(choiceBox, resetButton, playButton);
         controlBarTimeAnimator.setStyle("-fx-spacing: inherit;");
@@ -317,6 +336,10 @@ public class Main extends Application {
 
     }
 
+
+    static private ZonedDateTime getCurrentZonedDateTime(){
+        return ZonedDateTime.now();
+    }
 
     /**
      * Utility method.
