@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import ch.epfl.rigel.astronomy.HygDatabaseLoader.COLUMNS;
@@ -29,23 +30,31 @@ public enum AsterismLoader implements StarCatalogue.Loader {
     @Override
     public void load(InputStream inputStream, StarCatalogue.Builder builder) throws IOException {
 
+        try(
         InputStreamReader inStrReader = new InputStreamReader(inputStream, StandardCharsets.US_ASCII);
         BufferedReader buffReader = new BufferedReader(inStrReader);
+        ){
+            String line = buffReader.readLine();
+            String[] charTable;
+            List<Star> starList = new ArrayList<Star>();
+            HashMap<Integer, Star> starMap = new HashMap<Integer, Star>();
 
-        String line = buffReader.readLine();
-        String[] charTable;
-        List<Star> starList = new ArrayList<Star>();
-
-        while (line != null) {
-            starList.clear();
-            charTable = line.split(",");
-            for (String s : charTable) {
-                Star star = getStarFromCatalogue(Integer.parseInt(s), builder.stars());
-                starList.add(star);
+            //Load the star map
+            for(Star s:  builder.stars()){
+                starMap.put(s.hipparcosId(), s);
             }
-            builder.addAsterism(new Asterism(starList));
-            line = buffReader.readLine();
 
+            while (line != null) {
+                starList.clear();
+                charTable = line.split(",");
+                for (String s : charTable) {
+                    Star star = starMap.get(Integer.parseInt(s));
+                    starList.add(star);
+                }
+                builder.addAsterism(new Asterism(starList));
+                line = buffReader.readLine();
+
+            }
         }
 
 

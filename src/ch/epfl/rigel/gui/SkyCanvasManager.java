@@ -30,7 +30,7 @@ public class SkyCanvasManager {
     private final static double STEP_HORIZONTAL_PROJECTION_DEG = 10;
     private final static double STEP_VERTICAL_PROJECTION_DEG = 5;
     //TODO: Use it with 360?
-    private final static RightOpenInterval CENTER_AZDEG_INTERVAL = RightOpenInterval.of(0,359);
+    private final static RightOpenInterval CENTER_AZDEG_INTERVAL = RightOpenInterval.of(0,360);
     private final static ClosedInterval CENTER_ALTDEG_INTERVAL = ClosedInterval.of(5,90);
     private final ViewingParametersBean viewingParameters;
     private final DateTimeBean dateTimeBean;

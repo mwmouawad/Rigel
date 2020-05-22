@@ -317,24 +317,19 @@ public class Main extends Application {
 
      private StarCatalogue loadCatalogue(){
 
-        //TODO: Check exception handling
-        try (InputStream hs = getClass().getResourceAsStream("/hygdata_v3.csv")) {
+        try (InputStream hs = getClass().getResourceAsStream("/hygdata_v3.csv");
+             InputStream astStream = getClass().getResourceAsStream("/asterisms.txt")){
 
-            //TODO: Check if correct exception handling
-            try(InputStream astStream = getClass().getResourceAsStream("/asterisms.txt")){
                 StarCatalogue catalogue = new StarCatalogue.Builder()
                         .loadFrom(hs, HygDatabaseLoader.INSTANCE)
                         .loadFrom(astStream, AsterismLoader.INSTANCE)
                         .build();
 
-
-
                 return catalogue;
 
             }
-
-        } catch (IOException ioException) {
-            System.out.println(String.format("Got an error while loading Start Catalogue. Error: %s", ioException));
+         catch (IOException ioException) {
+            System.out.println(String.format("Got an error while loading Hyg data and Asterisms data. Error: %s", ioException));
             return null;
         }
 

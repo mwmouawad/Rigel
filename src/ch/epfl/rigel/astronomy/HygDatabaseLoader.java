@@ -27,8 +27,10 @@ public enum HygDatabaseLoader implements StarCatalogue.Loader {
     @Override
     public void load(InputStream inputStream, StarCatalogue.Builder builder) throws IOException {
 
+        try(
         InputStreamReader inStrReader = new InputStreamReader(inputStream, StandardCharsets.US_ASCII);
         BufferedReader buffReader = new BufferedReader(inStrReader);
+        ){
         //Skip the first line
         buffReader.readLine();
 
@@ -55,6 +57,7 @@ public enum HygDatabaseLoader implements StarCatalogue.Loader {
 
             builder.addStar(star);
             line = buffReader.readLine();
+        }
         }
     }
 
