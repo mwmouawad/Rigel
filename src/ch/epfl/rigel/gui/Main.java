@@ -49,7 +49,7 @@ public class Main extends Application {
     private static final double INIT_FOVDEG = 100.0;
     //TODO: Remove before submission!
     private static final boolean DEBUG_SAOPAULO = false;
-    private static final GeographicCoordinates INIT_COORDINATES = DEBUG_SAOPAULO ? GeographicCoordinates.ofDeg(-23.56, -46.66)
+    private static final GeographicCoordinates INIT_COORDINATES = DEBUG_SAOPAULO ? GeographicCoordinates.ofDeg(-46.66, -23.56)
             : GeographicCoordinates.ofDeg(6.57, 46.52);
     private static final String UNICODE_RESET = "\uf0e2";
     private static final String UNICODE_PLAY = "\uf04b";
@@ -319,15 +319,19 @@ public class Main extends Application {
 
         //TODO: Check exception handling
         try (InputStream hs = getClass().getResourceAsStream("/hygdata_v3.csv")) {
-            InputStream astStream = getClass().getResourceAsStream("/asterisms.txt");
 
-            StarCatalogue catalogue = new StarCatalogue.Builder()
-                    .loadFrom(hs, HygDatabaseLoader.INSTANCE)
-                    .loadFrom(astStream, AsterismLoader.INSTANCE)
-                    .build();
+            //TODO: Check if correct exception handling
+            try(InputStream astStream = getClass().getResourceAsStream("/asterisms.txt")){
+                StarCatalogue catalogue = new StarCatalogue.Builder()
+                        .loadFrom(hs, HygDatabaseLoader.INSTANCE)
+                        .loadFrom(astStream, AsterismLoader.INSTANCE)
+                        .build();
 
-            return catalogue;
 
+
+                return catalogue;
+
+            }
 
         } catch (IOException ioException) {
             System.out.println(String.format("Got an error while loading Start Catalogue. Error: %s", ioException));
