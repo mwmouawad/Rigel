@@ -22,14 +22,22 @@ import javafx.geometry.Point2D;
 import java.util.Optional;
 
 
-public class SkyCanvasManager {
+/**
+ * Manages the Java fx canvas for the sky. The Manager ensures the good functioning by listening
+ * to events, updating and drawing the appropriate objects. Its main functions are:
+ * Listens to changes/input from the user such as mouse position or keys pressed down.
+ * Sets the appropriate bindings.
+ * Uses SkyCanvasPainter to draw the objects into the sky upon updates.
+ * @author Mark Mouawad (296508)
+ * @author Leah Uzzan (302829)
+ */
+final public class SkyCanvasManager {
     //Constants
-    //TODO: What distance to use?
-    private final static double OBJECT_MOUSE_DISTANCE = 30;
-    private final static ClosedInterval FOV_INTERVAL = ClosedInterval.of(30,150);
+    private final static double OBJECT_MOUSE_DISTANCE = 10;
     private final static double STEP_HORIZONTAL_PROJECTION_DEG = 10;
     private final static double STEP_VERTICAL_PROJECTION_DEG = 5;
-    //TODO: Use it with 360?
+    //Intervals
+    private final static ClosedInterval FOV_INTERVAL = ClosedInterval.of(30,150);
     private final static RightOpenInterval CENTER_AZDEG_INTERVAL = RightOpenInterval.of(0,360);
     private final static ClosedInterval CENTER_ALTDEG_INTERVAL = ClosedInterval.of(5,90);
     private final ViewingParametersBean viewingParameters;
@@ -48,6 +56,14 @@ public class SkyCanvasManager {
     private SkyCanvasPainter skyCanvasPainter;
 
 
+    /**
+     * Creates an instance of SkyCanvasManager. Creates an empty Canvas that needs be
+     * used initialized.
+     * @param catalogue the star catalogue.
+     * @param dateTime a DateTimeBean object for the current time.
+     * @param observerLocation  a ObserverLocationBean with the current observer location coordinate properties.
+     * @param viewingParameters bean contaning the parameters for the view:  FOV and the center of projection.
+     */
     public SkyCanvasManager(StarCatalogue catalogue, DateTimeBean dateTime, ObserverLocationBean observerLocation, ViewingParametersBean viewingParameters) {
         this.canvas = new Canvas();
         this.viewingParameters = viewingParameters;
@@ -58,6 +74,10 @@ public class SkyCanvasManager {
         this.initListeners();
     }
 
+    /**
+     * Draws the sky objects from the observedSky with the skyCanvasPainter.
+     */
+    //TODO: Should it be public?
     public void drawSky(){
         this.skyCanvasPainter.clear();
         Transform planeToCanvas = this.planeToCanvas.get();
@@ -69,6 +89,9 @@ public class SkyCanvasManager {
     }
 
 
+    /**
+     * Initiates all listeners for the manager.
+     */
     private void initListeners() {
         //Listens to mouse movement and stores on mousePosition property
         this.canvas.setOnMouseMoved(event -> {
@@ -77,6 +100,7 @@ public class SkyCanvasManager {
             );
         });
 
+        //Listens for the arrows keys.
         this.canvas.setOnKeyPressed(event -> {
             if(event.getCode() == KeyCode.DOWN){
                 this.translateVerticalProjectCenter(-STEP_VERTICAL_PROJECTION_DEG);
@@ -96,14 +120,14 @@ public class SkyCanvasManager {
             }
         });
 
-        //TODO: What is expected to do here?
+        //Listens to mouse press.
         this.canvas.setOnMousePressed(event -> {
             if(event.isPrimaryButtonDown()){
                 this.canvas().requestFocus();
             }
         });
 
-
+        //Listens for mouse scroll.
         this.canvas.setOnScroll(event -> {
             if(Math.abs(event.getDeltaX()) > Math.abs(event.getDeltaY())){
                 this.addFOV(event.getDeltaX());
@@ -113,12 +137,10 @@ public class SkyCanvasManager {
             }
         });
 
+        //Whenever a change occurs, draw sky is called to update the view.
         this.viewingParameters.centerProperty().addListener((e) ->  this.drawSky() );
-
         this.viewingParameters.fieldOfViewDegProperty().addListener((e) -> this.drawSky() );
-
         this.observedSky.addListener((e) -> this.drawSky());
-
         this.planeToCanvas.addListener((e) -> this.drawSky());
 
     }
@@ -164,7 +186,6 @@ public class SkyCanvasManager {
         Point2D mousePosInverse = new Point2D(0,0);
         double inverseDistance = 0.0;
 
-        //TODO: Find a better exception handling is correct! Exceptions are being thrown
         //
         try {
              inverseDistance = this.planeToCanvas.get().inverseDeltaTransform(new Point2D(OBJECT_MOUSE_DISTANCE, 0)).getX();
@@ -174,6 +195,7 @@ public class SkyCanvasManager {
             System.out.println(
                     String.format("Erreur de transformation inverse du point: %s avec erreur: %s", this.mousePosition.get(), error)
             );
+            return null;
         }
 
         Optional<CelestialObject> celObj = this.observedSky.get().objectClosestTo(
@@ -204,13 +226,10 @@ public class SkyCanvasManager {
     }
 
     private Transform computePlaneToCanvas(ViewingParametersBean viewingParameters) {
-
-        //TODO: How handle when canvas are still width and height are still 0
         double width = canvas.widthProperty().get();
         double height = canvas.heightProperty().get();
         double scale = width / projection.get().applyToAngle(Angle.ofDeg(viewingParameters.getFieldOfViewDeg()));
         return Transform.affine(scale, 0, 0, -scale, width/2, height/2);
-
     }
 
 
@@ -252,15 +271,20 @@ public class SkyCanvasManager {
         return CartesianCoordinates.of(point2D.getX(), point2D.getY());
     }
 
-    private static Point2D toPoint2D(CartesianCoordinates coordinates){
-        return new Point2D(coordinates.x(), coordinates.y());
-    }
-
-
+    /**
+     * Returns a property containing the CelestialObject currently under/close
+     * to the mouse.
+     * @return a property containing the CelestialObject currently under/close
+     *  to the mouse.
+     */
     public ObservableValue<CelestialObject> objectUnderMouseProperty() {
         return this.objectUnderMouse;
     }
 
+    /**
+     * Returns the canvas used by the SkyCanvasManager to draw the sky.
+     * @return the canvas used by the SkyCanvasManager to draw the sky.
+     */
     public Canvas canvas() {
         return this.canvas;
     }

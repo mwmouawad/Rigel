@@ -15,9 +15,9 @@ import javafx.beans.value.ObservableObjectValue;
 
 import java.util.Objects;
 
-
+//TODO: Check if needs to add throws here.
 /**
- * A class representing the observer location as a JavaFX bean. Will be used so the user
+ * JavaFX Bean type class encapsulating the observer location. Will be used so the user
  * can change it's position and update the UI accordingly.
  * @author Mark Mouawad (296508)
  * @author Leah Uzzan (302829)
@@ -27,23 +27,24 @@ public class ObserverLocationBean {
     private final DoubleProperty lonDeg;
     private final DoubleProperty latDeg;
     private final ObjectProperty<GeographicCoordinates> coordinates;
-    private final ObjectBinding<GeographicCoordinates> binding;
+    private final ObjectBinding<GeographicCoordinates> coordinatesBinding;
 
     /**
-     * Constructs a observer location bean. Meant to be used by setting the values using
-     * the available setters.
+     * Constructs a observer location bean with empty coordinates properties.
+     * Meant to be used by setting the values using the available setters.
+     * //TODO: Should add throws here?
      */
     public ObserverLocationBean() {
         this.lonDeg = new SimpleDoubleProperty(0);
         this.latDeg = new SimpleDoubleProperty(0);
         this.coordinates = new SimpleObjectProperty();
 
-        this.binding = Bindings.createObjectBinding(
+        this.coordinatesBinding = Bindings.createObjectBinding(
                 () -> (GeographicCoordinates.ofDeg(Objects.requireNonNull(this.lonDeg.getValue()),
                         Objects.requireNonNull(this.latDeg.getValue()))),
                 this.lonDeg, this.latDeg);
 
-        this.coordinates.bind(this.binding);
+        this.coordinates.bind(this.coordinatesBinding);
     }
 
     /**
@@ -79,6 +80,7 @@ public class ObserverLocationBean {
     /**
      * Sets the latitude in degrees of the observer location.
      * @param latDeg the latitude in degrees to set.
+     * //TODO: Should add throws here?
      */
     public void setLatDeg(double latDeg) {this.latDeg.set(latDeg);}
 
@@ -95,11 +97,9 @@ public class ObserverLocationBean {
     public GeographicCoordinates getCoordinates() { return coordinates.get(); }
 
 
-   //TODO: Should it be possible to set directly?
-
     /**
      * Sets the Geographic coordinates in degrees of the observer.
-     * @param geoCoordinates
+     * @param geoCoordinates the geographic coordinates to set the observer location.
      */
     public void setCoordinates(GeographicCoordinates geoCoordinates){
         this.setLonDeg(geoCoordinates.lonDeg());
