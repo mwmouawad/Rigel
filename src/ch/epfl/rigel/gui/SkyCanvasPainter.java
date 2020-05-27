@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+
 public class SkyCanvasPainter {
 
     Canvas canvas;
@@ -37,23 +38,45 @@ public class SkyCanvasPainter {
         this.graphicContext.fillRect(0, 0, this.canvas.getWidth(), this.canvas.getHeight());
     }
 
-    // TODO: Add feature to not draw star path when they are outside of canvas!
+    /**
+     * Check if current position is in the screen boundaries
+     * @return
+     */
+    private boolean isInScreen(double x, double y){
+
+        return ( x >= 0 && x <= canvas.widthProperty().get() && y >= 0 && y <= canvas.heightProperty().get());
+    }
+
     private void drawAsterisms(ObservedSky sky, double[] transformedStarPos) {
 
         Set<Asterism> asterismSet = sky.asterisms();
         //Draw Asterisms
 
+        //TODO: Check if done correctly
         for (Asterism ast : asterismSet) {
             List<Integer> indexList = sky.asterismIndices(ast);
             this.graphicContext.setStroke(Color.BLUE);
             this.graphicContext.beginPath();
+            boolean isPreviousStarOnScreen = false;
+            boolean isCurrentStarOnScreen = false;
+            int oldIndex = 0;
+
             for (int i = 0; i < indexList.size(); i++) {
                 int index = indexList.get(i);
                 Star s = sky.stars().get(index);
                 double x = transformedStarPos[2 * index];
                 double y = transformedStarPos[2 * index + 1];
-                if (i == 0) this.graphicContext.moveTo(x, y);
-                else this.graphicContext.lineTo(x, y);
+
+                if(i == 0){
+                    this.graphicContext.moveTo(x, y);
+                }
+                else{
+                    isCurrentStarOnScreen = this.isInScreen(x ,y);
+                    isPreviousStarOnScreen = this.isInScreen(transformedStarPos[2 * (oldIndex)],transformedStarPos[2 * (oldIndex) + 1] );
+                    if(isCurrentStarOnScreen || isPreviousStarOnScreen) this.graphicContext.lineTo(x, y);
+                    else  this.graphicContext.moveTo(x,y);
+                }
+                oldIndex = index;
             }
             this.graphicContext.stroke();
             this.graphicContext.closePath();
