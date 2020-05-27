@@ -164,7 +164,6 @@ public final class ObservedSky {
      */
     public Optional<CelestialObject> objectClosestTo(CartesianCoordinates coordinates, double distance) {
 
-        //TODO: performant?
         CelestialObject closestObject = null;
         double objDistance;
         double lowestDistance = Double.POSITIVE_INFINITY;
@@ -183,7 +182,7 @@ public final class ObservedSky {
                 }
             }
         }
-        //TODO : inf ou egal ?
+        //TODO : inf ou egal ? juste ?
         return (closestObject != null && Math.sqrt(lowestDistance) <= distance) ? Optional.of(closestObject)
                 : Optional.empty();
 
@@ -199,22 +198,36 @@ public final class ObservedSky {
 
      */
 
+    /**
+     * Computes the distance squared between two celestial objects in a double array.
+     * @param obj1
+     * @param obj2
+     * @return
+     */
     private double distanceSqrd(CartesianCoordinates obj1, CartesianCoordinates obj2){
         return ((obj1.x() - obj2.x()) * (obj1.x() - obj2.x() ) + (obj1.y() - obj2.y()) * (obj1.y() - obj2.y()));
     }
 
 
+    /**
+     * Intended to be used only during init to compute the sun position in a double array.
+     * @return
+     */
     private double[]  computeSunPosition() {
         return new double[]{this.project(this.sun).x(), this.project(this.sun).y()};
     }
 
+    /**
+     * Intended to be used only during init to compute the moon position in a double array.
+     * @return
+     */
     private double[] computeMoonPosition() {
         return new double[]{this.project(this.moon).x(), this.project(this.moon).y()};
     }
 
 
     /**
-     * Intended to be used only during init.
+     * Intended to be used only during init to compute the planet positions
      * @return
      */
     private double[] computePlanetPositions() {
@@ -229,6 +242,10 @@ public final class ObservedSky {
         return  positions;
     }
 
+    /**
+     * Intended to be used only during init to compute the star positions
+     * @return
+     */
     private double[] computeStarPositions() {
         double[] positions = new double[stars().size()*2];
         int j = 0;
@@ -251,7 +268,12 @@ public final class ObservedSky {
         return this.projection.apply(horCoordinates);
     }
 
-
+    /**
+     *
+     * @param obj to get
+     * @param index of the element in the list
+     * @return
+     */
     private CelestialObject celestialObjectOf(SkyObjects obj, int index) {
         switch (obj) {
             case PLANETS:
@@ -268,30 +290,3 @@ public final class ObservedSky {
 
 
 }
-
-
-    /*
-    public Optional<CelestialObject> objectClosestTo(CartesianCoordinates coordinates, double distance) {
-
-        //TODO: performant?
-        CelestialObject closestObject = null;
-        double objDistance;
-        double lowestDistance = Double.POSITIVE_INFINITY;
-        double lowestDistanceX = Double.POSITIVE_INFINITY;
-
-        for(SkyObjects obj: SkyObjects.values()){
-            for(int i = 0; i < celObjPositions.get(obj).length; i+=2) {
-                if(Math.abs(coordinates.x() - celObjPositions.get(obj)[i]) <= lowestDistanceX) {
-                    lowestDistanceX = Math.abs(coordinates.x() - celObjPositions.get(obj)[i]);
-                    objDistance = distance(coordinates, CartesianCoordinates.of(celObjPositions.get(obj)[i], celObjPositions.get(obj)[i+1] ));
-                    lowestDistance = Math.min(objDistance, lowestDistance);
-                    closestObject = objDistance <= lowestDistance ?  celestialObjectOf(obj, i/2) : closestObject;
-                }
-            }
-        }
-        //TODO : inf ou egal ?
-        return (closestObject != null && lowestDistance <= distance) ? Optional.of(closestObject)
-                : Optional.empty();
-
-    }
-     */
