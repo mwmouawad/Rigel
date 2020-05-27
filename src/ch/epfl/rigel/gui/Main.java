@@ -7,15 +7,11 @@ import ch.epfl.rigel.astronomy.StarCatalogue;
 import ch.epfl.rigel.coordinates.GeographicCoordinates;
 import ch.epfl.rigel.coordinates.HorizontalCoordinates;
 import javafx.application.Application;
-import javafx.beans.Observable;
 import javafx.beans.binding.*;
 import javafx.beans.property.*;
-import javafx.beans.value.ObservableBooleanValue;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
@@ -104,19 +100,19 @@ public class Main extends Application {
         sky.requestFocus();
     }
 
-    private ObserverLocationBean buildObserverLocationBean() {
+    static private ObserverLocationBean buildObserverLocationBean() {
         ObserverLocationBean observerLocationBean = new ObserverLocationBean();
         observerLocationBean.setCoordinates(INIT_COORDINATES);
         return observerLocationBean;
     }
 
-    private DateTimeBean buildDateTimeBean(){
+    static private DateTimeBean buildDateTimeBean(){
         DateTimeBean dateTimeBean = new DateTimeBean();
         dateTimeBean.setZonedDateTime(INIT_DATETIME);
         return dateTimeBean;
     }
 
-    private ViewingParametersBean buildViewingParamBean() {
+    static private ViewingParametersBean buildViewingParamBean() {
         ViewingParametersBean viewingParametersBean =
                 new ViewingParametersBean();
         viewingParametersBean.setCenter(INIT_VIEW_PARAM);
@@ -127,14 +123,14 @@ public class Main extends Application {
     }
 
 
-    private SkyCanvasManager buildSkyCanvasManager(
+    static private SkyCanvasManager buildSkyCanvasManager(
             StarCatalogue catalogue, DateTimeBean dateTimeBean,
             ObserverLocationBean observerLocationBean, ViewingParametersBean viewingParametersBean) {
 
         return new SkyCanvasManager(catalogue, dateTimeBean, observerLocationBean, viewingParametersBean);
     }
 
-    private BorderPane buildInformationBar(ViewingParametersBean viewParamBean, ObservableValue<CelestialObject> objMouse, DoubleBinding mouseAzDeg, DoubleBinding mouseAltDeg){
+    static private BorderPane buildInformationBar(ViewingParametersBean viewParamBean, ObservableValue<CelestialObject> objMouse, DoubleBinding mouseAzDeg, DoubleBinding mouseAltDeg){
 
         BorderPane informationBar = new BorderPane();
         informationBar.setStyle("-fx-padding: 4; -fx-background-color: white;");
