@@ -25,14 +25,20 @@ public class SkyCanvasPainter {
     Canvas canvas;
     GraphicsContext graphicContext;
     private Color BACKGROUND_COLOR = Color.BLACK;
-    
 
+    /**
+     * Constructs a sky canvas painter with the canvas given in input.
+     * @param canvas
+     */
     public SkyCanvasPainter(Canvas canvas) {
         this.canvas = canvas;
         this.graphicContext = canvas.getGraphicsContext2D();
         this.graphicContext.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
     }
 
+    /**
+     * Clears all the objects present on the canvas leaving the canvas color.
+     */
     public void clear() {
         this.graphicContext.setFill(BACKGROUND_COLOR);
         this.graphicContext.fillRect(0, 0, this.canvas.getWidth(), this.canvas.getHeight());
@@ -47,12 +53,17 @@ public class SkyCanvasPainter {
         return ( x >= 0 && x <= canvas.widthProperty().get() && y >= 0 && y <= canvas.heightProperty().get());
     }
 
+    /**
+     * Draws all of the observed sky's asterisms
+     * @param sky
+     * @param transformedStarPos
+     */
     private void drawAsterisms(ObservedSky sky, double[] transformedStarPos) {
 
         Set<Asterism> asterismSet = sky.asterisms();
         //Draw Asterisms
 
-        //TODO: Check if done correctly
+        //TODO: Check if done correctly Pourquoi initialised at false ?
         for (Asterism ast : asterismSet) {
             List<Integer> indexList = sky.asterismIndices(ast);
             this.graphicContext.setStroke(Color.BLUE);
@@ -85,6 +96,11 @@ public class SkyCanvasPainter {
 
     }
 
+    /**
+     * Draws all of the observed sky's stars.
+     * @param sky
+     * @param planeToCanvas
+     */
     public void drawStars(ObservedSky sky, Transform planeToCanvas) {
         double[] transformedStarPos = new double[sky.starPositions().length];
         planeToCanvas.transform2DPoints(sky.starPositions(), 0, transformedStarPos, 0, sky.stars().size());
@@ -107,6 +123,11 @@ public class SkyCanvasPainter {
     }
 
     //TODO : check if right
+    /**
+     * Draws all of the observed sky's planets.
+     * @param sky
+     * @param planeToCanvas
+     */
     public void drawPlanets(ObservedSky sky, Transform planeToCanvas) {
 
         double[] transformedPlanetPos = new double[sky.planetPositions().length];
@@ -126,7 +147,12 @@ public class SkyCanvasPainter {
     }
 
 
-    public void drawSun(ObservedSky sky, StereographicProjection projection, Transform planeToCanvas) {
+        /**
+         * Draws  the observed sky's sun.
+         * @param sky
+         * @param planeToCanvas
+         */
+        public void drawSun(ObservedSky sky, StereographicProjection projection, Transform planeToCanvas) {
 
         Point2D transformedSunPos = planeToCanvas.transform(
                 sky.sunPosition().x(),
@@ -150,7 +176,7 @@ public class SkyCanvasPainter {
 
     }
 
-    /**
+    /** Draws the observed sky's moon
      * @param sky
      * @param projection
      * @param planeToCanvas
@@ -167,6 +193,11 @@ public class SkyCanvasPainter {
         this.fillCircle(transformedPos.getX(), transformedPos.getY(), diameter, moonColor);
     }
 
+    /** Draws the observed sky's horizon in red
+     * @param
+     * @param projection
+     * @param planeToCanvas
+     */
     public void drawHorizon(StereographicProjection projection, Transform planeToCanvas) {
         HorizontalCoordinates parallel = HorizontalCoordinates.of(0,0);
         double diameter = 2 * projection.circleRadiusForParallel(parallel);
@@ -191,14 +222,27 @@ public class SkyCanvasPainter {
         }
     }
 
-
+    /**
+     * Draws a filled circle of a give color and given size and coordinates
+     * @param x
+     * @param y
+     * @param diameter
+     * @param fillColor
+     */
     private void fillCircle(double x, double y, double diameter, Color fillColor) {
         double radius = diameter / 2.0d;
         this.graphicContext.setFill(fillColor);
         this.graphicContext.fillOval(x-radius, y-radius, diameter, diameter);
     }
 
-    static private double magnitudeSize(CelestialObject celestialObject) {
+    //TODO: STATIC ??
+
+    /**
+     * Computes the magnitude size of a celestial object
+     * @param celestialObject
+     * @return
+     */
+     private double magnitudeSize(CelestialObject celestialObject) {
         double clippedMag = ClosedInterval.of(-2, 5).clip(celestialObject.magnitude());
         double sizeFactor = (99.0 - 17.0 * clippedMag) / 144.0;
         return sizeFactor * StereographicProjection.applyToAngle(Angle.ofDeg(0.5));
