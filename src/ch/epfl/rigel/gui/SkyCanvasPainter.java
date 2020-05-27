@@ -31,7 +31,6 @@ public class SkyCanvasPainter {
     Canvas canvas;
     GraphicsContext graphicContext;
     private Color BACKGROUND_COLOR = Color.BLACK;
-    private double SCALE_FACTOR = 1300;
 
     /**
      * Builds a SkyCanvasPainter instance.
