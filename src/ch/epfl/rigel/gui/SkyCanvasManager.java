@@ -66,6 +66,9 @@ final public class SkyCanvasManager {
      */
     public SkyCanvasManager(StarCatalogue catalogue, DateTimeBean dateTime, ObserverLocationBean observerLocation, ViewingParametersBean viewingParameters) {
         this.canvas = new Canvas();
+        this.canvas.widthProperty().setValue(1);
+        this.canvas.heightProperty().setValue(1);
+
         this.viewingParameters = viewingParameters;
         this.dateTimeBean = dateTime;
         this.skyCanvasPainter = new SkyCanvasPainter(this.canvas);
@@ -81,8 +84,8 @@ final public class SkyCanvasManager {
     public void drawSky(){
         this.skyCanvasPainter.clear();
         Transform planeToCanvas = this.planeToCanvas.get();
-        this.skyCanvasPainter.drawStars(this.observedSky.get(), planeToCanvas);
-        this.skyCanvasPainter.drawPlanets(this.observedSky.get(), planeToCanvas);
+        this.skyCanvasPainter.drawStars(this.observedSky.get(), planeToCanvas, projection.get());
+        this.skyCanvasPainter.drawPlanets(this.observedSky.get(), planeToCanvas, projection.get());
         this.skyCanvasPainter.drawSun(this.observedSky.get(), this.projection.get(), planeToCanvas);
         this.skyCanvasPainter.drawMoon(this.observedSky.get(),this.projection.get(), planeToCanvas);
         this.skyCanvasPainter.drawHorizon(this.projection.get(), planeToCanvas);
@@ -162,7 +165,7 @@ final public class SkyCanvasManager {
                 , dateTime.dateProperty(), dateTime.zoneProperty(), dateTime.timeProperty(), observerLocation.coordinatesProperty(), this.projection);
 
         this.mouseHorizontalPosition = Bindings.createObjectBinding(
-                () -> this.computeMouseHorizontalPosition()
+                () -> this.computeMouseHorizontalPosition() == null ? HorizontalCoordinates.ofDeg(0,0) : this.computeMouseHorizontalPosition()
                 ,this.mousePosition, this.projection, this.planeToCanvas
         );
 
@@ -217,6 +220,7 @@ final public class SkyCanvasManager {
             System.out.println(
                     String.format("Erreur de transformation inverse du point: %s avec erreur: %s", this.mousePosition.get(), error)
             );
+            return null;
         }
 
         //Puis on prend la transformation inverse, afin d'avoir les coordonnées horizontales.
