@@ -39,6 +39,7 @@ public final class TimeAnimator extends AnimationTimer {
     public void start() {
         super.start();
         this.initSimulatedTime = dateTimeBean.getZonedDateTime();
+        this.initTimeStampNano = 0;
         this.running.set(true);
     }
 
@@ -77,8 +78,16 @@ public final class TimeAnimator extends AnimationTimer {
         this.timeAccelerator.set(timeAccelerator);
     }
 
+    /**
+     * Returns the current time accelerator property.
+     * @return the current time accelerator property.
+     */
     public SimpleObjectProperty<TimeAccelerator> timeAcceleratorProperty() { return timeAccelerator; }
 
+    /**
+     * Returns the current time accelerator.
+     * @return the current time accelerator.
+     */
     public TimeAccelerator getTimeAccelerator() { return timeAccelerator.getValue(); }
     /**
      * Returns the given running state of the animation timer.
@@ -88,12 +97,22 @@ public final class TimeAnimator extends AnimationTimer {
         return this.running;
     }
 
+    /**
+     * Gets the running status of the current TimeAnimator instance. true if it is currently running
+     * otherwise false.
+     * @return the running status of the current TimeAnimator instance. true if it is currently running
+     * otherwise false.
+     */
     public boolean getRunning() { return running.getValue(); }
 
+
+    /**
+     * Gets the current DateTimeBean property of the time animator.
+     * @return the current DateTimeBean property of the time animator.
+     */
     public DateTimeBean getDateTimeProperty() {
         return dateTimeBean;
     }
 
-    //TODO: check bean conventions
 
 }
