@@ -15,12 +15,12 @@ import java.time.ZonedDateTime;
  */
 public final class TimeAnimator extends AnimationTimer {
 
-    //TODO
 
-    private SimpleObjectProperty<TimeAccelerator> timeAccelerator  = new SimpleObjectProperty<>();
+    final private SimpleObjectProperty<TimeAccelerator> timeAccelerator  = new SimpleObjectProperty<>();
     final private SimpleBooleanProperty running = new SimpleBooleanProperty(false);
     final private DateTimeBean dateTimeBean;
-    private long lastTimestampNano = 0;
+    private ZonedDateTime initSimulatedTime;
+    private long initTimeStampNano = 0;
 
 
     /**
@@ -38,6 +38,7 @@ public final class TimeAnimator extends AnimationTimer {
     @Override
     public void start() {
         super.start();
+        this.initSimulatedTime = dateTimeBean.getZonedDateTime();
         this.running.set(true);
     }
 
@@ -59,13 +60,13 @@ public final class TimeAnimator extends AnimationTimer {
      */
     @Override
     public void handle(long now) {
-        if(this.lastTimestampNano > 0){
-            long delta = now - this.lastTimestampNano;
-            //double deltaSec = delta * 1e-9; utile?
-            ZonedDateTime updatedTime = this.timeAccelerator.get().adjust(dateTimeBean.getZonedDateTime(), delta);
+        if(this.initTimeStampNano > 0){
+            long delta = now - this.initTimeStampNano;
+            ZonedDateTime updatedTime = this.timeAccelerator.get().adjust(initSimulatedTime, delta);
             this.dateTimeBean.setZonedDateTime(updatedTime);
+        }else{
+            this.initTimeStampNano = now;
         }
-        this.lastTimestampNano = now;
     }
 
     /**
