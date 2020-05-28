@@ -19,7 +19,6 @@ import javafx.scene.paint.Color;
  */
 public class BlackBodyColor {
 
-    //TODO: static ?
     private static final String BBR_COLOR = "/bbr_color.txt";
     private static final Interval TEMP_INTERVAL = ClosedInterval.of(1000, 40000);
     private static final List<String> COLOR_LIST = loadColors();

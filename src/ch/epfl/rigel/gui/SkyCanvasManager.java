@@ -19,7 +19,6 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.input.KeyCode;
 import javafx.scene.transform.NonInvertibleTransformException;
 import javafx.scene.transform.Transform;
-
 import java.util.Optional;
 
 
@@ -153,14 +152,15 @@ final public class SkyCanvasManager {
                 viewingParameters.centerProperty()
         );
 
+        this.observedSky = Bindings.createObjectBinding(
+                () -> new ObservedSky(dateTime.getZonedDateTime(), observerLocation.getCoordinates(), this.projection.getValue(), catalogue)
+                , dateTime.dateProperty(), dateTime.zoneProperty(), dateTime.timeProperty(), observerLocation.coordinatesProperty(), this.projection);
+
+
         this.planeToCanvas = Bindings.createObjectBinding(
                 () -> computePlaneToCanvas(this.viewingParameters)
                 , canvas.widthProperty(), canvas.heightProperty(), this.viewingParameters.fieldOfViewDegProperty(), this.projection
         );
-
-        this.observedSky = Bindings.createObjectBinding(
-                () -> new ObservedSky(dateTime.getZonedDateTime(), observerLocation.getCoordinates(), this.projection.getValue(), catalogue)
-                , dateTime.dateProperty(), dateTime.zoneProperty(), dateTime.timeProperty(), observerLocation.coordinatesProperty(), this.projection);
 
         this.mouseHorizontalPosition = Bindings.createObjectBinding(
                 () -> this.computeMouseHorizontalPosition() == null ? HorizontalCoordinates.ofDeg(0, 0) : this.computeMouseHorizontalPosition()
