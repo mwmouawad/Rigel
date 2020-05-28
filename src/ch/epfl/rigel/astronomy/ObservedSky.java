@@ -36,12 +36,13 @@ public final class ObservedSky {
      * @param position the position of the observation.
      * @param projection the StereoGraphic projection meant to be used to draw the sky view.
      * @param catalogue the stars catalogue used.
+     * @throws
      */
     public ObservedSky(ZonedDateTime time, GeographicCoordinates position, StereographicProjection projection, StarCatalogue catalogue) {
-        Preconditions.checkArgument(!(time == null));
-        Preconditions.checkArgument(!(position == null));
-        Preconditions.checkArgument(!(projection == null));
-        Preconditions.checkArgument(!(catalogue == null));
+        Objects.requireNonNull(time);
+        Objects.requireNonNull(position);
+        Objects.requireNonNull(projection);
+        Objects.requireNonNull(catalogue);
         this.projection = projection;
         this.position = position;
         this.when = time;
@@ -157,10 +158,11 @@ public final class ObservedSky {
 
 
     /**
+     * Returns the closest celestial object within the given input distance from the input coordinates.
      *
-     * @param coordinates
-     * @param distance
-     * @return
+     * @param coordinates coordinates to use as reference point.
+     * @param distance the threshold distance to find near objects.
+     * @return the closest celestial object within the input distance.
      */
     public Optional<CelestialObject> objectClosestTo(CartesianCoordinates coordinates, double distance) {
 
@@ -173,7 +175,7 @@ public final class ObservedSky {
         for(SkyObjects obj: SkyObjects.values()){
             for(int i = 0; i < celObjPositions.get(obj).length; i+=2) {
                 if(Math.abs(coordinates.x() - celObjPositions.get(obj)[i]) <= lowestDistanceX
-                    && Math.abs(coordinates.y() - celObjPositions.get(obj)[i+1]) <= lowestDistanceY) {
+                        && Math.abs(coordinates.y() - celObjPositions.get(obj)[i+1]) <= lowestDistanceY) {
                     lowestDistanceX = Math.abs(coordinates.x() - celObjPositions.get(obj)[i]);
                     lowestDistanceY = Math.abs(coordinates.y() - celObjPositions.get(obj)[i + 1]);
                     objDistance = distanceSqrd(coordinates, CartesianCoordinates.of(celObjPositions.get(obj)[i], celObjPositions.get(obj)[i+1] ));
@@ -182,21 +184,11 @@ public final class ObservedSky {
                 }
             }
         }
-        //TODO : inf ou egal ? juste ?
         return (closestObject != null && Math.sqrt(lowestDistance) <= distance) ? Optional.of(closestObject)
                 : Optional.empty();
 
     }
 
-    /*if(Math.abs(coordinates.x() - celObjPositions.get(obj)[i]) <= lowestDistanceX &&
-            Math.abs(coordinates.x() - celObjPositions.get(obj)[i+1]) <= lowestDistanceY) {
-        lowestDistanceX = Math.abs(coordinates.x() - celObjPositions.get(obj)[i]);
-        lowestDistanceY = Math.abs(coordinates.y() - celObjPositions.get(obj)[i + 1]);
-        objDistance = distance(coordinates, CartesianCoordinates.of(celObjPositions.get(obj)[i], celObjPositions.get(obj)[i+1] ));
-        lowestDistance = Math.min(objDistance, lowestDistance);
-        closestObject = objDistance <= lowestDistance ?  celestialObjectOf(obj, i/2) : closestObject;
-
-     */
 
     /**
      * Computes the distance squared between two celestial objects in a double array.
