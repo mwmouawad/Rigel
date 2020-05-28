@@ -19,18 +19,32 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-//TODO: Constants!!! MAGIC NUMBERS!!
 /**
  * Class encapsulating methods to draw the stars, sky, planets,
  * asterisms and horizon. Uses JavaFX Graphics Context.
  * @author Mark Mouawad (296508)
  * @author Leah Uzzan (302829)
  */
-public class SkyCanvasPainter {
+final public class SkyCanvasPainter {
 
-    Canvas canvas;
-    GraphicsContext graphicContext;
+    final Canvas canvas;
+    final GraphicsContext graphicContext;
     private Color BACKGROUND_COLOR = Color.BLACK;
+    static final private ClosedInterval CLIP_INTERVAL_MAG = ClosedInterval.of(-2, 5);
+    static final private double CLIP_MAG_FACTOR = 17.0;
+    static final private double CLIP_MAG_ALPHA = 99.0;
+    static final private double CLIP_MAG_BETA = 140;
+    static final private double CLIP_MAG_APPARENT_SIZE = Angle.ofDeg(0.5);
+    static final private Color SUN_INNER_CENTER_COLOR =  Color.WHITE;
+    static final private Color SUN_OUTER_CENTER_COLOR =  Color.YELLOW;
+    static final private Color SUN_OUTER_COLOR =  Color.YELLOW.deriveColor(0,1.0f,1.0f,0.25f);
+    static final private Color ASTERISM_COLOR = Color.BLUE;
+    static final private Color PLANET_COLOR = Color.LIGHTGRAY;
+    static final private Color MOON_COLOR = Color.WHITE;
+    static final private Color HORIZON_COLOR = Color.RED;
+    static final private HorizontalCoordinates PARALLEL_COORDINATES = HorizontalCoordinates.of(0,0);
+
+
 
     /**
      * Builds a SkyCanvasPainter instance.
@@ -40,7 +54,7 @@ public class SkyCanvasPainter {
     public SkyCanvasPainter(Canvas canvas) {
         this.canvas = canvas;
         this.graphicContext = canvas.getGraphicsContext2D();
-        this.graphicContext.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
+        this.clear();
     }
 
     /**
@@ -55,32 +69,28 @@ public class SkyCanvasPainter {
     /**
      * Draws all stars from ObservedSky to the Canvas. Uses
      * a given transform matrix to convert to the screen coordinate system.
+     * Asterisms are draw before the stars.
      * @param sky the ObservedSky instance containing the given sky to draw.
      * @param planeToCanvas the transform matrix for the conversion.
      */
     public void drawStars(ObservedSky sky, Transform planeToCanvas, StereographicProjection projection) {
         double[] transformedStarPos = new double[sky.starPositions().length];
         planeToCanvas.transform2DPoints(sky.starPositions(), 0, transformedStarPos, 0, sky.stars().size());
+        //Draw Asterisms.
         this.drawAsterisms(sky, transformedStarPos);
         //Draw Stars
         int i = 0;
-        this.graphicContext.setFill(Color.RED);
-        this.graphicContext.beginPath();
 
         for (Star s : sky.stars()) {
             Color starColor = BlackBodyColor.colorForTemperature(s.colorTemperature());
-
-
             //Draw the element
             double diameter = planeToCanvas.deltaTransform(magnitudeSize(s, projection), 0).getX();
             double x = transformedStarPos[i];
             double y = transformedStarPos[i + 1];
-            this.fillCircle(x, y, diameter, starColor);
+            this.drawCircle(x, y, diameter, starColor);
             i += 2;
         }
     }
-
-    //TODO : check if right
 
     /**
      * Draws all planets from ObservedSky to the Canvas. Uses
@@ -95,11 +105,10 @@ public class SkyCanvasPainter {
 
         int i = 0;
         for (Planet p : sky.planets()) {
-            Color color = Color.LIGHTGRAY;
             double diameter = planeToCanvas.deltaTransform(magnitudeSize(p, projection), 0).getX();
             double x = transformedPlanetPos[i];
             double y = transformedPlanetPos[i + 1];
-            this.fillCircle(x, y, diameter, color);
+            this.drawCircle(x, y, diameter, PLANET_COLOR);
             i += 2;
         }
 
@@ -124,16 +133,15 @@ public class SkyCanvasPainter {
         ).getX();
 
 
-        //Third Circle
-            //Color.YELLOW with opacity 25%
-        Color lightYellow = Color.YELLOW.deriveColor(0,1.0f,1.0f,0.25f);
-        this.fillCircle(transformedSunPos.getX(), transformedSunPos.getY(), 2.2 * diameter, lightYellow);
+        double outerDiameter = 2.2 * diameter;
+        double outerCenterDiameter = diameter + 2.0;
+        double innerCenterDiameter =  diameter;
+        double sunX = transformedSunPos.getX();
+        double sunY = transformedSunPos.getY();
 
-        //Second circle
-        this.fillCircle(transformedSunPos.getX(), transformedSunPos.getY(), diameter + 2, Color.YELLOW);
-
-        //First circle
-        this.fillCircle(transformedSunPos.getX(), transformedSunPos.getY(), diameter, Color.WHITE);
+        this.drawCircle(sunX, sunY, outerDiameter, SUN_OUTER_COLOR);
+        this.drawCircle(sunX, sunY, outerCenterDiameter, SUN_OUTER_CENTER_COLOR);
+        this.drawCircle(sunX, sunY, innerCenterDiameter, SUN_INNER_CENTER_COLOR);
 
     }
 
@@ -147,13 +155,12 @@ public class SkyCanvasPainter {
     public void drawMoon(ObservedSky sky, StereographicProjection projection, Transform planeToCanvas) {
 
         Point2D transformedPos = planeToCanvas.transform(sky.moonPosition().x(), sky.moonPosition().y());
-        Color moonColor = Color.WHITE;
 
         double diameter = planeToCanvas.deltaTransform(
                 projection.applyToAngle(sky.moon().angularSize()), 0
         ).getX();
 
-        this.fillCircle(transformedPos.getX(), transformedPos.getY(), diameter, moonColor);
+        this.drawCircle(transformedPos.getX(), transformedPos.getY(), diameter, MOON_COLOR);
     }
 
     /**
@@ -163,15 +170,14 @@ public class SkyCanvasPainter {
      * @param projection the stereographic projection used to apply to the Moon diameter.
      */
     public void drawHorizon(StereographicProjection projection, Transform planeToCanvas) {
-        HorizontalCoordinates parallel = HorizontalCoordinates.of(0,0);
-        double diameter = 2 * projection.circleRadiusForParallel(parallel);
+        double diameter = 2 * projection.circleRadiusForParallel(PARALLEL_COORDINATES);
         double transformedDiameter = planeToCanvas.deltaTransform(diameter, 0).getX();
         double radius = transformedDiameter/2;
 
-        CartesianCoordinates coordinates  = projection.circleCenterForParallel(parallel);
+        CartesianCoordinates coordinates  = projection.circleCenterForParallel(PARALLEL_COORDINATES);
         Point2D transformedPos = planeToCanvas.transform(coordinates.x(), coordinates.y());
 
-        graphicContext.setStroke(Color.RED);
+        graphicContext.setStroke(HORIZON_COLOR);
         graphicContext.setLineWidth(2);
         graphicContext.strokeOval(transformedPos.getX() - radius,
                 transformedPos.getY() - radius, transformedDiameter, transformedDiameter);
@@ -180,9 +186,13 @@ public class SkyCanvasPainter {
             HorizontalCoordinates horiz = HorizontalCoordinates.ofDeg(i*45, 0);
             CartesianCoordinates coord = projection.apply(horiz);
             Point2D point = planeToCanvas.transform(coord.x(), coord.y());
-            graphicContext.setFill(Color.RED);
-            graphicContext.fillText(horiz.azOctantName("N", "E", "S", "O"), point.getX(), point.getY());
-            graphicContext.setTextBaseline(VPos.TOP);
+            this.drawText(
+                    horiz.azOctantName("N", "E", "S", "O"),
+                    point.getX(),
+                    point.getY(),
+                    HORIZON_COLOR,
+                    VPos.TOP
+            );
         }
     }
 
@@ -197,10 +207,10 @@ public class SkyCanvasPainter {
         Set<Asterism> asterismSet = sky.asterisms();
         //Draw Asterisms
 
-        //TODO: Check if done correctly
+        //TODO: Improve this.
         for (Asterism ast : asterismSet) {
             List<Integer> indexList = sky.asterismIndices(ast);
-            this.graphicContext.setStroke(Color.BLUE);
+            this.graphicContext.setStroke(ASTERISM_COLOR);
             this.graphicContext.beginPath();
             boolean isPreviousStarOnScreen;
             boolean isCurrentStarOnScreen;
@@ -208,7 +218,6 @@ public class SkyCanvasPainter {
 
             for (int i = 0; i < indexList.size(); i++) {
                 int index = indexList.get(i);
-                Star s = sky.stars().get(index);
                 double x = transformedStarPos[2 * index];
                 double y = transformedStarPos[2 * index + 1];
 
@@ -237,10 +246,24 @@ public class SkyCanvasPainter {
      * @param diameter
      * @param fillColor
      */
-    private void fillCircle(double x, double y, double diameter, Color fillColor) {
+    private void drawCircle(double x, double y, double diameter, Color fillColor) {
         double radius = diameter / 2.0d;
         this.graphicContext.setFill(fillColor);
         this.graphicContext.fillOval(x-radius, y-radius, diameter, diameter);
+    }
+
+    /**
+     * Helper method for drawing text.
+     * @param text
+     * @param x
+     * @param y
+     * @param color
+     * @param vPos
+     */
+    private void drawText(String text, double x, double y, Color color, VPos vPos){
+        graphicContext.setFill(color);
+        graphicContext.fillText(text, x, y);
+        graphicContext.setTextBaseline(vPos);
     }
 
     /**
@@ -250,9 +273,9 @@ public class SkyCanvasPainter {
      * @return
      */
     static private double magnitudeSize(CelestialObject celestialObject, StereographicProjection projection) {
-        double clippedMag = ClosedInterval.of(-2, 5).clip(celestialObject.magnitude());
-        double sizeFactor = (99.0 - 17.0 * clippedMag) / 144.0;
-        return sizeFactor * projection.applyToAngle(Angle.ofDeg(0.5));
+        double clippedMag = CLIP_INTERVAL_MAG.clip(celestialObject.magnitude());
+        double sizeFactor = (CLIP_MAG_ALPHA - CLIP_MAG_FACTOR * clippedMag) / CLIP_MAG_BETA;
+        return sizeFactor * projection.applyToAngle(CLIP_MAG_APPARENT_SIZE);
     }
 
     /**
