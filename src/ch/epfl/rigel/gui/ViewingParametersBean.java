@@ -23,7 +23,7 @@ final public class ViewingParametersBean {
      */
     public ViewingParametersBean() {
         this.fieldOfViewDeg = new SimpleDoubleProperty();
-        this.center = new SimpleObjectProperty();
+        this.center = new SimpleObjectProperty<HorizontalCoordinates>();
     }
 
     /**

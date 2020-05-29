@@ -28,6 +28,7 @@ import javafx.util.converter.NumberStringConverter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -85,9 +86,9 @@ final public class Main extends Application {
     );
 
     //Formatters
-    private static TextFormatter LATITUDE_TEXT_FORMATTER = buildTextLonLatFormatter(NUMBER_STRING_CONVERTER, GeographicCoordinates::isValidLatDeg);
-    private static TextFormatter LONGITUDE_TEXT_FORMATTER = buildTextLonLatFormatter(NUMBER_STRING_CONVERTER, GeographicCoordinates::isValidLonDeg);
-    private static TextFormatter DATE_TIME_TEXT_FORMATTER = new TextFormatter<>(LOCAL_TIME_STRING_CONVERTER);
+    private static TextFormatter<Number> LATITUDE_TEXT_FORMATTER = buildTextLonLatFormatter(NUMBER_STRING_CONVERTER, GeographicCoordinates::isValidLatDeg);
+    private static TextFormatter<Number> LONGITUDE_TEXT_FORMATTER = buildTextLonLatFormatter(NUMBER_STRING_CONVERTER, GeographicCoordinates::isValidLonDeg);
+    private static TextFormatter<LocalTime> DATE_TIME_TEXT_FORMATTER = new TextFormatter<LocalTime>(LOCAL_TIME_STRING_CONVERTER);
 
     //Resources
     private final Font fontAwesome = loadFont();
@@ -231,8 +232,7 @@ final public class Main extends Application {
         //Styles
         controlBar.setStyle("-fx-spacing: 4; -fx-padding: 4;");
         //Bindings
-        //TODO: UNCHECKED BIDNING
-        controlBarInstant.disableProperty().bind(disableBinding);
+        controlBarInstant.disableProperty().bind(timeAnimator.runningProperty());
 
         return controlBar;
     }
@@ -246,20 +246,9 @@ final public class Main extends Application {
      */
     private HBox buildControlBarPosition(ObserverLocationBean obsLocationBean) {
         Label longitudeLabel = buildLongitudeLabel();
-        TextField longitudeTextField = buildLongitudeTextField();
+        TextField longitudeTextField = buildLongitudeTextField(obsLocationBean);
         Label latitudeLabel = buildLatitudeLabel();
-        TextField latitudeTextField = buildLatitudeTextField();
-
-        //Set formatters
-        latitudeTextField.setTextFormatter(LATITUDE_TEXT_FORMATTER);
-        longitudeTextField.setTextFormatter(LONGITUDE_TEXT_FORMATTER);
-
-        //Bind property to TextFormatter
-        //TODO: UNCHECKED BINDING
-        //ObjectProperty<Double> latProperty = (ObjectProperty<Double>) latitudeTextField.getTextFormatter().valueProperty();
-        //latProperty.bindBidirectional(obsLocationBean.latDegProperty());
-        ObjectProperty longProperty = longitudeTextField.getTextFormatter().valueProperty();
-        longProperty.bindBidirectional(obsLocationBean.lonDegProperty());
+        TextField latitudeTextField = buildLatitudeTextField(obsLocationBean);
 
         //Create control bar
         HBox controlBarPosition = new HBox(longitudeLabel, longitudeTextField, latitudeLabel, latitudeTextField);
@@ -279,16 +268,10 @@ final public class Main extends Application {
         Label dateLabel = buildDateLabel();
         Label hourLabel = buildHourLabel();
         DatePicker datePicker = buildDatePicker();
-        TextField hourTextField = buildHourTextLabel();
-        ComboBox zoneComboBox = buildZoneIdComboBox();
-
-        //Set formatters
-        hourTextField.setTextFormatter(DATE_TIME_TEXT_FORMATTER);
+        TextField hourTextField = buildHourTextLabel(dateTimeBean);
+        ComboBox<ZoneId> zoneComboBox = buildZoneIdComboBox();
 
         //Bind values
-        ObjectProperty hourProperty = hourTextField.getTextFormatter().valueProperty();
-        //TODO: UNCHECKED BINDING
-        hourProperty.bindBidirectional(dateTimeBean.timeProperty());
         zoneComboBox.valueProperty().bindBidirectional(dateTimeBean.zoneProperty());
         datePicker.valueProperty().bindBidirectional(dateTimeBean.dateProperty());
 
@@ -308,7 +291,7 @@ final public class Main extends Application {
     private HBox buildControlBarTimeAnimator(TimeAnimator timeAnimator, Binding disableBinding) {
 
         //Set the choice box
-        ChoiceBox choiceBox = buildTimeAcceleratorChoiceBox();
+        ChoiceBox choiceBox = buildTimeAcceleratorChoiceBox(timeAnimator);
         timeAnimator.timeAcceleratorProperty().bind(Bindings.select(choiceBox.valueProperty(), "accelerator"));
 
         Button resetButton = buildResetButton();
@@ -317,7 +300,7 @@ final public class Main extends Application {
         playButton.setFont(this.fontAwesome);
 
         //Actions
-        resetButton.setOnAction((e) -> timeAnimator.getDateTimeProperty().setZonedDateTime(this.getCurrentZonedDateTime()));
+        resetButton.setOnAction((e) -> timeAnimator.getDateTimeProperty().setZonedDateTime(getCurrentZonedDateTime()));
         playButton.setOnAction(
                 (e) -> timeAnimator.start()
         );
@@ -327,10 +310,11 @@ final public class Main extends Application {
         });
 
         //Bindings
-        Binding playPauseBinding = Bindings.when(timeAnimator.runningProperty()).then(UNICODE_PAUSE).otherwise(UNICODE_PLAY);
-        choiceBox.disableProperty().bind(disableBinding);
-        resetButton.disableProperty().bind(disableBinding);
-        playButton.textProperty().bind(playPauseBinding);
+
+        resetButton.disableProperty().bind(timeAnimator.runningProperty());
+        playButton.textProperty().bind(
+                Bindings.when(timeAnimator.runningProperty()).then(UNICODE_PAUSE).otherwise(UNICODE_PLAY)
+        );
 
         HBox controlBarTimeAnimator = new HBox(choiceBox, resetButton, playButton);
         controlBarTimeAnimator.setStyle("-fx-spacing: inherit;");
@@ -363,11 +347,12 @@ final public class Main extends Application {
      *
      * @return
      */
-    static private ChoiceBox buildTimeAcceleratorChoiceBox() {
-        ChoiceBox choiceBox = new ChoiceBox();
+    static private ChoiceBox buildTimeAcceleratorChoiceBox(TimeAnimator timeAnimator) {
+        ChoiceBox<NamedTimeAccelerator> choiceBox = new ChoiceBox<NamedTimeAccelerator>();
         ObservableList<NamedTimeAccelerator> obsList = FXCollections.observableList(Arrays.asList(NamedTimeAccelerator.values()));
         choiceBox.setItems(obsList);
         choiceBox.setValue(obsList.get(0));
+        choiceBox.disableProperty().bind(timeAnimator.runningProperty());
         return choiceBox;
     }
 
@@ -414,8 +399,10 @@ final public class Main extends Application {
      *
      * @return
      */
-    static private TextField buildLongitudeTextField() {
+    static private TextField buildLongitudeTextField(ObserverLocationBean obsLocationBean) {
         TextField longitudeTextField = new TextField();
+        LONGITUDE_TEXT_FORMATTER.valueProperty().bindBidirectional(obsLocationBean.lonDegProperty());
+        longitudeTextField.setTextFormatter(LONGITUDE_TEXT_FORMATTER);
         longitudeTextField.setStyle("-fx-pref-width: 60; -fx-alignment: baseline-right;");
         return longitudeTextField;
     }
@@ -425,8 +412,10 @@ final public class Main extends Application {
      *
      * @return
      */
-    static private TextField buildLatitudeTextField() {
+    static private TextField buildLatitudeTextField(ObserverLocationBean obsLocationBean) {
         TextField latitudeTextField = new TextField();
+        LATITUDE_TEXT_FORMATTER.valueProperty().bindBidirectional(obsLocationBean.latDegProperty());
+        latitudeTextField.setTextFormatter(LATITUDE_TEXT_FORMATTER);
         latitudeTextField.setStyle("-fx-pref-width: 60; -fx-alignment: baseline-right;");
         return latitudeTextField;
     }
@@ -436,8 +425,10 @@ final public class Main extends Application {
      *
      * @return
      */
-    static private TextField buildHourTextLabel() {
+    static private TextField buildHourTextLabel(DateTimeBean dateTimeBean) {
         TextField hourTextField = new TextField();
+        DATE_TIME_TEXT_FORMATTER.valueProperty().bindBidirectional(dateTimeBean.timeProperty());
+        hourTextField.setTextFormatter(DATE_TIME_TEXT_FORMATTER);
         hourTextField.setStyle("-fx-pref-width: 75;-fx-alignment: baseline-right;");
         return hourTextField;
     }
@@ -447,15 +438,16 @@ final public class Main extends Application {
      *
      * @return
      */
-    static private ComboBox buildZoneIdComboBox() {
-        ComboBox zoneComboBox = new ComboBox();
-        List<String> zoneIdStringList = new ArrayList<String>(ZoneId.getAvailableZoneIds());
-        List<ZoneId> zoneIdList = new ArrayList<ZoneId>();
+    static private ComboBox<ZoneId> buildZoneIdComboBox() {
+        ArrayList<String> zoneIdStringList = new ArrayList<String>(ZoneId.getAvailableZoneIds());
+        ArrayList<ZoneId> zoneIdList = new ArrayList<ZoneId>();
         Collections.sort(zoneIdStringList);
         for (String s : zoneIdStringList) {
             zoneIdList.add(ZoneId.of(s));
         }
-        zoneComboBox.getItems().addAll(zoneIdList);
+        ObservableList<ZoneId> obsZoneIdList = FXCollections.observableList(zoneIdList);
+        ComboBox<ZoneId> zoneComboBox = new ComboBox<ZoneId>();
+        zoneComboBox.setItems(obsZoneIdList);
         zoneComboBox.setStyle("-fx-pref-width: 180;");
         return zoneComboBox;
     }

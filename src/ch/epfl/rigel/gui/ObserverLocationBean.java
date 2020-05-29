@@ -1,17 +1,9 @@
 package ch.epfl.rigel.gui;
 
 import ch.epfl.rigel.coordinates.GeographicCoordinates;
-import ch.epfl.rigel.coordinates.HorizontalCoordinates;
-import ch.epfl.rigel.math.Angle;
-import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.ObjectBinding;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ObservableDoubleValue;
-import javafx.beans.value.ObservableObjectValue;
+import javafx.beans.property.*;
 
 import java.util.Objects;
 
@@ -36,9 +28,8 @@ public class ObserverLocationBean {
     public ObserverLocationBean() {
         this.lonDeg = new SimpleDoubleProperty(0);
         this.latDeg = new SimpleDoubleProperty(0);
-        this.coordinates = new SimpleObjectProperty();
+        this.coordinates = new SimpleObjectProperty<GeographicCoordinates>();
 
-        //TODO: Is this good?
         this.coordinatesBinding = Bindings.createObjectBinding(
                 () -> (GeographicCoordinates.ofDeg(Objects.requireNonNull(this.lonDeg.getValue()),
                         Objects.requireNonNull(this.latDeg.getValue()))),
@@ -69,7 +60,7 @@ public class ObserverLocationBean {
      * Gets the property of the latitude in degrees
      * @return the property of the latitude in degrees.
      */
-    public DoubleProperty latDegProperty() { return latDeg; }
+    public DoubleProperty latDegProperty() { return latDegProperty(); }
 
     /**
      * Gets the latitude in degrees of the observer's location.
