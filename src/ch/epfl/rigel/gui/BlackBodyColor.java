@@ -19,15 +19,17 @@ import javafx.scene.paint.Color;
  */
 final public class BlackBodyColor {
 
+    //attributes
     private static final String BBR_COLOR = "/bbr_color.txt";
     private static final Interval TEMP_INTERVAL = ClosedInterval.of(1000, 40000);
     private static final List<String> COLOR_LIST = loadColors();
     private static final int columnStart = 80;
     private static final int columnEnd = 87;
 
+    private static final int STEP_ARRAY = 100;
 
     /**
-     *
+     * Non instanceable
      */
     private BlackBodyColor() { }
 
@@ -68,7 +70,7 @@ final public class BlackBodyColor {
         Preconditions.checkInInterval(TEMP_INTERVAL, temperatureInDeg);
         int roundedTemp = (int) Math.round(temperatureInDeg / 100.0d) * 100;
         //the steps of the data are of 100 and the first value is a 1000.
-        String colorCode = COLOR_LIST.get((roundedTemp - 1000)/ 100);
+        String colorCode = COLOR_LIST.get((roundedTemp - 1000)/ STEP_ARRAY);
 
         return Color.web(colorCode);
     }

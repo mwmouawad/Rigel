@@ -69,7 +69,7 @@ public enum PlanetModel implements CelestialObjectModel<Planet> {
         this.axe = axe;
         this.obliquity = Angle.ofDeg(obliquity);
         this.lon_nod = Angle.ofDeg(lon_nod);
-        this.angularSize1UA = Angle.ofArcsec(size); //unite ?
+        this.angularSize1UA = Angle.ofArcsec(size);
         this.magnitude = magnitude;
     }
 

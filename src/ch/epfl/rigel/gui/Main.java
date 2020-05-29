@@ -83,7 +83,8 @@ final public class Main extends Application {
     private static final TextFormatter<Number> LATITUDE_TEXT_FORMATTER = buildTextLonLatFormatter(NUMBER_STRING_CONVERTER, GeographicCoordinates::isValidLatDeg);
     private static final TextFormatter<Number> LONGITUDE_TEXT_FORMATTER = buildTextLonLatFormatter(NUMBER_STRING_CONVERTER, GeographicCoordinates::isValidLonDeg);
     private static final TextFormatter<LocalTime> DATE_TIME_TEXT_FORMATTER = new TextFormatter<LocalTime>(LOCAL_TIME_STRING_CONVERTER);
-
+    private static final String CONTROL_BAR_STYLE = "-fx-spacing: inherit; -fx-alignment: baseline-left;";
+    private static final String LAT_LON_STYLE = "-fx-pref-width: 60; -fx-alignment: baseline-right;";
 
     /**
      * Launches the application.
@@ -231,7 +232,7 @@ final public class Main extends Application {
 
         //Create control bar
         HBox controlBarPosition = new HBox(longitudeLabel, longitudeTextField, latitudeLabel, latitudeTextField);
-        controlBarPosition.setStyle("-fx-spacing: inherit; -fx-alignment: baseline-left;");
+        controlBarPosition.setStyle(CONTROL_BAR_STYLE);
         return controlBarPosition;
     }
 
@@ -251,7 +252,7 @@ final public class Main extends Application {
         TextField hourTextField = buildHourTextLabel(dateTimeBean);
         ComboBox<ZoneId> zoneComboBox = buildZoneIdComboBox(dateTimeBean);
         HBox controlBarInstant = new HBox(dateLabel, datePicker, hourLabel, hourTextField, zoneComboBox);
-        controlBarInstant.setStyle("-fx-spacing: inherit; -fx-alignment: baseline-left;");
+        controlBarInstant.setStyle(CONTROL_BAR_STYLE);
 
         return controlBarInstant;
     }
@@ -415,7 +416,7 @@ final public class Main extends Application {
         TextField longitudeTextField = new TextField();
         LONGITUDE_TEXT_FORMATTER.valueProperty().bindBidirectional(obsLocationBean.lonDegProperty());
         longitudeTextField.setTextFormatter(LONGITUDE_TEXT_FORMATTER);
-        longitudeTextField.setStyle("-fx-pref-width: 60; -fx-alignment: baseline-right;");
+        longitudeTextField.setStyle(LAT_LON_STYLE);
         return longitudeTextField;
     }
 
@@ -428,7 +429,7 @@ final public class Main extends Application {
         TextField latitudeTextField = new TextField();
         LATITUDE_TEXT_FORMATTER.valueProperty().bindBidirectional(obsLocationBean.latDegProperty());
         latitudeTextField.setTextFormatter(LATITUDE_TEXT_FORMATTER);
-        latitudeTextField.setStyle("-fx-pref-width: 60; -fx-alignment: baseline-right;");
+        latitudeTextField.setStyle(LAT_LON_STYLE);
         return latitudeTextField;
     }
 
