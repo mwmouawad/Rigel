@@ -61,7 +61,6 @@ public final class DateTimeBean {
      * Gets the stored LocalDate..
      * @return the stored LocalDate.
      */
-    //TODO: public ou private ?
     public LocalDate getDate() {
         return this.date.get();
     }

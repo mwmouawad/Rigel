@@ -32,13 +32,13 @@ public class ObserverLocationBean {
     /**
      * Constructs a observer location bean with empty coordinates properties.
      * Meant to be used by setting the values using the available setters.
-     * //TODO: Should add throws here?
      */
     public ObserverLocationBean() {
         this.lonDeg = new SimpleDoubleProperty(0);
         this.latDeg = new SimpleDoubleProperty(0);
         this.coordinates = new SimpleObjectProperty();
 
+        //TODO: Is this good?
         this.coordinatesBinding = Bindings.createObjectBinding(
                 () -> (GeographicCoordinates.ofDeg(Objects.requireNonNull(this.lonDeg.getValue()),
                         Objects.requireNonNull(this.latDeg.getValue()))),

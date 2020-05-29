@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 
 
@@ -84,11 +85,10 @@ final public class Main extends Application {
     );
 
     //Formatters
-    private static TextFormatter LATITUDE_TEXT_FORMATTER = buildTextLonLatFormatter(NUMBER_STRING_CONVERTER, false);
-    private static TextFormatter LONGITUDE_TEXT_FORMATTER = buildTextLonLatFormatter(NUMBER_STRING_CONVERTER, true);
+    private static TextFormatter LATITUDE_TEXT_FORMATTER = buildTextLonLatFormatter(NUMBER_STRING_CONVERTER, GeographicCoordinates::isValidLatDeg);
+    private static TextFormatter LONGITUDE_TEXT_FORMATTER = buildTextLonLatFormatter(NUMBER_STRING_CONVERTER, GeographicCoordinates::isValidLonDeg);
     private static TextFormatter DATE_TIME_TEXT_FORMATTER = new TextFormatter<>(LOCAL_TIME_STRING_CONVERTER);
-
-
+    
     //Resources
     private final Font fontAwesome = loadFont();
     private final StarCatalogue starCatalogue = loadCatalogue();
@@ -106,7 +106,7 @@ final public class Main extends Application {
 
     /**
      * Overrides JavaFx start method.
-     *
+     * Starts the application, builds panes, bindings and SkyCanvasManager to display the sky.
      * @param primaryStage
      * @throws Exception
      */
@@ -559,6 +559,31 @@ final public class Main extends Application {
 
         return new TextFormatter<>(nbStringConverter, 0, filter);
 
+    }
+
+
+    /**
+     * Builds a text formater for lon and lat deg.
+     * Uses predicate to determine if new value is valid.
+     * @param nbStringConverter
+     * @param predicate
+     * @return
+     */
+    static private TextFormatter<Number> buildTextLonLatFormatter(NumberStringConverter nbStringConverter, Predicate<Double> predicate){
+        UnaryOperator<TextFormatter.Change> filter = (change -> {
+            try {
+                String newText = change.getControlNewText();
+                change.getControlNewText();
+                double newCoordinate =
+                        nbStringConverter.fromString(newText).doubleValue();
+                return predicate.test(newCoordinate) ? change : null;
+
+            } catch (Exception e) {
+                return null;
+            }
+        });
+
+        return new TextFormatter<>(nbStringConverter, 0, filter);
     }
 
 
