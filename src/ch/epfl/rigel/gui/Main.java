@@ -88,7 +88,7 @@ final public class Main extends Application {
     private static TextFormatter LATITUDE_TEXT_FORMATTER = buildTextLonLatFormatter(NUMBER_STRING_CONVERTER, GeographicCoordinates::isValidLatDeg);
     private static TextFormatter LONGITUDE_TEXT_FORMATTER = buildTextLonLatFormatter(NUMBER_STRING_CONVERTER, GeographicCoordinates::isValidLonDeg);
     private static TextFormatter DATE_TIME_TEXT_FORMATTER = new TextFormatter<>(LOCAL_TIME_STRING_CONVERTER);
-    
+
     //Resources
     private final Font fontAwesome = loadFont();
     private final StarCatalogue starCatalogue = loadCatalogue();
@@ -533,32 +533,6 @@ final public class Main extends Application {
 
     static private ZonedDateTime getCurrentZonedDateTime() {
         return ZonedDateTime.now();
-    }
-
-    /**
-     * Utility method for formatting the longitude/latitude text fields.
-     */
-    static private TextFormatter<Number> buildTextLonLatFormatter(NumberStringConverter nbStringConverter, boolean isLon) {
-        UnaryOperator<TextFormatter.Change> filter = (change -> {
-            try {
-                String newText = change.getControlNewText();
-                change.getControlNewText();
-                double newCoordinate =
-                        nbStringConverter.fromString(newText).doubleValue();
-                if (isLon) {
-                    return GeographicCoordinates.isValidLonDeg(newCoordinate)
-                            ? change : null;
-                }
-                return GeographicCoordinates.isValidLatDeg(newCoordinate)
-                        ? change : null;
-
-            } catch (Exception e) {
-                return null;
-            }
-        });
-
-        return new TextFormatter<>(nbStringConverter, 0, filter);
-
     }
 
 
