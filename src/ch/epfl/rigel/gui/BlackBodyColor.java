@@ -36,8 +36,7 @@ public class BlackBodyColor {
 
         List<String> colors = new ArrayList<String>();
 
-        try (InputStream inputStream = BlackBodyColor.class.getResourceAsStream(BBR_COLOR);
-            InputStreamReader inStrReader = new InputStreamReader(inputStream, StandardCharsets.US_ASCII);
+        try (InputStreamReader inStrReader = new InputStreamReader(BlackBodyColor.class.getResourceAsStream(BBR_COLOR), StandardCharsets.US_ASCII);
             BufferedReader buffReader = new BufferedReader(inStrReader)) {
             String line = buffReader.readLine();
 
