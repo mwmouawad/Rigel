@@ -33,8 +33,9 @@ public final class EclipticToEquatorialConversion implements Function<EclipticCo
      */
     public EclipticToEquatorialConversion(ZonedDateTime when) {
         double time = J2000.julianCenturiesUntil(when);
-        cosEpsi = Math.cos(EPSI.at(time));
-        sinEpsi = Math.sin(EPSI.at(time));
+        double epsi_at = EPSI.at(time);
+        cosEpsi = Math.cos(epsi_at);
+        sinEpsi = Math.sin(epsi_at);
     }
 
     /**
@@ -47,13 +48,13 @@ public final class EclipticToEquatorialConversion implements Function<EclipticCo
     public EquatorialCoordinates apply(EclipticCoordinates eclipticCoordinates) {
         double lambda = eclipticCoordinates.lon();
         double beta = eclipticCoordinates.lat();
-
+        double sinLambda = Math.sin(lambda);
         double alpha = Math.atan2(
-                Math.sin(lambda) * cosEpsi - Math.tan(beta) * sinEpsi,
+                sinLambda * cosEpsi - Math.tan(beta) * sinEpsi,
                 Math.cos(lambda)
         );
 
-        double delta = Math.asin(Math.sin(beta) * cosEpsi + Math.cos(beta) * sinEpsi * Math.sin(lambda));
+        double delta = Math.asin(Math.sin(beta) * cosEpsi + Math.cos(beta) * sinEpsi * sinLambda);
 
         return EquatorialCoordinates.of(Angle.normalizePositive(alpha), DEC_INTERVAL.reduce(delta));
     }

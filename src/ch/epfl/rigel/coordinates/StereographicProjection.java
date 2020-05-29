@@ -40,14 +40,17 @@ public final class StereographicProjection implements Function<HorizontalCoordin
 
         double coordX = azAlt.az();
         double coordY = azAlt.alt();
+        double sinY = Math.sin(coordY);
+        double cosY = Math.cos(coordY);
         double varX = coordX - this.centerX;
+        double cosX =  Math.cos(varX);
 
 
-        double d = 1 / (1 + Math.sin(coordY) * this.sinCenterY + Math.cos(coordY) * this.cosCenterY * Math.cos(varX));
+        double d = 1 / (1 + sinY * this.sinCenterY +cosY * this.cosCenterY * cosX);
 
         //computes the new coordinates
-        double x = d * Math.cos(coordY) * Math.sin(varX);
-        double y = d * (Math.sin(coordY) * this.cosCenterY - Math.cos(coordY) * this.sinCenterY * Math.cos(varX));
+        double x = d * cosY * Math.sin(varX);
+        double y = d * (sinY * this.cosCenterY - cosY * this.sinCenterY *cosX);
 
         return CartesianCoordinates.of(x, y);
     }
@@ -96,9 +99,10 @@ public final class StereographicProjection implements Function<HorizontalCoordin
     public HorizontalCoordinates inverseApply(CartesianCoordinates xy) {
         double x = xy.x();
         double y = xy.y();
-        double rho = Math.sqrt(x * x + y * y);
-        double sinc = 2 * rho / (rho * rho + 1);
-        double cosc = (1 - rho * rho) / (rho * rho + 1);
+        double rhoSqrd = x * x + y * y;
+        double rho = Math.sqrt(rhoSqrd);
+        double sinc = 2 * rho / (rhoSqrd + 1);
+        double cosc = (1 - rhoSqrd) / (rhoSqrd + 1);
 
         //computes inverse coordinates with the above constants
 

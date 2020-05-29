@@ -51,12 +51,14 @@ public final class EquatorialToHorizontalConversion implements Function<Equatori
         double cosAngleHour = Math.cos(hourAngle);
         double sinAngleHour = Math.sin(hourAngle);
 
+        double sinDelta = Math.sin(delta);
+        double cosDelta = Math.cos(delta);
         double alt = Math.asin(
-                Math.sin(delta) * this.sinPhi + Math.cos(delta) * this.cosPhi * cosAngleHour
+                sinDelta * this.sinPhi + cosDelta * this.cosPhi * cosAngleHour
         );
         double az = Math.atan2(
-                -Math.cos(delta) * this.cosPhi * sinAngleHour
-                , Math.sin(delta) - this.sinPhi * Math.sin(alt)
+                - cosDelta * this.cosPhi * sinAngleHour,
+                sinDelta - this.sinPhi * Math.sin(alt)
         );
 
         return HorizontalCoordinates.of(Angle.normalizePositive(az), ALT_INTERVAL.reduce(alt));

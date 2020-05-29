@@ -6,6 +6,7 @@ import ch.epfl.rigel.coordinates.*;
 import java.time.ZonedDateTime;
 import java.util.*;
 
+
 /**
  * Represents a view of the sky in a given moment at a given place.
  * @author Mark Mouawad (296508)
@@ -16,8 +17,7 @@ public final class ObservedSky {
         MOON,
         SUN,
         PLANETS,
-        STARS;
-
+        STARS
     }
     private final Sun sun;
     private final List<Planet> planets;
@@ -148,7 +148,7 @@ public final class ObservedSky {
     }
 
     /**
-     * Returns a list with the index of the stars for the input astermism.
+     * Returns a list with the index of the stars for the input asterism.
      *
      * @param asterism
      * @return list with the index of the stars in the stars list.
@@ -257,7 +257,7 @@ public final class ObservedSky {
      */
     private CartesianCoordinates project(CelestialObject celestialObject){
         HorizontalCoordinates horCoordinates = new EquatorialToHorizontalConversion(this.when, this.position).apply(celestialObject.equatorialPos());
-        return this.projection.apply(horCoordinates);
+        return projection.apply(horCoordinates);
     }
 
     /**

@@ -256,8 +256,8 @@ final public class Main extends Application {
 
         //Bind property to TextFormatter
         //TODO: UNCHECKED BINDING
-        ObjectProperty<Double> latProperty = (ObjectProperty<Double>) latitudeTextField.getTextFormatter().valueProperty();
-        latProperty.bindBidirectional(obsLocationBean.latDegProperty());
+        //ObjectProperty<Double> latProperty = (ObjectProperty<Double>) latitudeTextField.getTextFormatter().valueProperty();
+        //latProperty.bindBidirectional(obsLocationBean.latDegProperty());
         ObjectProperty longProperty = longitudeTextField.getTextFormatter().valueProperty();
         longProperty.bindBidirectional(obsLocationBean.lonDegProperty());
 

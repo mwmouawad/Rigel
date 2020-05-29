@@ -4,6 +4,8 @@ import java.util.Locale;
 
 /**
  * Represents a couple of Cartesian Coordinates (x,y).
+ * @author Mark Mouawad (296508)
+ * @author Leah Uzzan (302829)
  */
 public final class CartesianCoordinates {
 
@@ -39,7 +41,7 @@ public final class CartesianCoordinates {
 
     /**
      *
-     * @see Object#equals(Object)
+     *  Not used here
      * @throws UnsupportedOperationException
      */
     @Override
@@ -49,7 +51,7 @@ public final class CartesianCoordinates {
 
     /**
      *
-     * @see Object#hashCode()
+     *  Not used here
      * @throws UnsupportedOperationException
      */
     @Override

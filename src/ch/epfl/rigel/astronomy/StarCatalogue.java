@@ -162,8 +162,7 @@ public final class StarCatalogue {
          * @return Star Catalogue
          */
         public StarCatalogue build() {
-            StarCatalogue starCatalogue = new StarCatalogue(this.stars, this.asterisms);
-            return starCatalogue;
+            return new StarCatalogue(this.stars, this.asterisms);
         }
 
     }
