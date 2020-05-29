@@ -7,7 +7,6 @@ import javafx.beans.property.*;
 
 import java.util.Objects;
 
-//TODO: Check if needs to add throws here.
 /**
  * JavaFX Bean type class encapsulating the observer location. Will be used so the user
  * can change it's position and update the UI accordingly.
@@ -71,7 +70,6 @@ public class ObserverLocationBean {
     /**
      * Sets the latitude in degrees of the observer location.
      * @param latDeg the latitude in degrees to set.
-     * //TODO: Should add throws here?
      */
     public void setLatDeg(double latDeg) {this.latDeg.set(latDeg);}
 

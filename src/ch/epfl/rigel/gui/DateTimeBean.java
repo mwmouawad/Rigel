@@ -10,6 +10,8 @@ import java.time.ZonedDateTime;
 /**
  * A JavaFX bean class representing a ZonedDateTime. Contains
  * a ZoneId, a LocalDate and a LocalTime.
+ * @author Mark Mouawad (296508)
+ * @author Leah Uzzan (302829)
  */
 public final class DateTimeBean {
 

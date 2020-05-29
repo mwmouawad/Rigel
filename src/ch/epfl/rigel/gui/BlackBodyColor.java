@@ -17,11 +17,14 @@ import javafx.scene.paint.Color;
  * @author Mark Mouawad (296508)
  * @author Leah Uzzan (302829)
  */
-public class BlackBodyColor {
+final public class BlackBodyColor {
 
     private static final String BBR_COLOR = "/bbr_color.txt";
     private static final Interval TEMP_INTERVAL = ClosedInterval.of(1000, 40000);
     private static final List<String> COLOR_LIST = loadColors();
+    private static final int columnStart = 80;
+    private static final int columnEnd = 87;
+
 
     /**
      *
@@ -42,7 +45,7 @@ public class BlackBodyColor {
 
             while(line != null) {
                 if(line.charAt(0) != '#') {
-                    colors.add(line.substring(80,87).strip());
+                    colors.add(line.substring(columnStart,columnEnd).strip());
                 }
                 buffReader.readLine();
                 line = buffReader.readLine();
@@ -57,7 +60,7 @@ public class BlackBodyColor {
 
     /** Gets the corresponding web Color for the given temperature in degrees.
      * @param temperatureInDeg
-     * @return
+     * @return the corresponding web Color for the given temperature in degrees.
      * @throws IllegalArgumentException if temp ( in kelvins ) is not in the interval [1000K, 40000K]
      */
     public static Color colorForTemperature(double temperatureInDeg) {
