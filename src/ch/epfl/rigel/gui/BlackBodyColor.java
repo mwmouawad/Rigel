@@ -25,7 +25,7 @@ public class BlackBodyColor {
     private static final int STEP_ARRAY = 100;
 
     /**
-     *
+     * Non instanceable
      */
     private BlackBodyColor() { }
 
