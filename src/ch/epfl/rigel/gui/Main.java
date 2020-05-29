@@ -526,7 +526,8 @@ final public class Main extends Application {
             return catalogue;
 
         } catch (IOException ioException) {
-            throw new UncheckedIOException(ioException);
+            System.out.println(String.format("Got an error while loading Font. Error: %s", ioException));
+            return null;
         }
 
     }
