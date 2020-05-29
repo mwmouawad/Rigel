@@ -64,24 +64,20 @@ final public class Main extends Application {
     private static final String UNICODE_PLAY = "\uf04b";
     private static final String UNICODE_PAUSE = "\uf04c";
     private static final String EMPTY_STRING = "";
-
     //Labels
     private static final String LATITUDE_LABEL = "Latitude (°) :";
     private static final String LONGITUDE_LABEL = "Longitude (°) :";
     private static final String DATE_LABEL = "Date : ";
     private static final String HOUR_LABEL = "Heure : ";
-
     //Information Bar String Formatters
     private static final String INFO_COORD_FORMAT = "Azimut : %.2f°  hauteur : %.2f°";
     private static final String INFO_FOV_FORMAT = "Champ de vue : %.2f°";
-
     //String converters
     private static final NumberStringConverter NUMBER_STRING_CONVERTER = new NumberStringConverter("#0.00");
     private static final LocalTimeStringConverter LOCAL_TIME_STRING_CONVERTER = new LocalTimeStringConverter(
             DateTimeFormatter.ofPattern("HH:mm:ss"),
             DateTimeFormatter.ofPattern("HH:mm:ss")
     );
-
     //Formatters
     private static final TextFormatter<Number> LATITUDE_TEXT_FORMATTER = buildTextLonLatFormatter(NUMBER_STRING_CONVERTER, GeographicCoordinates::isValidLatDeg);
     private static final TextFormatter<Number> LONGITUDE_TEXT_FORMATTER = buildTextLonLatFormatter(NUMBER_STRING_CONVERTER, GeographicCoordinates::isValidLonDeg);
@@ -89,7 +85,7 @@ final public class Main extends Application {
 
 
     /**
-     * Launchs the application.
+     * Launches the application.
      * Calls the JavaFX Application launch method.
      *
      * @param args
@@ -98,34 +94,6 @@ final public class Main extends Application {
         launch();
     }
 
-    static private ZonedDateTime getCurrentZonedDateTime() {
-        return ZonedDateTime.now();
-    }
-
-    /**
-     * Builds a text formater for lon and lat deg.
-     * Uses predicate to determine if new value is valid.
-     *
-     * @param nbStringConverter
-     * @param predicate
-     * @return
-     */
-    static private TextFormatter<Number> buildTextLonLatFormatter(NumberStringConverter nbStringConverter, Predicate<Double> predicate) {
-        UnaryOperator<TextFormatter.Change> filter = (change -> {
-            try {
-                String newText = change.getControlNewText();
-                change.getControlNewText();
-                double newCoordinate =
-                        nbStringConverter.fromString(newText).doubleValue();
-                return predicate.test(newCoordinate) ? change : null;
-
-            } catch (Exception e) {
-                return null;
-            }
-        });
-
-        return new TextFormatter<>(nbStringConverter, 0, filter);
-    }
 
     /**
      * Overrides JavaFx start method.
@@ -274,13 +242,11 @@ final public class Main extends Application {
         //Build nodes
         Label dateLabel = buildDateLabel();
         Label hourLabel = buildHourLabel();
-        DatePicker datePicker = buildDatePicker();
+        DatePicker datePicker = buildDatePicker(dateTimeBean);
         TextField hourTextField = buildHourTextLabel(dateTimeBean);
-        ComboBox<ZoneId> zoneComboBox = buildZoneIdComboBox();
+        ComboBox<ZoneId> zoneComboBox = buildZoneIdComboBox(dateTimeBean);
 
         //Bind values
-        zoneComboBox.valueProperty().bindBidirectional(dateTimeBean.zoneProperty());
-        datePicker.valueProperty().bindBidirectional(dateTimeBean.dateProperty());
 
         HBox controlBarInstant = new HBox(dateLabel, datePicker, hourLabel, hourTextField, zoneComboBox);
         controlBarInstant.setStyle("-fx-spacing: inherit; -fx-alignment: baseline-left;");
@@ -482,16 +448,21 @@ final public class Main extends Application {
      *
      * @return
      */
-    private ComboBox<ZoneId> buildZoneIdComboBox() {
+    private ComboBox<ZoneId> buildZoneIdComboBox(DateTimeBean dateTimeBean) {
+        ComboBox<ZoneId> zoneComboBox = new ComboBox<ZoneId>();
+
         ArrayList<String> zoneIdStringList = new ArrayList<String>(ZoneId.getAvailableZoneIds());
         ArrayList<ZoneId> zoneIdList = new ArrayList<ZoneId>();
         Collections.sort(zoneIdStringList);
         for (String s : zoneIdStringList) {
             zoneIdList.add(ZoneId.of(s));
         }
+
         ObservableList<ZoneId> obsZoneIdList = FXCollections.observableList(zoneIdList);
-        ComboBox<ZoneId> zoneComboBox = new ComboBox<ZoneId>();
+
         zoneComboBox.setItems(obsZoneIdList);
+
+        zoneComboBox.valueProperty().bindBidirectional(dateTimeBean.zoneProperty());
         zoneComboBox.setStyle("-fx-pref-width: 180;");
         return zoneComboBox;
     }
@@ -501,8 +472,9 @@ final public class Main extends Application {
      *
      * @return
      */
-    private DatePicker buildDatePicker() {
+    private DatePicker buildDatePicker(DateTimeBean dateTimeBean) {
         DatePicker datePicker = new DatePicker();
+        datePicker.valueProperty().bindBidirectional(dateTimeBean.dateProperty());
         datePicker.setStyle("-fx-pref-width: 120;");
         return datePicker;
     }
@@ -530,6 +502,36 @@ final public class Main extends Application {
             StarCatalogue catalogue, DateTimeBean dateTimeBean,
             ObserverLocationBean observerLocationBean, ViewingParametersBean viewingParametersBean) {
         return new SkyCanvasManager(catalogue, dateTimeBean, observerLocationBean, viewingParametersBean);
+    }
+
+
+    static private ZonedDateTime getCurrentZonedDateTime() {
+        return ZonedDateTime.now();
+    }
+
+    /**
+     * Builds a text formater for lon and lat deg.
+     * Uses predicate to determine if new value is valid.
+     *
+     * @param nbStringConverter
+     * @param predicate
+     * @return
+     */
+    static private TextFormatter<Number> buildTextLonLatFormatter(NumberStringConverter nbStringConverter, Predicate<Double> predicate) {
+        UnaryOperator<TextFormatter.Change> filter = (change -> {
+            try {
+                String newText = change.getControlNewText();
+                change.getControlNewText();
+                double newCoordinate =
+                        nbStringConverter.fromString(newText).doubleValue();
+                return predicate.test(newCoordinate) ? change : null;
+
+            } catch (Exception e) {
+                return null;
+            }
+        });
+
+        return new TextFormatter<>(nbStringConverter, 0, filter);
     }
 
     /**
