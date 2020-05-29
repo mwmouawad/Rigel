@@ -7,11 +7,9 @@ import ch.epfl.rigel.astronomy.StarCatalogue;
 import ch.epfl.rigel.coordinates.GeographicCoordinates;
 import ch.epfl.rigel.coordinates.HorizontalCoordinates;
 import javafx.application.Application;
-import javafx.beans.binding.Binding;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.binding.ObjectBinding;
-import javafx.beans.property.ObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -25,9 +23,9 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.converter.LocalTimeStringConverter;
 import javafx.util.converter.NumberStringConverter;
+
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UncheckedIOException;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -35,7 +33,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 
@@ -91,8 +88,6 @@ final public class Main extends Application {
     private static TextFormatter<LocalTime> DATE_TIME_TEXT_FORMATTER = new TextFormatter<LocalTime>(LOCAL_TIME_STRING_CONVERTER);
 
     //Resources
-    private final Font fontAwesome = loadFont();
-    private final StarCatalogue starCatalogue = loadCatalogue();
 
 
     /**
@@ -108,6 +103,7 @@ final public class Main extends Application {
     /**
      * Overrides JavaFx start method.
      * Starts the application, builds panes, bindings and SkyCanvasManager to display the sky.
+     *
      * @param primaryStage
      * @throws Exception
      */
@@ -119,7 +115,7 @@ final public class Main extends Application {
         ObserverLocationBean obsLocation = buildObserverLocationBean();
         DateTimeBean dateTimeBean = timeAnimator.getDateTimeProperty();
         SkyCanvasManager skyCanvasManager = buildSkyCanvasManager(
-                this.starCatalogue, dateTimeBean, obsLocation, viewParams
+                this.loadCatalogue(), dateTimeBean, obsLocation, viewParams
         );
         Canvas sky = skyCanvasManager.canvas();
         //Build the Pane
@@ -223,15 +219,13 @@ final public class Main extends Application {
      */
     private HBox buildControlBar(DateTimeBean dateTimeBean, ObserverLocationBean obsLocationBean, TimeAnimator timeAnimator) {
         //Disable nodes when time animator is running
-        Binding disableBinding = Bindings.when(timeAnimator.runningProperty()).then(true).otherwise(false);
         HBox controlBarPosition = buildControlBarPosition(obsLocationBean);
         HBox controlBarInstant = buildControlBarInstant(dateTimeBean);
-        HBox controlBarTimeAnimator = buildControlBarTimeAnimator(timeAnimator, disableBinding);
-        //Disable entire control bar for instant of observation.
+        HBox controlBarTimeAnimator = buildControlBarTimeAnimator(timeAnimator);
         HBox controlBar = new HBox(controlBarPosition, controlBarInstant, controlBarTimeAnimator);
         //Styles
         controlBar.setStyle("-fx-spacing: 4; -fx-padding: 4;");
-        //Bindings
+        //Disable Binding.
         controlBarInstant.disableProperty().bind(timeAnimator.runningProperty());
 
         return controlBar;
@@ -285,37 +279,16 @@ final public class Main extends Application {
      * Builds the Hbox containing the time animation options.
      *
      * @param timeAnimator
-     * @param disableBinding
      * @return
      */
-    private HBox buildControlBarTimeAnimator(TimeAnimator timeAnimator, Binding disableBinding) {
+    private HBox buildControlBarTimeAnimator(TimeAnimator timeAnimator) {
 
         //Set the choice box
         ChoiceBox choiceBox = buildTimeAcceleratorChoiceBox(timeAnimator);
         timeAnimator.timeAcceleratorProperty().bind(Bindings.select(choiceBox.valueProperty(), "accelerator"));
-
-        Button resetButton = buildResetButton();
-        Button playButton = buildPlayPauseButton();
-        resetButton.setFont(this.fontAwesome);
-        playButton.setFont(this.fontAwesome);
-
-        //Actions
-        resetButton.setOnAction((e) -> timeAnimator.getDateTimeProperty().setZonedDateTime(getCurrentZonedDateTime()));
-        playButton.setOnAction(
-                (e) -> timeAnimator.start()
-        );
-        playButton.setOnAction((e) -> {
-            if (timeAnimator.getRunning()) timeAnimator.stop();
-            else timeAnimator.start();
-        });
-
-        //Bindings
-
-        resetButton.disableProperty().bind(timeAnimator.runningProperty());
-        playButton.textProperty().bind(
-                Bindings.when(timeAnimator.runningProperty()).then(UNICODE_PAUSE).otherwise(UNICODE_PLAY)
-        );
-
+        Font buttonFont = this.loadFont();
+        Button resetButton = buildResetButton(timeAnimator, buttonFont);
+        Button playButton = buildPlayPauseButton(timeAnimator, buttonFont);
         HBox controlBarTimeAnimator = new HBox(choiceBox, resetButton, playButton);
         controlBarTimeAnimator.setStyle("-fx-spacing: inherit;");
 
@@ -327,8 +300,12 @@ final public class Main extends Application {
      *
      * @return
      */
-    static private Button buildResetButton() {
+    private Button buildResetButton(TimeAnimator timeAnimator, Font font) {
         Button resetButton = new Button(UNICODE_RESET);
+        resetButton.setFont(font);
+        resetButton.setOnAction((e) -> timeAnimator.getDateTimeProperty().setZonedDateTime(getCurrentZonedDateTime()));
+        resetButton.disableProperty().bind(timeAnimator.runningProperty());
+
         return resetButton;
     }
 
@@ -337,8 +314,17 @@ final public class Main extends Application {
      *
      * @return
      */
-    static private Button buildPlayPauseButton() {
+    private Button buildPlayPauseButton(TimeAnimator timeAnimator, Font font) {
         Button playButton = new Button(UNICODE_PLAY);
+        playButton.setFont(font);
+        playButton.setOnAction((e) -> {
+            if (timeAnimator.getRunning()) timeAnimator.stop();
+            else timeAnimator.start();
+        });
+        playButton.textProperty().bind(
+                Bindings.when(timeAnimator.runningProperty()).then(UNICODE_PAUSE).otherwise(UNICODE_PLAY)
+        );
+
         return playButton;
     }
 
@@ -347,7 +333,7 @@ final public class Main extends Application {
      *
      * @return
      */
-    static private ChoiceBox buildTimeAcceleratorChoiceBox(TimeAnimator timeAnimator) {
+    private ChoiceBox<NamedTimeAccelerator> buildTimeAcceleratorChoiceBox(TimeAnimator timeAnimator) {
         ChoiceBox<NamedTimeAccelerator> choiceBox = new ChoiceBox<NamedTimeAccelerator>();
         ObservableList<NamedTimeAccelerator> obsList = FXCollections.observableList(Arrays.asList(NamedTimeAccelerator.values()));
         choiceBox.setItems(obsList);
@@ -361,7 +347,7 @@ final public class Main extends Application {
      *
      * @return
      */
-    static private Label buildLongitudeLabel() {
+    private Label buildLongitudeLabel() {
         return new Label(LONGITUDE_LABEL);
     }
 
@@ -370,7 +356,7 @@ final public class Main extends Application {
      *
      * @return
      */
-    static private Label buildLatitudeLabel() {
+    private Label buildLatitudeLabel() {
         return new Label(LATITUDE_LABEL);
     }
 
@@ -379,27 +365,21 @@ final public class Main extends Application {
      *
      * @return
      */
-    static private Label buildDateLabel() {
-        Label dateLabel = new Label(DATE_LABEL);
-        return dateLabel;
-    }
+    private Label buildDateLabel() { return new Label(DATE_LABEL); }
 
     /**
      * Builds the hour label.
      *
      * @return
      */
-    static private Label buildHourLabel() {
-        Label hourLabel = new Label(HOUR_LABEL);
-        return hourLabel;
-    }
+    private Label buildHourLabel() { return new Label(HOUR_LABEL); }
 
     /**
      * Builds the longitude text field.
      *
      * @return
      */
-    static private TextField buildLongitudeTextField(ObserverLocationBean obsLocationBean) {
+    private TextField buildLongitudeTextField(ObserverLocationBean obsLocationBean) {
         TextField longitudeTextField = new TextField();
         LONGITUDE_TEXT_FORMATTER.valueProperty().bindBidirectional(obsLocationBean.lonDegProperty());
         longitudeTextField.setTextFormatter(LONGITUDE_TEXT_FORMATTER);
@@ -412,7 +392,7 @@ final public class Main extends Application {
      *
      * @return
      */
-    static private TextField buildLatitudeTextField(ObserverLocationBean obsLocationBean) {
+    private TextField buildLatitudeTextField(ObserverLocationBean obsLocationBean) {
         TextField latitudeTextField = new TextField();
         LATITUDE_TEXT_FORMATTER.valueProperty().bindBidirectional(obsLocationBean.latDegProperty());
         latitudeTextField.setTextFormatter(LATITUDE_TEXT_FORMATTER);
@@ -425,7 +405,7 @@ final public class Main extends Application {
      *
      * @return
      */
-    static private TextField buildHourTextLabel(DateTimeBean dateTimeBean) {
+    private TextField buildHourTextLabel(DateTimeBean dateTimeBean) {
         TextField hourTextField = new TextField();
         DATE_TIME_TEXT_FORMATTER.valueProperty().bindBidirectional(dateTimeBean.timeProperty());
         hourTextField.setTextFormatter(DATE_TIME_TEXT_FORMATTER);
@@ -438,7 +418,7 @@ final public class Main extends Application {
      *
      * @return
      */
-    static private ComboBox<ZoneId> buildZoneIdComboBox() {
+    private ComboBox<ZoneId> buildZoneIdComboBox() {
         ArrayList<String> zoneIdStringList = new ArrayList<String>(ZoneId.getAvailableZoneIds());
         ArrayList<ZoneId> zoneIdList = new ArrayList<ZoneId>();
         Collections.sort(zoneIdStringList);
@@ -463,26 +443,26 @@ final public class Main extends Application {
         return datePicker;
     }
 
-    static private ObserverLocationBean buildObserverLocationBean() {
+    private ObserverLocationBean buildObserverLocationBean() {
         ObserverLocationBean observerLocationBean = new ObserverLocationBean();
         observerLocationBean.setCoordinates(INIT_COORDINATES);
         return observerLocationBean;
     }
 
-    static private DateTimeBean buildDateTimeBean() {
+    private DateTimeBean buildDateTimeBean() {
         DateTimeBean dateTimeBean = new DateTimeBean();
         dateTimeBean.setZonedDateTime(INIT_DATETIME);
         return dateTimeBean;
     }
 
-    static private ViewingParametersBean buildViewingParamBean() {
+    private ViewingParametersBean buildViewingParamBean() {
         ViewingParametersBean viewingParametersBean = new ViewingParametersBean();
         viewingParametersBean.setCenter(INIT_VIEW_PARAM);
         viewingParametersBean.setFieldOfViewDeg(INIT_FOVDEG);
         return viewingParametersBean;
     }
 
-    static private SkyCanvasManager buildSkyCanvasManager(
+    private SkyCanvasManager buildSkyCanvasManager(
             StarCatalogue catalogue, DateTimeBean dateTimeBean,
             ObserverLocationBean observerLocationBean, ViewingParametersBean viewingParametersBean) {
         return new SkyCanvasManager(catalogue, dateTimeBean, observerLocationBean, viewingParametersBean);
@@ -495,8 +475,7 @@ final public class Main extends Application {
      */
     private Font loadFont() {
         try (InputStream fontStream = getClass().getResourceAsStream(FONT_PATH)) {
-            Font font = Font.loadFont(fontStream, FONT_SIZE);
-            return font;
+            return Font.loadFont(fontStream, FONT_SIZE);
         } catch (IOException ioException) {
             System.out.println(String.format("Got an error while loading Font. Error: %s", ioException));
             return null;
@@ -508,17 +487,15 @@ final public class Main extends Application {
      *
      * @return
      */
-    private static StarCatalogue loadCatalogue() {
+    private StarCatalogue loadCatalogue() {
 
-        try (InputStream hs = Main.class.getResourceAsStream(HYG_PATH);
-             InputStream astStream = Main.class.getResourceAsStream(AST_PATH)) {
+        try (InputStream hs = getClass().getResourceAsStream(HYG_PATH);
+             InputStream astStream = getClass().getResourceAsStream(AST_PATH)) {
 
-            StarCatalogue catalogue = new StarCatalogue.Builder()
+            return new StarCatalogue.Builder()
                     .loadFrom(hs, HygDatabaseLoader.INSTANCE)
                     .loadFrom(astStream, AsterismLoader.INSTANCE)
                     .build();
-
-            return catalogue;
 
         } catch (IOException ioException) {
             System.out.println(String.format("Got an error while loading Font. Error: %s", ioException));
@@ -535,11 +512,12 @@ final public class Main extends Application {
     /**
      * Builds a text formater for lon and lat deg.
      * Uses predicate to determine if new value is valid.
+     *
      * @param nbStringConverter
      * @param predicate
      * @return
      */
-    static private TextFormatter<Number> buildTextLonLatFormatter(NumberStringConverter nbStringConverter, Predicate<Double> predicate){
+    static private TextFormatter<Number> buildTextLonLatFormatter(NumberStringConverter nbStringConverter, Predicate<Double> predicate) {
         UnaryOperator<TextFormatter.Change> filter = (change -> {
             try {
                 String newText = change.getControlNewText();

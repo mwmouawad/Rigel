@@ -70,7 +70,7 @@ final public class SkyCanvasManager {
         this.viewingParameters = viewingParameters;
         this.dateTimeBean = dateTime;
         this.skyCanvasPainter = new SkyCanvasPainter(this.canvas);
-        this.mousePosition = new SimpleObjectProperty(Point2D.ZERO);
+        this.mousePosition = new SimpleObjectProperty<Point2D>(Point2D.ZERO);
         this.initBindings(catalogue, dateTime, observerLocation);
         this.initListeners();
     }
@@ -227,9 +227,11 @@ final public class SkyCanvasManager {
             return null;
         }
 
-        HorizontalCoordinates horPoint = this.projection.get().inverseApply(CartesianCoordinates.of(point2D.getX(), point2D.getY()));
+        return this.projection.get().inverseApply(CartesianCoordinates.of(
+                point2D.getX(), point2D.getY()
+        ));
 
-        return horPoint;
+
     }
 
     /**
