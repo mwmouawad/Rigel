@@ -129,10 +129,10 @@ final public class SkyCanvasPainter {
                 sky.sunPosition().x(),
                 sky.sunPosition().y()
         );
+
         double diameter = planeToCanvas.deltaTransform(
                 projection.applyToAngle(sky.sun().angularSize()), 0
         ).getX();
-
 
         double outerDiameter = 2.2 * diameter;
         double outerCenterDiameter = diameter + 2.0;
@@ -143,7 +143,6 @@ final public class SkyCanvasPainter {
         this.drawCircle(sunX, sunY, outerDiameter, SUN_OUTER_COLOR);
         this.drawCircle(sunX, sunY, outerCenterDiameter, SUN_OUTER_CENTER_COLOR);
         this.drawCircle(sunX, sunY, innerCenterDiameter, SUN_INNER_CENTER_COLOR);
-
     }
 
     /**

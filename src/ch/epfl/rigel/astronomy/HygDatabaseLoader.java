@@ -27,42 +27,37 @@ public enum HygDatabaseLoader implements StarCatalogue.Loader {
     @Override
     public void load(InputStream inputStream, StarCatalogue.Builder builder) throws IOException {
 
-        InputStreamReader inStrReader = new InputStreamReader(inputStream, StandardCharsets.US_ASCII);
-        try {
-            BufferedReader buffReader = new BufferedReader(inStrReader);
-            try {
-                //Skip the first line
-                buffReader.readLine();
 
-                //Star parameters;
-                int hipparcosId;
-                String name;
-                EquatorialCoordinates eqCoord;
-                float magnitude;
-                float colorInd;
+        try (InputStreamReader inStrReader = new InputStreamReader(inputStream, StandardCharsets.US_ASCII);
+             BufferedReader buffReader = new BufferedReader(inStrReader)) {
+            //Skip the first line
+            buffReader.readLine();
+
+            //Star parameters;
+            int hipparcosId;
+            String name;
+            EquatorialCoordinates eqCoord;
+            float magnitude;
+            float colorInd;
 
 
-                String line = buffReader.readLine();
-                String[] lineTable;
-                while (line != null) {
-                    lineTable = line.split(",");
+            String line = buffReader.readLine();
+            String[] lineTable;
+            while (line != null) {
+                lineTable = line.split(",");
 
-                    hipparcosId = parseInteger(lineTable[COLUMNS.HIP.ordinal()], 0);
-                    name = parseStarName(lineTable[COLUMNS.PROPER.ordinal()], lineTable[COLUMNS.BAYER.ordinal()], lineTable[COLUMNS.CON.ordinal()]);
-                    magnitude = parseFloat(lineTable[COLUMNS.MAG.ordinal()], 0);
-                    colorInd = parseFloat(lineTable[COLUMNS.CI.ordinal()], 0);
-                    eqCoord = EquatorialCoordinates.of(parseDouble(lineTable[COLUMNS.RARAD.ordinal()]), parseDouble(lineTable[COLUMNS.DECRAD.ordinal()]));
+                hipparcosId = parseInteger(lineTable[COLUMNS.HIP.ordinal()], 0);
+                name = parseStarName(lineTable[COLUMNS.PROPER.ordinal()], lineTable[COLUMNS.BAYER.ordinal()], lineTable[COLUMNS.CON.ordinal()]);
+                magnitude = parseFloat(lineTable[COLUMNS.MAG.ordinal()], 0);
+                colorInd = parseFloat(lineTable[COLUMNS.CI.ordinal()], 0);
+                eqCoord = EquatorialCoordinates.of(parseDouble(lineTable[COLUMNS.RARAD.ordinal()]), parseDouble(lineTable[COLUMNS.DECRAD.ordinal()]));
 
-                    Star star = new Star(hipparcosId, name, eqCoord, magnitude, colorInd);
+                Star star = new Star(hipparcosId, name, eqCoord, magnitude, colorInd);
 
-                    builder.addStar(star);
-                    line = buffReader.readLine();
-                }
-            } finally {
-                buffReader.close();
+                builder.addStar(star);
+                line = buffReader.readLine();
             }
-        } finally {
-            inStrReader.close();
+
         }
     }
 
