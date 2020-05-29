@@ -10,6 +10,7 @@ import javafx.application.Application;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.binding.ObjectBinding;
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -150,7 +151,8 @@ final public class Main extends Application {
 
         //Sets control bar
         HBox controlBar = buildControlBar(dateTimeBean, obsLocation, timeAnimator);
-        BorderPane informationBar = buildInformationBar(viewParams, skyCanvasManager.objectUnderMouseProperty(), skyCanvasManager.mouseAzDeg, skyCanvasManager.mouseAltDeg);
+        BorderPane informationBar = buildInformationBar(viewParams, skyCanvasManager.objectUnderMouseProperty(),
+                skyCanvasManager.mouseAzDegProperty(), skyCanvasManager.mouseAltDegProperty());
         //Bindings
         sky.widthProperty().bind(skyViewPane.widthProperty());
         sky.heightProperty().bind(skyViewPane.heightProperty());
@@ -169,12 +171,13 @@ final public class Main extends Application {
      * @param objMouse
      * @param mouseAzDeg
      * @param mouseAltDeg
-     * @return
+     * @return the bottom BorderPane containing information for the user FOV (Field of View Degrees)
+     * and the current Mouse Position.
      */
     private BorderPane buildInformationBar(ViewingParametersBean viewParamBean,
                                            ObservableValue<CelestialObject> objMouse,
-                                           DoubleBinding mouseAzDeg,
-                                           DoubleBinding mouseAltDeg) {
+                                           DoubleProperty mouseAzDeg,
+                                           DoubleProperty mouseAltDeg) {
 
         BorderPane informationBar = new BorderPane();
         Label fovLabel = buildFOVLabel(viewParamBean);
@@ -198,7 +201,8 @@ final public class Main extends Application {
      * @param dateTimeBean
      * @param obsLocationBean
      * @param timeAnimator
-     * @return
+     * @return the top BorderPane containing the inputs for the user to select it's position,
+     * current DateTime and the animation options.
      */
     private HBox buildControlBar(DateTimeBean dateTimeBean, ObserverLocationBean obsLocationBean, TimeAnimator timeAnimator) {
         //Disable nodes when time animator is running
@@ -218,7 +222,7 @@ final public class Main extends Application {
      * Builds the HBox containing the controls for the user position.
      *
      * @param obsLocationBean
-     * @return
+     * @return the HBox containing the controls for the user position.
      */
     private HBox buildControlBarPosition(ObserverLocationBean obsLocationBean) {
         Label longitudeLabel = buildLongitudeLabel();
@@ -237,7 +241,8 @@ final public class Main extends Application {
      * instants.
      *
      * @param dateTimeBean
-     * @return
+     * @return the HBox containing the controls for the user current date and time
+     * instants.
      */
     private HBox buildControlBarInstant(DateTimeBean dateTimeBean) {
         //Build nodes
@@ -246,8 +251,6 @@ final public class Main extends Application {
         DatePicker datePicker = buildDatePicker(dateTimeBean);
         TextField hourTextField = buildHourTextLabel(dateTimeBean);
         ComboBox<ZoneId> zoneComboBox = buildZoneIdComboBox(dateTimeBean);
-
-        //Bind values
         HBox controlBarInstant = new HBox(dateLabel, datePicker, hourLabel, hourTextField, zoneComboBox);
         controlBarInstant.setStyle(CONTROL_BAR_STYLE);
 
@@ -258,7 +261,7 @@ final public class Main extends Application {
      * Builds the Hbox containing the time animation options.
      *
      * @param timeAnimator
-     * @return
+     * @return  the Hbox containing the time animation options.
      */
     private HBox buildControlBarTimeAnimator(TimeAnimator timeAnimator) {
 
@@ -277,7 +280,7 @@ final public class Main extends Application {
     /**
      * Builds the reset button.
      *
-     * @return
+     * @return the reset button.
      */
     private Button buildResetButton(TimeAnimator timeAnimator, Font font) {
         Button resetButton = new Button(UNICODE_RESET);
@@ -291,7 +294,7 @@ final public class Main extends Application {
     /**
      * Builds the play/pause button.
      *
-     * @return
+     * @return the play/pause button.
      */
     private Button buildPlayPauseButton(TimeAnimator timeAnimator, Font font) {
         Button playButton = new Button(UNICODE_PLAY);
@@ -310,7 +313,7 @@ final public class Main extends Application {
     /**
      * Builds the time accelerator choice box.
      *
-     * @return
+     * @return the time accelerator choice box.
      */
     private ChoiceBox<NamedTimeAccelerator> buildTimeAcceleratorChoiceBox(TimeAnimator timeAnimator) {
         ChoiceBox<NamedTimeAccelerator> choiceBox = new ChoiceBox<NamedTimeAccelerator>();
@@ -324,7 +327,7 @@ final public class Main extends Application {
     /**
      * Builds the Closest Celestial Object to the mouse label.
      *
-     * @return
+     * @return the Closest Celestial Object to the mouse label.
      */
     private Label buildClosestCelObjLabel(ObservableValue<CelestialObject> objMouse) {
         Label closestCelObjLabel = new Label();
@@ -344,7 +347,7 @@ final public class Main extends Application {
     /**
      * Builds the FOV label.
      *
-     * @return
+     * @return the FOV label.
      */
     private Label buildFOVLabel(ViewingParametersBean viewParamBean) {
         Label fovLabel = new Label();
@@ -357,9 +360,9 @@ final public class Main extends Application {
     /**
      * Builds the mouse position label.
      *
-     * @return
+     * @return  the mouse position label.
      */
-    private Label buildObsMousePositionLabel(DoubleBinding mouseAzDeg, DoubleBinding mouseAltDeg) {
+    private Label buildObsMousePositionLabel(DoubleProperty mouseAzDeg, DoubleProperty mouseAltDeg) {
         Label obsMousePositionLabel = new Label();
         obsMousePositionLabel.textProperty().bind(
                 Bindings.format(INFO_COORD_FORMAT, mouseAzDeg, mouseAltDeg)
@@ -371,7 +374,7 @@ final public class Main extends Application {
     /**
      * Builds the longitude label.
      *
-     * @return
+     * @return  the longitude label.
      */
     private Label buildLongitudeLabel() {
         return new Label(LONGITUDE_LABEL);
@@ -380,7 +383,7 @@ final public class Main extends Application {
     /**
      * Builds the latitude label.
      *
-     * @return
+     * @return the latitude label.
      */
     private Label buildLatitudeLabel() {
         return new Label(LATITUDE_LABEL);
@@ -389,7 +392,7 @@ final public class Main extends Application {
     /**
      * Builds the date label.
      *
-     * @return
+     * @return the date label.
      */
     private Label buildDateLabel() {
         return new Label(DATE_LABEL);
@@ -398,7 +401,7 @@ final public class Main extends Application {
     /**
      * Builds the hour label.
      *
-     * @return
+     * @return the hour label.
      */
     private Label buildHourLabel() {
         return new Label(HOUR_LABEL);
@@ -407,7 +410,7 @@ final public class Main extends Application {
     /**
      * Builds the longitude text field.
      *
-     * @return
+     * @return the longitude text field.
      */
     private TextField buildLongitudeTextField(ObserverLocationBean obsLocationBean) {
         TextField longitudeTextField = new TextField();
@@ -420,7 +423,7 @@ final public class Main extends Application {
     /**
      * Builds the altitude text field.
      *
-     * @return
+     * @return  the altitude text field.
      */
     private TextField buildLatitudeTextField(ObserverLocationBean obsLocationBean) {
         TextField latitudeTextField = new TextField();
@@ -433,7 +436,7 @@ final public class Main extends Application {
     /**
      * Build the hour text field.
      *
-     * @return
+     * @return the hour text field.
      */
     private TextField buildHourTextLabel(DateTimeBean dateTimeBean) {
         TextField hourTextField = new TextField();
@@ -446,7 +449,7 @@ final public class Main extends Application {
     /**
      * Builds the zone id ComboBox.
      *
-     * @return
+     * @return the zone id ComboBox.
      */
     private ComboBox<ZoneId> buildZoneIdComboBox(DateTimeBean dateTimeBean) {
         ComboBox<ZoneId> zoneComboBox = new ComboBox<ZoneId>();
@@ -470,7 +473,7 @@ final public class Main extends Application {
     /**
      * Builds the Date Picker.
      *
-     * @return
+     * @return the Date Picker.
      */
     private DatePicker buildDatePicker(DateTimeBean dateTimeBean) {
         DatePicker datePicker = new DatePicker();
@@ -479,18 +482,30 @@ final public class Main extends Application {
         return datePicker;
     }
 
+    /**
+     * Builds the application observer location bean property with initial coordinates.
+     * @return the application observer location bean property with initial coordinates.
+     */
     private ObserverLocationBean buildObserverLocationBean() {
         ObserverLocationBean observerLocationBean = new ObserverLocationBean();
         observerLocationBean.setCoordinates(INIT_COORDINATES);
         return observerLocationBean;
     }
 
+    /**
+     * Builds the application date time bean with initial date time.
+     * @return the application date time bean with initial date time.
+     */
     private DateTimeBean buildDateTimeBean() {
         DateTimeBean dateTimeBean = new DateTimeBean();
         dateTimeBean.setZonedDateTime(INIT_DATETIME);
         return dateTimeBean;
     }
 
+    /**
+     * Builds the application viewing parameters  bean with view params .
+     * @return the application viewing parameters  bean with view params .
+     */
     private ViewingParametersBean buildViewingParamBean() {
         ViewingParametersBean viewingParametersBean = new ViewingParametersBean();
         viewingParametersBean.setCenter(INIT_VIEW_PARAM);
@@ -498,6 +513,14 @@ final public class Main extends Application {
         return viewingParametersBean;
     }
 
+    /**
+     * Builds the applicastion sky canvas manager.
+     * @param catalogue
+     * @param dateTimeBean
+     * @param observerLocationBean
+     * @param viewingParametersBean
+     * @return Builds the applicastion sky canvas manager.
+     */
     private SkyCanvasManager buildSkyCanvasManager(
             StarCatalogue catalogue, DateTimeBean dateTimeBean,
             ObserverLocationBean observerLocationBean, ViewingParametersBean viewingParametersBean) {
@@ -505,6 +528,10 @@ final public class Main extends Application {
     }
 
 
+    /**
+     * Utility method for getting the current DateTime and Zone of the application.
+     * @return
+     */
     static private ZonedDateTime getCurrentZonedDateTime() {
         return ZonedDateTime.now();
     }

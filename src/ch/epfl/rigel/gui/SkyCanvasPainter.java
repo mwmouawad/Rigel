@@ -211,14 +211,12 @@ final public class SkyCanvasPainter {
         Set<Asterism> asterismSet = sky.asterisms();
         //Draw Asterisms
 
-        //TODO: Improve this.
         for (Asterism ast : asterismSet) {
             List<Integer> indexList = sky.asterismIndices(ast);
             this.graphicContext.setStroke(ASTERISM_COLOR);
             this.graphicContext.beginPath();
-            boolean isPreviousStarOnScreen;
-            boolean isCurrentStarOnScreen;
-            int oldIndex = 0;
+            boolean isPreviousStarOnScreen = true;
+            boolean isCurrentStarOnScreen = true;
 
             for (int i = 0; i < indexList.size(); i++) {
                 int index = indexList.get(i);
@@ -229,16 +227,20 @@ final public class SkyCanvasPainter {
                     this.graphicContext.moveTo(x, y);
                 } else {
                     isCurrentStarOnScreen = this.isInScreen(x, y);
-                    isPreviousStarOnScreen = this.isInScreen(transformedStarPos[2 * (oldIndex)], transformedStarPos[2 * (oldIndex) + 1]);
                     if (isCurrentStarOnScreen || isPreviousStarOnScreen) this.graphicContext.lineTo(x, y);
                     else this.graphicContext.moveTo(x, y);
+
                 }
-                oldIndex = index;
+                isPreviousStarOnScreen = isCurrentStarOnScreen;
             }
             this.graphicContext.stroke();
             this.graphicContext.closePath();
 
         }
+            this.graphicContext.stroke();
+            this.graphicContext.closePath();
+
+
 
     }
 
@@ -291,8 +293,7 @@ final public class SkyCanvasPainter {
      * @return true if current position is within the screen boundaries. Otherwise false.
      */
     private boolean isInScreen(double x, double y) {
-
-        return (x >= 0 && x <= canvas.widthProperty().get() && y >= 0 && y <= canvas.heightProperty().get());
+        return canvas.getBoundsInLocal().contains(x, y);
     }
 
 }
