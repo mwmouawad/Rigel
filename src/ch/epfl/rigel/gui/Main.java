@@ -248,7 +248,6 @@ final public class Main extends Application {
         ComboBox<ZoneId> zoneComboBox = buildZoneIdComboBox(dateTimeBean);
 
         //Bind values
-
         HBox controlBarInstant = new HBox(dateLabel, datePicker, hourLabel, hourTextField, zoneComboBox);
         controlBarInstant.setStyle(CONTROL_BAR_STYLE);
 
