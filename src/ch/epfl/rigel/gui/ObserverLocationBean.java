@@ -60,7 +60,7 @@ public class ObserverLocationBean {
      * Gets the property of the latitude in degrees
      * @return the property of the latitude in degrees.
      */
-    public DoubleProperty latDegProperty() { return latDegProperty(); }
+    public DoubleProperty latDegProperty() { return this.latDeg; }
 
     /**
      * Gets the latitude in degrees of the observer's location.
