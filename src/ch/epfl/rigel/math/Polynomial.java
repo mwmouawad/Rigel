@@ -11,7 +11,7 @@ import ch.epfl.rigel.Preconditions;
  */
 public final class Polynomial {
 
-    private double coefficients[];
+    private final double coefficients[];
 
 
     private Polynomial(double coefficientN, double... coefficients){
@@ -101,7 +101,7 @@ public final class Polynomial {
      * @throws UnsupportedOperationException
      */
     @Override
-    public final int hashCode() {
+    public int hashCode() {
         throw new UnsupportedOperationException();
     }
 
@@ -110,7 +110,7 @@ public final class Polynomial {
      * @throws UnsupportedOperationException
      */
     @Override
-    public final boolean equals(Object obj) {
+    public boolean equals(Object obj) {
         throw new UnsupportedOperationException();
     }
 }

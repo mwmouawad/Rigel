@@ -9,10 +9,10 @@ import ch.epfl.rigel.math.Angle;
  * @author Mark Mouawad (296508)
  * @author Leah Uzzan (302829)
  */
-public abstract class SphericalCoordinates {
+abstract class SphericalCoordinates {
 
-    private double longitude;
-    private double latitude;
+    private final double longitude;
+    private final double latitude;
 
     /**
      * Constructs a Spherical Coordinates object.
@@ -30,7 +30,7 @@ public abstract class SphericalCoordinates {
      *
      * @return longitude
      */
-    public double lon() {
+     double lon() {
         return this.longitude;
     }
 
@@ -39,7 +39,7 @@ public abstract class SphericalCoordinates {
      *
      * @return
      */
-    public double lonDeg() {
+     double lonDeg() {
         return Angle.toDeg(this.longitude);
     }
 
@@ -48,7 +48,7 @@ public abstract class SphericalCoordinates {
      *
      * @return latitude in radian degrees.
      */
-    public double lat() {
+     double lat() {
         return this.latitude;
     }
 
@@ -57,7 +57,7 @@ public abstract class SphericalCoordinates {
      *
      * @return latitude in celsius degrees.
      */
-    public double latDeg() {
+     double latDeg() {
         return Angle.toDeg(this.latitude);
     }
 

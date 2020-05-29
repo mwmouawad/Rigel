@@ -32,7 +32,7 @@ public final class Preconditions {
      */
     static public double checkInInterval(Interval interval, double value) {
         if (!interval.contains(value)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Not in interval");
         }
         return value;
     }

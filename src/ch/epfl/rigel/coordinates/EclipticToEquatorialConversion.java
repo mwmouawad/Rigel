@@ -17,7 +17,7 @@ import static ch.epfl.rigel.astronomy.Epoch.J2000;
  */
 public final class EclipticToEquatorialConversion implements Function<EclipticCoordinates, EquatorialCoordinates> {
 
-    private static final Polynomial EPSI = Polynomial.of(
+    private final Polynomial EPSI = Polynomial.of(
             Angle.ofArcsec(0.00181),
             -Angle.ofArcsec(0.0006),
             -Angle.ofArcsec(46.815),
@@ -26,6 +26,7 @@ public final class EclipticToEquatorialConversion implements Function<EclipticCo
     private final double cosEpsi;
     private final double sinEpsi;
     private final static  RightOpenInterval DEC_INTERVAL =  RightOpenInterval.symmetric(Math.PI);
+
 
     /**
      * @param when time zone time used to be converted.
@@ -48,8 +49,8 @@ public final class EclipticToEquatorialConversion implements Function<EclipticCo
         double beta = eclipticCoordinates.lat();
 
         double alpha = Math.atan2(
-                Math.sin(lambda) * cosEpsi - Math.tan(beta) * sinEpsi
-                ,Math.cos(lambda)
+                Math.sin(lambda) * cosEpsi - Math.tan(beta) * sinEpsi,
+                Math.cos(lambda)
         );
 
         double delta = Math.asin(Math.sin(beta) * cosEpsi + Math.cos(beta) * sinEpsi * Math.sin(lambda));

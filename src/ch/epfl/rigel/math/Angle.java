@@ -13,9 +13,15 @@ public final class Angle {
 
     public final static  double TAU = 2*Math.PI ;
     private static final double DEG_PER_RAD = 360.0 / TAU;
-    static private RightOpenInterval ZERO_TO_TAU =  RightOpenInterval.of(0, TAU);
+    static private final RightOpenInterval ZERO_TO_TAU =  RightOpenInterval.of(0, TAU);
+    private static final double NUMBER_OF_SEC_IN_HOUR = 3600;
+    private static final double NUMBER_OF_SEC_IN_MINUTE = 60;
+    private static final double TO_HOUR = 15;
 
 
+    /**
+     * Non instanciable class
+     */
     private Angle(){ }
 
     /**
@@ -34,7 +40,7 @@ public final class Angle {
     public static double ofArcsec(double sec){
 
         //Convert sec to degrees
-        double deg = sec / 3600;
+        double deg = sec / NUMBER_OF_SEC_IN_HOUR;
 
         return ofDeg(deg);
 
@@ -62,7 +68,7 @@ public final class Angle {
      * @return
      */
     public static double ofHr(double hr){
-        return ofDeg(hr * 15);
+        return ofDeg(hr * TO_HOUR);
     }
 
     /**
@@ -73,7 +79,7 @@ public final class Angle {
     public static double toHr(double rad){
 
         double deg = toDeg(rad);
-        return deg / 15;
+        return deg / TO_HOUR;
 
     }
 
@@ -87,12 +93,12 @@ public final class Angle {
      */
     public static double ofDMS(int deg, int min, double sec){
 
-        Preconditions.checkArgument(min<60 && min>=0 && sec<60 && sec>=0 && deg >= 0);
+        Preconditions.checkArgument(min<NUMBER_OF_SEC_IN_MINUTE && min>=0 && sec<NUMBER_OF_SEC_IN_MINUTE && sec>=0 && deg >= 0);
 
         //Convert arcminutes to Degrees
-        double minInDeg = (double)min / 60;
+        double minInDeg = (double)min / NUMBER_OF_SEC_IN_MINUTE;
         //Convert arcseconds to Degrees
-        double secInDeg = sec / 3600;
+        double secInDeg = sec / NUMBER_OF_SEC_IN_HOUR;
 
         return ofDeg(deg + minInDeg + secInDeg);
     }
