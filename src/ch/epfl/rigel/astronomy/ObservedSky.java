@@ -53,7 +53,7 @@ public final class ObservedSky {
         sun = SunModel.SUN.at(daysUntil, conversion);
         moon = MoonModel.MOON.at(daysUntil, conversion);
 
-        planets = new ArrayList<>();
+        planets = new ArrayList<Planet>();
         for (PlanetModel p : PlanetModel.ALL) {
             if(!p.equals(PlanetModel.EARTH)){
                 planets.add(p.at(daysUntil, conversion));

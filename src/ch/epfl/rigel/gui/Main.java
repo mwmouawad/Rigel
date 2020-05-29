@@ -231,6 +231,7 @@ final public class Main extends Application {
         //Styles
         controlBar.setStyle("-fx-spacing: 4; -fx-padding: 4;");
         //Bindings
+        //TODO: UNCHECKED BIDNING
         controlBarInstant.disableProperty().bind(disableBinding);
 
         return controlBar;
@@ -254,7 +255,8 @@ final public class Main extends Application {
         longitudeTextField.setTextFormatter(LONGITUDE_TEXT_FORMATTER);
 
         //Bind property to TextFormatter
-        ObjectProperty latProperty = latitudeTextField.getTextFormatter().valueProperty();
+        //TODO: UNCHECKED BINDING
+        ObjectProperty<Double> latProperty = (ObjectProperty<Double>) latitudeTextField.getTextFormatter().valueProperty();
         latProperty.bindBidirectional(obsLocationBean.latDegProperty());
         ObjectProperty longProperty = longitudeTextField.getTextFormatter().valueProperty();
         longProperty.bindBidirectional(obsLocationBean.lonDegProperty());
@@ -285,6 +287,7 @@ final public class Main extends Application {
 
         //Bind values
         ObjectProperty hourProperty = hourTextField.getTextFormatter().valueProperty();
+        //TODO: UNCHECKED BINDING
         hourProperty.bindBidirectional(dateTimeBean.timeProperty());
         zoneComboBox.valueProperty().bindBidirectional(dateTimeBean.zoneProperty());
         datePicker.valueProperty().bindBidirectional(dateTimeBean.dateProperty());
@@ -446,7 +449,7 @@ final public class Main extends Application {
      */
     static private ComboBox buildZoneIdComboBox() {
         ComboBox zoneComboBox = new ComboBox();
-        List<String> zoneIdStringList = new ArrayList<>(ZoneId.getAvailableZoneIds());
+        List<String> zoneIdStringList = new ArrayList<String>(ZoneId.getAvailableZoneIds());
         List<ZoneId> zoneIdList = new ArrayList<ZoneId>();
         Collections.sort(zoneIdStringList);
         for (String s : zoneIdStringList) {

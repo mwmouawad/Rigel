@@ -34,7 +34,7 @@ public class BlackBodyColor {
      */
      private static List<String> loadColors() {
 
-        List<String> colors = new ArrayList<>();
+        List<String> colors = new ArrayList<String>();
 
         try (InputStream inputStream = BlackBodyColor.class.getResourceAsStream(BBR_COLOR);
             InputStreamReader inStrReader = new InputStreamReader(inputStream, StandardCharsets.US_ASCII);
