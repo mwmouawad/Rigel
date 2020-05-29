@@ -83,11 +83,9 @@ final public class Main extends Application {
     );
 
     //Formatters
-    private static TextFormatter<Number> LATITUDE_TEXT_FORMATTER = buildTextLonLatFormatter(NUMBER_STRING_CONVERTER, GeographicCoordinates::isValidLatDeg);
-    private static TextFormatter<Number> LONGITUDE_TEXT_FORMATTER = buildTextLonLatFormatter(NUMBER_STRING_CONVERTER, GeographicCoordinates::isValidLonDeg);
-    private static TextFormatter<LocalTime> DATE_TIME_TEXT_FORMATTER = new TextFormatter<LocalTime>(LOCAL_TIME_STRING_CONVERTER);
-
-    //Resources
+    private static final TextFormatter<Number> LATITUDE_TEXT_FORMATTER = buildTextLonLatFormatter(NUMBER_STRING_CONVERTER, GeographicCoordinates::isValidLatDeg);
+    private static final TextFormatter<Number> LONGITUDE_TEXT_FORMATTER = buildTextLonLatFormatter(NUMBER_STRING_CONVERTER, GeographicCoordinates::isValidLonDeg);
+    private static final TextFormatter<LocalTime> DATE_TIME_TEXT_FORMATTER = new TextFormatter<LocalTime>(LOCAL_TIME_STRING_CONVERTER);
 
 
     /**
@@ -100,31 +98,63 @@ final public class Main extends Application {
         launch();
     }
 
+    static private ZonedDateTime getCurrentZonedDateTime() {
+        return ZonedDateTime.now();
+    }
+
+    /**
+     * Builds a text formater for lon and lat deg.
+     * Uses predicate to determine if new value is valid.
+     *
+     * @param nbStringConverter
+     * @param predicate
+     * @return
+     */
+    static private TextFormatter<Number> buildTextLonLatFormatter(NumberStringConverter nbStringConverter, Predicate<Double> predicate) {
+        UnaryOperator<TextFormatter.Change> filter = (change -> {
+            try {
+                String newText = change.getControlNewText();
+                change.getControlNewText();
+                double newCoordinate =
+                        nbStringConverter.fromString(newText).doubleValue();
+                return predicate.test(newCoordinate) ? change : null;
+
+            } catch (Exception e) {
+                return null;
+            }
+        });
+
+        return new TextFormatter<>(nbStringConverter, 0, filter);
+    }
+
     /**
      * Overrides JavaFx start method.
      * Starts the application, builds panes, bindings and SkyCanvasManager to display the sky.
      *
      * @param primaryStage
-     * @throws Exception
      */
     @Override
-    public void start(Stage primaryStage) throws Exception {
+    public void start(Stage primaryStage) {
         //Build the application properties
         TimeAnimator timeAnimator = new TimeAnimator(buildDateTimeBean());
         ViewingParametersBean viewParams = buildViewingParamBean();
         ObserverLocationBean obsLocation = buildObserverLocationBean();
         DateTimeBean dateTimeBean = timeAnimator.getDateTimeProperty();
+
         SkyCanvasManager skyCanvasManager = buildSkyCanvasManager(
                 this.loadCatalogue(), dateTimeBean, obsLocation, viewParams
         );
+
         Canvas sky = skyCanvasManager.canvas();
-        //Build the Pane
+
         BorderPane mainPane = buildMainPane(dateTimeBean, obsLocation, viewParams, timeAnimator, skyCanvasManager, sky);
+
         primaryStage.setTitle(APP_TITLE);
         primaryStage.minWidthProperty().setValue(STAGE_MIN_WIDTH);
         primaryStage.minHeightProperty().setValue(STAGE_MIN_HEIGHT);
         primaryStage.setScene(new Scene(mainPane));
         primaryStage.show();
+
         sky.requestFocus();
 
     }
@@ -147,10 +177,11 @@ final public class Main extends Application {
                                      TimeAnimator timeAnimator, SkyCanvasManager skyCanvasManager, Canvas sky) {
 
         BorderPane mainPane = new BorderPane();
+        Pane skyViewPane = new Pane(sky);
+
         //Sets control bar
         HBox controlBar = buildControlBar(dateTimeBean, obsLocation, timeAnimator);
         BorderPane informationBar = buildInformationBar(viewParams, skyCanvasManager.objectUnderMouseProperty(), skyCanvasManager.mouseAzDeg, skyCanvasManager.mouseAltDeg);
-        Pane skyViewPane = new Pane(sky);
         //Bindings
         sky.widthProperty().bind(skyViewPane.widthProperty());
         sky.heightProperty().bind(skyViewPane.heightProperty());
@@ -171,15 +202,15 @@ final public class Main extends Application {
      * @param mouseAltDeg
      * @return
      */
-    static private BorderPane buildInformationBar(ViewingParametersBean viewParamBean,
-                                                  ObservableValue<CelestialObject> objMouse,
-                                                  DoubleBinding mouseAzDeg,
-                                                  DoubleBinding mouseAltDeg) {
+    private BorderPane buildInformationBar(ViewingParametersBean viewParamBean,
+                                           ObservableValue<CelestialObject> objMouse,
+                                           DoubleBinding mouseAzDeg,
+                                           DoubleBinding mouseAltDeg) {
 
         BorderPane informationBar = new BorderPane();
-        Label fovLabel = new Label();
-        Label closestCelObjLabel = new Label();
-        Label obsMousePositionLabel = new Label();
+        Label fovLabel = buildFOVLabel(viewParamBean);
+        Label closestCelObjLabel = buildClosestCelObjLabel(objMouse);
+        Label obsMousePositionLabel = buildObsMousePositionLabel(mouseAzDeg, mouseAltDeg);
 
         informationBar.setLeft(fovLabel);
         informationBar.setCenter(closestCelObjLabel);
@@ -188,25 +219,8 @@ final public class Main extends Application {
         //Styles
         informationBar.setStyle("-fx-padding: 4; -fx-background-color: white;");
 
-        //Bindings
-        ObjectBinding celObjString = Bindings.createObjectBinding(() -> {
-            if (objMouse.getValue() == null) return EMPTY_STRING;
-            else return objMouse.getValue().name();
-        }, objMouse);
-
-        fovLabel.textProperty().bind(
-                Bindings.format(INFO_FOV_FORMAT, viewParamBean.fieldOfViewDegProperty())
-        );
-        closestCelObjLabel.textProperty().bind(
-                Bindings.format("%s", celObjString)
-        );
-        obsMousePositionLabel.textProperty().bind(
-                Bindings.format(INFO_COORD_FORMAT, mouseAzDeg, mouseAltDeg)
-        );
-
         return informationBar;
     }
-
 
     /**
      * Builds the top BorderPane containing the inputs for the user to select it's position,
@@ -230,7 +244,6 @@ final public class Main extends Application {
 
         return controlBar;
     }
-
 
     /**
      * Builds the HBox containing the controls for the user position.
@@ -343,6 +356,53 @@ final public class Main extends Application {
     }
 
     /**
+     * Builds the Closest Celestial Object to the mouse label.
+     *
+     * @return
+     */
+    private Label buildClosestCelObjLabel(ObservableValue<CelestialObject> objMouse) {
+        Label closestCelObjLabel = new Label();
+
+        ObjectBinding celObjString = Bindings.createObjectBinding(() -> {
+            if (objMouse.getValue() == null) return EMPTY_STRING;
+            else return objMouse.getValue().name();
+        }, objMouse);
+
+        closestCelObjLabel.textProperty().bind(
+                Bindings.format("%s", celObjString)
+        );
+
+        return closestCelObjLabel;
+    }
+
+    /**
+     * Builds the FOV label.
+     *
+     * @return
+     */
+    private Label buildFOVLabel(ViewingParametersBean viewParamBean) {
+        Label fovLabel = new Label();
+        fovLabel.textProperty().bind(
+                Bindings.format(INFO_FOV_FORMAT, viewParamBean.fieldOfViewDegProperty())
+        );
+        return fovLabel;
+    }
+
+    /**
+     * Builds the mouse position label.
+     *
+     * @return
+     */
+    private Label buildObsMousePositionLabel(DoubleBinding mouseAzDeg, DoubleBinding mouseAltDeg) {
+        Label obsMousePositionLabel = new Label();
+        obsMousePositionLabel.textProperty().bind(
+                Bindings.format(INFO_COORD_FORMAT, mouseAzDeg, mouseAltDeg)
+        );
+
+        return obsMousePositionLabel;
+    }
+
+    /**
      * Builds the longitude label.
      *
      * @return
@@ -365,14 +425,18 @@ final public class Main extends Application {
      *
      * @return
      */
-    private Label buildDateLabel() { return new Label(DATE_LABEL); }
+    private Label buildDateLabel() {
+        return new Label(DATE_LABEL);
+    }
 
     /**
      * Builds the hour label.
      *
      * @return
      */
-    private Label buildHourLabel() { return new Label(HOUR_LABEL); }
+    private Label buildHourLabel() {
+        return new Label(HOUR_LABEL);
+    }
 
     /**
      * Builds the longitude text field.
@@ -502,36 +566,6 @@ final public class Main extends Application {
             return null;
         }
 
-    }
-
-    static private ZonedDateTime getCurrentZonedDateTime() {
-        return ZonedDateTime.now();
-    }
-
-
-    /**
-     * Builds a text formater for lon and lat deg.
-     * Uses predicate to determine if new value is valid.
-     *
-     * @param nbStringConverter
-     * @param predicate
-     * @return
-     */
-    static private TextFormatter<Number> buildTextLonLatFormatter(NumberStringConverter nbStringConverter, Predicate<Double> predicate) {
-        UnaryOperator<TextFormatter.Change> filter = (change -> {
-            try {
-                String newText = change.getControlNewText();
-                change.getControlNewText();
-                double newCoordinate =
-                        nbStringConverter.fromString(newText).doubleValue();
-                return predicate.test(newCoordinate) ? change : null;
-
-            } catch (Exception e) {
-                return null;
-            }
-        });
-
-        return new TextFormatter<>(nbStringConverter, 0, filter);
     }
 
 
