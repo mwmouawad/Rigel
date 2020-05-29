@@ -236,10 +236,6 @@ final public class SkyCanvasPainter {
             this.graphicContext.closePath();
 
         }
-            this.graphicContext.stroke();
-            this.graphicContext.closePath();
-
-
 
     }
 
