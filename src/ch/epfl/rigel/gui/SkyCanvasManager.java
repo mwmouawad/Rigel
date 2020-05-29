@@ -37,6 +37,7 @@ final public class SkyCanvasManager {
     private final static double OBJECT_MOUSE_DISTANCE = 10;
     private final static double STEP_HORIZONTAL_PROJECTION_DEG = 10;
     private final static double STEP_VERTICAL_PROJECTION_DEG = 5;
+    private final static double TRANSLATION_COEF = 2.0d;
     //Intervals
     private final static ClosedInterval FOV_INTERVAL = ClosedInterval.of(30, 150);
     private final static RightOpenInterval CENTER_AZDEG_INTERVAL = RightOpenInterval.of(0, 360);
@@ -178,7 +179,7 @@ final public class SkyCanvasManager {
         );
 
         this.objectUnderMouse = Bindings.createObjectBinding(
-                () -> this.computeObjectUnderMouse(),
+                this::computeObjectUnderMouse,
                 this.observedSky, this.mousePosition, this.planeToCanvas
         );
     }
@@ -244,7 +245,7 @@ final public class SkyCanvasManager {
         double height = canvas.heightProperty().get();
         double scale = width / projection.get().applyToAngle(Angle.ofDeg(viewingParameters.getFieldOfViewDeg()));
         Transform scaleTransform =  Transform.scale(scale, -scale);
-        Transform translationTransform = Transform.translate(width /2.0d, height / 2.0d);
+        Transform translationTransform = Transform.translate(width / TRANSLATION_COEF, height / TRANSLATION_COEF);
         return translationTransform.createConcatenation(scaleTransform);
     }
 

@@ -42,6 +42,7 @@ final public class SkyCanvasPainter {
     static final private Color MOON_COLOR = Color.WHITE;
     static final private Color HORIZON_COLOR = Color.RED;
     static final private HorizontalCoordinates PARALLEL_COORDINATES = HorizontalCoordinates.of(0, 0);
+    static final private double CIRCLE_EIGHTH_DEGREE = 45;
 
 
     /**
@@ -136,13 +137,12 @@ final public class SkyCanvasPainter {
 
         double outerDiameter = 2.2 * diameter;
         double outerCenterDiameter = diameter + 2.0;
-        double innerCenterDiameter = diameter;
         double sunX = transformedSunPos.getX();
         double sunY = transformedSunPos.getY();
 
         this.drawCircle(sunX, sunY, outerDiameter, SUN_OUTER_COLOR);
         this.drawCircle(sunX, sunY, outerCenterDiameter, SUN_OUTER_CENTER_COLOR);
-        this.drawCircle(sunX, sunY, innerCenterDiameter, SUN_INNER_CENTER_COLOR);
+        this.drawCircle(sunX, sunY, diameter, SUN_INNER_CENTER_COLOR);
 
     }
 
@@ -186,7 +186,7 @@ final public class SkyCanvasPainter {
                 transformedPos.getY() - radius, transformedDiameter, transformedDiameter);
 
         for (int i = 0; i < 8; i++) {
-            HorizontalCoordinates horiz = HorizontalCoordinates.ofDeg(i * 45, 0);
+            HorizontalCoordinates horiz = HorizontalCoordinates.ofDeg(i * CIRCLE_EIGHTH_DEGREE, 0);
             CartesianCoordinates coord = projection.apply(horiz);
             Point2D point = planeToCanvas.transform(coord.x(), coord.y());
             this.drawText(

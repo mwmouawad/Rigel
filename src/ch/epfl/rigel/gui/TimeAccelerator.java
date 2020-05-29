@@ -41,7 +41,6 @@ public interface TimeAccelerator {
      * @param frequency number of elapsed steps by real time unity.
      * @return adjusted TimeAccelerator by number of steps.
      */
-    //TODO: easier way
     static TimeAccelerator discrete(Duration step, long frequency) {
         return (initialTime, timeNanoSec) -> {
             long steps = (long) Math.floor(frequency * 1e-9 * timeNanoSec) * step.toNanos();
