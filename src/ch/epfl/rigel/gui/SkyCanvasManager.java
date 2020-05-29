@@ -12,6 +12,8 @@ import ch.epfl.rigel.math.RightOpenInterval;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.binding.ObjectBinding;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Point2D;
@@ -52,9 +54,10 @@ final public class SkyCanvasManager {
     private ObjectBinding<CelestialObject> objectUnderMouse;
     private final Canvas canvas;
     private final SkyCanvasPainter skyCanvasPainter;
-    //Public bindings
-    public DoubleBinding mouseAzDeg;
-    public DoubleBinding mouseAltDeg;
+    private  DoubleProperty mouseAzDegProperty;
+    private  DoubleProperty mouseAltDegProperty;
+    private  DoubleBinding mouseAzDeg;
+    private  DoubleBinding mouseAltDeg;
 
     /**
      * Creates an instance of SkyCanvasManager. Creates an empty Canvas that needs be
@@ -71,7 +74,11 @@ final public class SkyCanvasManager {
         this.dateTimeBean = dateTime;
         this.skyCanvasPainter = new SkyCanvasPainter(this.canvas);
         this.mousePosition = new SimpleObjectProperty<Point2D>(Point2D.ZERO);
+        this.mouseAzDegProperty = new SimpleDoubleProperty();
+        this.mouseAltDegProperty = new SimpleDoubleProperty();
         this.initBindings(catalogue, dateTime, observerLocation);
+        this.mouseAzDegProperty.bind(this.mouseAzDeg);
+        this.mouseAltDegProperty.bind(this.mouseAltDeg);
         this.initListeners();
     }
 
@@ -153,18 +160,18 @@ final public class SkyCanvasManager {
         );
 
         this.observedSky = Bindings.createObjectBinding(
-                () -> new ObservedSky(dateTime.getZonedDateTime(), observerLocation.getCoordinates(), this.projection.getValue(), catalogue)
-                , dateTime.dateProperty(), dateTime.zoneProperty(), dateTime.timeProperty(), observerLocation.coordinatesProperty(), this.projection);
+                () -> new ObservedSky(dateTime.getZonedDateTime(), observerLocation.getCoordinates(), this.projection.getValue(), catalogue),
+                dateTime.dateProperty(), dateTime.zoneProperty(), dateTime.timeProperty(), observerLocation.coordinatesProperty(), this.projection);
 
 
         this.planeToCanvas = Bindings.createObjectBinding(
-                () -> computePlaneToCanvas(this.viewingParameters)
-                , canvas.widthProperty(), canvas.heightProperty(), this.viewingParameters.fieldOfViewDegProperty(), this.projection
+                () -> computePlaneToCanvas(this.viewingParameters),
+                canvas.widthProperty(), canvas.heightProperty(), this.viewingParameters.fieldOfViewDegProperty(), this.projection
         );
 
         this.mouseHorizontalPosition = Bindings.createObjectBinding(
-                () -> this.computeMouseHorizontalPosition() == null ? HorizontalCoordinates.ofDeg(0, 0) : this.computeMouseHorizontalPosition()
-                , this.mousePosition, this.projection, this.planeToCanvas
+                () -> this.computeMouseHorizontalPosition(),
+                this.mousePosition, this.projection, this.planeToCanvas
         );
 
         this.mouseAzDeg = Bindings.createDoubleBinding(
@@ -173,7 +180,7 @@ final public class SkyCanvasManager {
         );
 
         this.mouseAltDeg = Bindings.createDoubleBinding(
-                () -> this.mouseHorizontalPosition.get().altDeg(),
+                () ->  this.mouseHorizontalPosition.get().altDeg(),
                 this.mouseHorizontalPosition
         );
 
@@ -188,8 +195,8 @@ final public class SkyCanvasManager {
      * @return
      */
     private CelestialObject computeObjectUnderMouse() {
-        Point2D mousePosInverse;
-        double inverseDistance;
+        Point2D mousePosInverse = Point2D.ZERO;
+        double inverseDistance = 0.0;
 
         try {
             inverseDistance = this.planeToCanvas.get().inverseDeltaTransform(new Point2D(OBJECT_MOUSE_DISTANCE, 0)).getX();
@@ -198,7 +205,6 @@ final public class SkyCanvasManager {
             System.out.println(
                     String.format("Erreur de transformation inverse du point: %s avec erreur: %s", this.mousePosition.get(), error)
             );
-            return null;
         }
 
         Optional<CelestialObject> celObj = this.observedSky.get().objectClosestTo(
@@ -214,17 +220,15 @@ final public class SkyCanvasManager {
      */
     private HorizontalCoordinates computeMouseHorizontalPosition() {
 
-        Point2D point2D;
+        Point2D point2D = Point2D.ZERO;
         try {
             point2D = this.planeToCanvas.get()
                     .inverseTransform(this.mousePosition.get());
         }
-        //TODO: See if exception handling is correct!
         catch (NonInvertibleTransformException error) {
             System.out.println(
                     String.format("Erreur de transformation inverse du point: %s avec erreur: %s", this.mousePosition.get(), error)
             );
-            return null;
         }
 
         return this.projection.get().inverseApply(CartesianCoordinates.of(
@@ -311,6 +315,23 @@ final public class SkyCanvasManager {
      */
     public Canvas canvas() {
         return this.canvas;
+    }
+
+    /**
+     * Get the mouse position azimuth in degrees property.
+     * @return the mouse position azimuth in degrees property.
+     */
+    public DoubleProperty mouseAzDegProperty(){
+        return this.mouseAzDegProperty;
+
+    }
+
+    /**
+     * Get the mouse position altitude in degrees property.
+     * @@return the mouse position azimuth in degrees property.
+     */
+    public DoubleProperty mouseAltDegProperty(){
+        return this.mouseAltDegProperty;
     }
 }
 

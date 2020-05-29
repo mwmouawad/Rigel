@@ -214,23 +214,28 @@ final public class SkyCanvasPainter {
             List<Integer> indexList = sky.asterismIndices(ast);
             this.graphicContext.setStroke(ASTERISM_COLOR);
             this.graphicContext.beginPath();
-            boolean isPreviousStarOnScreen = false;
-            boolean isCurrentStarOnScreen;
+            boolean isPreviousStarOnScreen = true;
+            boolean isCurrentStarOnScreen = true;
 
-            this.graphicContext.moveTo(transformedStarPos[indexList.get(0)], transformedStarPos[indexList.get(0) + 1]);
-
-            for (int index : indexList.subList(1, indexList.size())) {
+            for (int i = 0; i < indexList.size(); i++) {
+                int index = indexList.get(i);
                 double x = transformedStarPos[2 * index];
                 double y = transformedStarPos[2 * index + 1];
 
-                isCurrentStarOnScreen = this.isInScreen(x, y);
-                System.out.println("On scrren " +  isCurrentStarOnScreen);
-                if (isCurrentStarOnScreen || isPreviousStarOnScreen) this.graphicContext.lineTo(x, y);
-                else this.graphicContext.moveTo(x, y);
-                isPreviousStarOnScreen = isCurrentStarOnScreen;
+                if (i == 0) {
+                    this.graphicContext.moveTo(x, y);
+                } else {
+                    isCurrentStarOnScreen = this.isInScreen(x, y);
+                    if (isCurrentStarOnScreen || isPreviousStarOnScreen) this.graphicContext.lineTo(x, y);
+                    else this.graphicContext.moveTo(x, y);
 
+                }
+                isPreviousStarOnScreen = isCurrentStarOnScreen;
             }
-            }
+            this.graphicContext.stroke();
+            this.graphicContext.closePath();
+
+        }
             this.graphicContext.stroke();
             this.graphicContext.closePath();
 
