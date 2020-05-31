@@ -188,7 +188,13 @@ final public class SkyCanvasManager {
     }
 
     private void initMouseMovement() {
-        this.mouseTimer = new MouseMovementAnimation(this.mousePosition, this.canvas().widthProperty(), this.canvas.heightProperty(), this.mouseMovementEnableProperty);
+        this.mouseTimer = new MouseMovementAnimation(
+                this.mousePosition,
+                this.canvas().widthProperty(),
+                this.canvas.heightProperty(),
+                this.mouseMovementEnableProperty,
+                this.viewingParameters.fieldOfViewDegProperty()
+        );
         this.mouseTimer.start();
         //TODO: Should we set it here?
         this.canvas.cursorProperty().bind(Bindings.when(this.mouseMovementEnableProperty).then(Cursor.CROSSHAIR).otherwise(Cursor.DEFAULT));
