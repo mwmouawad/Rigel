@@ -12,15 +12,15 @@ import ch.epfl.rigel.math.RightOpenInterval;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.binding.ObjectBinding;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.*;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Point2D;
+import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.input.KeyCode;
 import javafx.scene.transform.NonInvertibleTransformException;
 import javafx.scene.transform.Transform;
+
 import java.util.Optional;
 
 
@@ -46,6 +46,8 @@ final public class SkyCanvasManager {
     private final static ClosedInterval CENTER_ALTDEG_INTERVAL = ClosedInterval.of(5, 90);
     private final ViewingParametersBean viewingParameters;
     private final DateTimeBean dateTimeBean;
+    private final Canvas canvas;
+    private final SkyCanvasPainter skyCanvasPainter;
     //Private bindings
     private ObjectBinding<Transform> planeToCanvas;
     private ObjectBinding<ObservedSky> observedSky;
@@ -53,12 +55,17 @@ final public class SkyCanvasManager {
     private SimpleObjectProperty<Point2D> mousePosition;
     private ObjectBinding<HorizontalCoordinates> mouseHorizontalPosition;
     private ObjectBinding<CelestialObject> objectUnderMouse;
-    private final Canvas canvas;
-    private final SkyCanvasPainter skyCanvasPainter;
-    private  DoubleProperty mouseAzDegProperty;
-    private  DoubleProperty mouseAltDegProperty;
-    private  DoubleBinding mouseAzDeg;
-    private  DoubleBinding mouseAltDeg;
+    private DoubleProperty mouseAzDegProperty;
+    private DoubleProperty mouseAltDegProperty;
+    private DoubleBinding mouseAzDeg;
+    private DoubleBinding mouseAltDeg;
+
+    //Etape 12
+    private MouseMovementAnimation mouseTimer;
+    private DoubleBinding horTransBinding;
+    private DoubleBinding verTransBinding;
+    private BooleanProperty mouseMovementEnableProperty;
+
 
     /**
      * Creates an instance of SkyCanvasManager. Creates an empty Canvas that needs be
@@ -77,10 +84,26 @@ final public class SkyCanvasManager {
         this.mousePosition = new SimpleObjectProperty<Point2D>(Point2D.ZERO);
         this.mouseAzDegProperty = new SimpleDoubleProperty();
         this.mouseAltDegProperty = new SimpleDoubleProperty();
+        this.mouseMovementEnableProperty = new SimpleBooleanProperty();
+        this.initMouseMovement();
         this.initBindings(catalogue, dateTime, observerLocation);
+
         this.mouseAzDegProperty.bind(this.mouseAzDeg);
         this.mouseAltDegProperty.bind(this.mouseAltDeg);
+
         this.initListeners();
+
+
+    }
+
+    /**
+     * Converts a Point2D argument to cartesian coordinates.
+     *
+     * @param point2D
+     * @return
+     */
+    private static CartesianCoordinates toCartesian(Point2D point2D) {
+        return CartesianCoordinates.of(point2D.getX(), point2D.getY());
     }
 
     /**
@@ -96,7 +119,6 @@ final public class SkyCanvasManager {
         this.skyCanvasPainter.drawHorizon(this.projection.get(), planeToCanvas);
     }
 
-
     /**
      * Initiates all listeners for the manager.
      */
@@ -107,6 +129,18 @@ final public class SkyCanvasManager {
                     new Point2D(event.getX(), event.getY())
             );
         });
+
+
+        //Listens to mouse movement in the horizontal. Only have effects when mouseEnableProperty is true.
+        this.horTransBinding.addListener((event) ->
+                this.translateHorizontalProjectCenter(this.horTransBinding.getValue())
+        );
+
+        //Listens to mouse movement in the vertical. Only have effects when mouseEnableProperty is true.
+        this.verTransBinding.addListener((event) ->
+                this.translateVerticalProjectCenter(this.verTransBinding.getValue())
+        );
+
 
         //Listens for the arrows keys.
         this.canvas.setOnKeyPressed(event -> {
@@ -121,6 +155,12 @@ final public class SkyCanvasManager {
                 event.consume();
             } else if (event.getCode() == KeyCode.LEFT) {
                 this.translateHorizontalProjectCenter(-STEP_HORIZONTAL_PROJECTION_DEG);
+                event.consume();
+
+            } else if (event.getCode() == KeyCode.SPACE) {
+                this.mouseMovementEnableProperty.set(
+                        !this.mouseMovementEnableProperty.get()
+                );
                 event.consume();
             }
         });
@@ -147,8 +187,16 @@ final public class SkyCanvasManager {
 
     }
 
+    private void initMouseMovement() {
+        this.mouseTimer = new MouseMovementAnimation(this.mousePosition, this.canvas().widthProperty(), this.canvas.heightProperty(), this.mouseMovementEnableProperty);
+        this.mouseTimer.start();
+        //TODO: Should we set it here?
+        this.canvas.cursorProperty().bind(Bindings.when(this.mouseMovementEnableProperty).then(Cursor.CROSSHAIR).otherwise(Cursor.DEFAULT));
+    }
+
     /**
      * Init the bindings.
+     *
      * @param catalogue
      * @param dateTime
      * @param observerLocation
@@ -181,7 +229,7 @@ final public class SkyCanvasManager {
         );
 
         this.mouseAltDeg = Bindings.createDoubleBinding(
-                () ->  this.mouseHorizontalPosition.get().altDeg(),
+                () -> this.mouseHorizontalPosition.get().altDeg(),
                 this.mouseHorizontalPosition
         );
 
@@ -189,10 +237,20 @@ final public class SkyCanvasManager {
                 this::computeObjectUnderMouse,
                 this.observedSky, this.mousePosition, this.planeToCanvas
         );
+
+        this.horTransBinding = Bindings.createDoubleBinding(() -> this.mouseTimer.horizontalTranslationProperty().get(),
+                this.mouseTimer.horizontalTranslationProperty()
+        );
+
+        this.verTransBinding = Bindings.createDoubleBinding(() -> this.mouseTimer.verticalTranslationProperty().get(),
+                this.mouseTimer.verticalTranslationProperty()
+        );
+
     }
 
     /**
      * Computes the object under mouse.
+     *
      * @return
      */
     private CelestialObject computeObjectUnderMouse() {
@@ -217,6 +275,7 @@ final public class SkyCanvasManager {
 
     /**
      * Computes the Horizontal Position of the mouse using the inverse projection.
+     *
      * @return
      */
     private HorizontalCoordinates computeMouseHorizontalPosition() {
@@ -225,8 +284,7 @@ final public class SkyCanvasManager {
         try {
             point2D = this.planeToCanvas.get()
                     .inverseTransform(this.mousePosition.get());
-        }
-        catch (NonInvertibleTransformException error) {
+        } catch (NonInvertibleTransformException error) {
             System.out.println(
                     String.format("Erreur de transformation inverse du point: %s avec erreur: %s", this.mousePosition.get(), error)
             );
@@ -241,6 +299,7 @@ final public class SkyCanvasManager {
 
     /**
      * Computes the plane to canvas Transform property.
+     *
      * @param viewingParameters
      * @return
      */
@@ -248,11 +307,10 @@ final public class SkyCanvasManager {
         double width = canvas.widthProperty().get();
         double height = canvas.heightProperty().get();
         double scale = width / projection.get().applyToAngle(Angle.ofDeg(viewingParameters.getFieldOfViewDeg()));
-        Transform scaleTransform =  Transform.scale(scale, -scale);
+        Transform scaleTransform = Transform.scale(scale, -scale);
         Transform translationTransform = Transform.translate(width / TRANSLATION_COEF, height / TRANSLATION_COEF);
         return translationTransform.createConcatenation(scaleTransform);
     }
-
 
     /**
      * Sets field of view to current plus param{fovDeg}. Clips to the interval
@@ -269,6 +327,7 @@ final public class SkyCanvasManager {
 
     /**
      * Translates the center horizontally by the stepDeg argument.
+     *
      * @param stepDeg
      */
     private void translateHorizontalProjectCenter(double stepDeg) {
@@ -280,6 +339,7 @@ final public class SkyCanvasManager {
 
     /**
      * Translates the center vertically by the stepDeg Argument.
+     *
      * @param stepDeg
      */
     private void translateVerticalProjectCenter(double stepDeg) {
@@ -287,15 +347,6 @@ final public class SkyCanvasManager {
         double newAltDeg = CENTER_ALTDEG_INTERVAL.clip(currentCenter.altDeg() + stepDeg);
         HorizontalCoordinates newCenter = HorizontalCoordinates.ofDeg(currentCenter.azDeg(), newAltDeg);
         this.viewingParameters.setCenter(newCenter);
-    }
-
-    /**
-     * Converts a Point2D argument to cartesian coordinates.
-     * @param point2D
-     * @return
-     */
-    private static CartesianCoordinates toCartesian(Point2D point2D) {
-        return CartesianCoordinates.of(point2D.getX(), point2D.getY());
     }
 
     /**
@@ -320,19 +371,23 @@ final public class SkyCanvasManager {
 
     /**
      * Get the mouse position azimuth in degrees property.
+     *
      * @return the mouse position azimuth in degrees property.
      */
-    public DoubleProperty mouseAzDegProperty(){
+    public DoubleProperty mouseAzDegProperty() {
         return this.mouseAzDegProperty;
 
     }
 
     /**
      * Get the mouse position altitude in degrees property.
+     *
      * @@return the mouse position azimuth in degrees property.
      */
-    public DoubleProperty mouseAltDegProperty(){
+    public DoubleProperty mouseAltDegProperty() {
         return this.mouseAltDegProperty;
     }
+
+
 }
 
