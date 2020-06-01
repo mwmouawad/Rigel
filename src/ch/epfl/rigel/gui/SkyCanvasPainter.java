@@ -240,7 +240,8 @@ final public class SkyCanvasPainter {
             this.graphicContext.stroke();
             this.graphicContext.closePath();
 
-            this.drawText(ast.getName(),nameX + 10,nameY + 5, Color.WHITE,VPos.CENTER);
+            if(this.isInScreen(nameX + 10, nameY + 5))
+                this.drawText(ast.getName(),nameX + 10,nameY + 5, Color.WHITE,VPos.CENTER);
         }
 
     }

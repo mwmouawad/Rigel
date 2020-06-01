@@ -17,6 +17,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -56,6 +57,7 @@ final public class Main extends Application {
     private static final String HYG_PATH = "/hygdata_v3.csv";
     private static final String AST_PATH = "/asterisms.txt";
     private static final String FONT_PATH = "/Font Awesome 5 Free-Solid-900.otf";
+    private static final String APP_ICON_PATH = "/icon.png";
     private static final int FONT_SIZE = 15;
     private static final ZonedDateTime INIT_DATETIME = getCurrentZonedDateTime();
     private static final HorizontalCoordinates INIT_VIEW_PARAM = HorizontalCoordinates.ofDeg(180.000000000001, 15);
@@ -124,7 +126,7 @@ final public class Main extends Application {
         primaryStage.minHeightProperty().setValue(STAGE_MIN_HEIGHT);
         primaryStage.setScene(new Scene(mainPane));
         primaryStage.show();
-
+        primaryStage.getIcons().add(new Image(Main.class.getResourceAsStream(APP_ICON_PATH)));
         sky.requestFocus();
 
     }
