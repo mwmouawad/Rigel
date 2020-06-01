@@ -17,7 +17,7 @@ public class MyAsterismTest {
     void failsOnEmptyStarLis() {
         var starList = new ArrayList<Star>();
         assertThrows(IllegalArgumentException.class, () -> {
-                    new Asterism(starList);
+                    new Asterism(starList, "Dummy");
                 }
         );
     }
@@ -28,7 +28,7 @@ public class MyAsterismTest {
         starList.add(new Star(1, "Star", EquatorialCoordinates.of(0, 0), 0f, 0f));
         starList.add(new Star(2, "Sta2r", EquatorialCoordinates.of(1, 0), 1f, 0f));
         starList.add(new Star(2, "Sta2r", EquatorialCoordinates.of(1, 0), 1f, 0f));
-        var asterism = new Asterism(starList);
+        var asterism = new Asterism(starList, "dummy");
 
         assertEquals(starList, asterism.stars());
     }

@@ -61,10 +61,9 @@ final public class SkyCanvasManager {
     private DoubleBinding mouseAltDeg;
 
     //Etape 12
-    private MouseMovementAnimation mouseTimer;
+    private MouseMovementAnimation mouseMovementAnimation;
     private DoubleBinding horTransBinding;
     private DoubleBinding verTransBinding;
-    private BooleanProperty mouseMovementEnableProperty;
 
 
     /**
@@ -84,7 +83,6 @@ final public class SkyCanvasManager {
         this.mousePosition = new SimpleObjectProperty<Point2D>(Point2D.ZERO);
         this.mouseAzDegProperty = new SimpleDoubleProperty();
         this.mouseAltDegProperty = new SimpleDoubleProperty();
-        this.mouseMovementEnableProperty = new SimpleBooleanProperty();
         this.initMouseMovement();
         this.initBindings(catalogue, dateTime, observerLocation);
 
@@ -158,9 +156,8 @@ final public class SkyCanvasManager {
                 event.consume();
 
             } else if (event.getCode() == KeyCode.SPACE) {
-                this.mouseMovementEnableProperty.set(
-                        !this.mouseMovementEnableProperty.get()
-                );
+                if(mouseMovementAnimation.getMouseMovementEnableProperty().get()) this.mouseMovementAnimation.stop();
+                else this.mouseMovementAnimation.start();
                 event.consume();
             }
         });
@@ -188,16 +185,14 @@ final public class SkyCanvasManager {
     }
 
     private void initMouseMovement() {
-        this.mouseTimer = new MouseMovementAnimation(
+        this.mouseMovementAnimation = new MouseMovementAnimation(
                 this.mousePosition,
                 this.canvas().widthProperty(),
                 this.canvas.heightProperty(),
-                this.mouseMovementEnableProperty,
                 this.viewingParameters.fieldOfViewDegProperty()
         );
-        this.mouseTimer.start();
         //TODO: Should we set it here?
-        this.canvas.cursorProperty().bind(Bindings.when(this.mouseMovementEnableProperty).then(Cursor.CROSSHAIR).otherwise(Cursor.DEFAULT));
+        this.canvas.cursorProperty().bind(Bindings.when(this.mouseMovementAnimation.getMouseMovementEnableProperty()).then(Cursor.CROSSHAIR).otherwise(Cursor.DEFAULT));
     }
 
     /**
@@ -244,12 +239,12 @@ final public class SkyCanvasManager {
                 this.observedSky, this.mousePosition, this.planeToCanvas
         );
 
-        this.horTransBinding = Bindings.createDoubleBinding(() -> this.mouseTimer.horizontalTranslationProperty().get(),
-                this.mouseTimer.horizontalTranslationProperty()
+        this.horTransBinding = Bindings.createDoubleBinding(() -> this.mouseMovementAnimation.horizontalTranslationProperty().get(),
+                this.mouseMovementAnimation.horizontalTranslationProperty()
         );
 
-        this.verTransBinding = Bindings.createDoubleBinding(() -> this.mouseTimer.verticalTranslationProperty().get(),
-                this.mouseTimer.verticalTranslationProperty()
+        this.verTransBinding = Bindings.createDoubleBinding(() -> this.mouseMovementAnimation.verticalTranslationProperty().get(),
+                this.mouseMovementAnimation.verticalTranslationProperty()
         );
 
     }

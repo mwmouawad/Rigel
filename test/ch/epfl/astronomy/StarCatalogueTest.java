@@ -65,7 +65,7 @@ public class StarCatalogueTest {
             var startIndex = Math.min(i1, i2);
             var endIndex = Math.max(i1, i2) + 1;
             var asterismStars = shuffledStars.subList(startIndex, endIndex);
-            asterisms.add(new Asterism(asterismStars));
+            asterisms.add(new Asterism(asterismStars, "dummy"));
             starsToAdd -= asterismStars.size();
         }
         return Collections.unmodifiableList(asterisms);
@@ -87,7 +87,7 @@ public class StarCatalogueTest {
             Collections.shuffle(fakeAsterismStars, random);
 
             var asterisms = new ArrayList<>(randomAsterisms(rng, stars));
-            asterisms.add(new Asterism(fakeAsterismStars));
+            asterisms.add(new Asterism(fakeAsterismStars, "Dummy"));
             Collections.shuffle(asterisms, random);
 
             assertThrows(IllegalArgumentException.class, () -> {

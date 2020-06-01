@@ -14,15 +14,17 @@ import java.util.Objects;
 public final class Asterism {
 
     private final List<Star> list;
+    private final String name;
 
     /**
      * Stores the stars in a new copy.
      * @param stars
      * @throws  IllegalArgumentException if the list is empty.
      */
-    public Asterism(List<Star> stars){
+    public Asterism(List<Star> stars, String name){
         Preconditions.checkArgument(!stars.isEmpty());
         this.list = List.copyOf(stars);
+        this.name = name;
     }
 
     /**
@@ -32,5 +34,8 @@ public final class Asterism {
 
     public List<Star> stars(){ return list; }
 
+    public String getName(){
+        return this.name;
+    }
 
 }

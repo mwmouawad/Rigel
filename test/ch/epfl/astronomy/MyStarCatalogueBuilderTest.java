@@ -48,9 +48,9 @@ public class MyStarCatalogueBuilderTest {
         var starList2 = Arrays.asList(star3, star4);
         var starList3 = Arrays.asList(star2, star4, star5);
 
-        Asterism ast1 = new Asterism(starList1);
-        Asterism ast2 =  new Asterism(starList2);
-        Asterism ast3 =  new Asterism(starList3);
+        Asterism ast1 = new Asterism(starList1, "Dummy");
+        Asterism ast2 =  new Asterism(starList2, "Dummy");
+        Asterism ast3 =  new Asterism(starList3, "dummy");
 
         starBuilder.addAsterism(ast1).addAsterism(ast2).addAsterism(ast3);
 
@@ -71,9 +71,9 @@ public class MyStarCatalogueBuilderTest {
         var starList3 = Arrays.asList(star2, star4, star5);
         var stars = Arrays.asList(star1,star2,star3,star4,star5);
 
-        Asterism ast1 = new Asterism(starList1);
-        Asterism ast2 =  new Asterism(starList2);
-        Asterism ast3 =  new Asterism(starList3);
+        Asterism ast1 = new Asterism(starList1, "Dummy");
+        Asterism ast2 =  new Asterism(starList2, "Dummy");
+        Asterism ast3 =  new Asterism(starList3, "dummy");
 
         starBuilder.addAsterism(ast1).addAsterism(ast2).addAsterism(ast3);
         starBuilder.addStar(star1).addStar(star2).addStar(star3).addStar(star4).addStar(star5);

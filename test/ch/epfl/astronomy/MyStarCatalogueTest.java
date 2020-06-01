@@ -41,9 +41,9 @@ public class MyStarCatalogueTest {
         var starList2 = Arrays.asList(star3, star4);
         var starList3 = Arrays.asList(star2, star4, star5);
 
-        Asterism ast1 = new Asterism(starList1);
-        Asterism ast2 =  new Asterism(starList2);
-        Asterism ast3 =  new Asterism(starList3);
+        Asterism ast1 = new Asterism(starList1, "Dummy");
+        Asterism ast2 =  new Asterism(starList2, "Dummy");
+        Asterism ast3 =  new Asterism(starList3, "dummy");
         List<Asterism> astList = Arrays.asList( ast1,ast2,ast3 );
 
         assertThrows(IllegalArgumentException.class, () -> {
@@ -74,9 +74,9 @@ public class MyStarCatalogueTest {
         var starList2 = Arrays.asList(star3, star4);
         var starList3 = Arrays.asList(star2, star4);
 
-        Asterism ast1 = new Asterism(starList1);
-        Asterism ast2 =  new Asterism(starList2);
-        Asterism ast3 =  new Asterism(starList3);
+        Asterism ast1 = new Asterism(starList1, "Dummy");
+        Asterism ast2 =  new Asterism(starList2, "Dummy");
+        Asterism ast3 =  new Asterism(starList3, "dummy");
         List<Asterism> astList = Arrays.asList( ast1,ast2,ast3 );
 
         var starCatalogue = new StarCatalogue(stars, astList);
@@ -109,9 +109,9 @@ public class MyStarCatalogueTest {
         var starList2 = Arrays.asList(star3, star4);
         var starList3 = Arrays.asList(star2, star4);
 
-        Asterism ast1 = new Asterism(starList1);
-        Asterism ast2 =  new Asterism(starList2);
-        Asterism ast3 =  new Asterism(starList3);
+        Asterism ast1 = new Asterism(starList1, "Dummy");
+        Asterism ast2 =  new Asterism(starList2, "Dummy");
+        Asterism ast3 =  new Asterism(starList3, "dummy");
         List<Asterism> astList = Arrays.asList( ast1,ast2,ast3 );
 
         var starCatalogue = new StarCatalogue(stars, astList);

@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import ch.epfl.rigel.astronomy.HygDatabaseLoader.COLUMNS;
@@ -35,7 +36,8 @@ public enum AsterismLoader implements StarCatalogue.Loader {
         BufferedReader buffReader = new BufferedReader(inStrReader);
         ){
             String line = buffReader.readLine();
-            String[] charTable;
+            String[] charTableWithName;
+            String asterismName;
             List<Star> starList = new ArrayList<Star>();
             HashMap<Integer, Star> starMap = new HashMap<Integer, Star>();
 
@@ -46,12 +48,14 @@ public enum AsterismLoader implements StarCatalogue.Loader {
 
             while (line != null) {
                 starList.clear();
-                charTable = line.split(",");
-                for (String s : charTable) {
-                    Star star = starMap.get(Integer.parseInt(s));
+                charTableWithName = line.split(",");
+                asterismName = charTableWithName[0];
+                for(int i = 1; i < charTableWithName.length; i++){
+                    Star star = starMap.get(Integer.parseInt(charTableWithName[i]));
                     starList.add(star);
                 }
-                builder.addAsterism(new Asterism(starList));
+
+                builder.addAsterism(new Asterism(starList, asterismName));
                 line = buffReader.readLine();
 
             }

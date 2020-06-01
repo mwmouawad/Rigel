@@ -217,6 +217,8 @@ final public class SkyCanvasPainter {
             this.graphicContext.beginPath();
             boolean isPreviousStarOnScreen = true;
             boolean isCurrentStarOnScreen = true;
+            double nameX = 0.0;
+            double nameY = 0.0;
 
             for (int i = 0; i < indexList.size(); i++) {
                 int index = indexList.get(i);
@@ -225,6 +227,8 @@ final public class SkyCanvasPainter {
 
                 if (i == 0) {
                     this.graphicContext.moveTo(x, y);
+                    nameX = x ;
+                    nameY = y ;
                 } else {
                     isCurrentStarOnScreen = this.isInScreen(x, y);
                     if (isCurrentStarOnScreen || isPreviousStarOnScreen) this.graphicContext.lineTo(x, y);
@@ -236,6 +240,7 @@ final public class SkyCanvasPainter {
             this.graphicContext.stroke();
             this.graphicContext.closePath();
 
+            this.drawText(ast.getName(),nameX + 10,nameY + 5, Color.WHITE,VPos.CENTER);
         }
 
     }

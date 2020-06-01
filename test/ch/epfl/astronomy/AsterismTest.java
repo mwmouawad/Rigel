@@ -24,7 +24,7 @@ public class AsterismTest {
     @Test
     void constructorFailsWhenStarListIsEmpty() {
         assertThrows(IllegalArgumentException.class, () -> {
-            new Asterism(List.of());
+           new Asterism(List.of(), "Dummy Name");
         });
     }
 
@@ -32,7 +32,7 @@ public class AsterismTest {
     void constructorCopiesStarList() {
         var l = newModifiableStarList("Rigel");
         var s = l.get(0);
-        var a = new Asterism(l);
+        var a = new Asterism(l, "Dummy Name");
         l.clear();
         assertEquals(1, a.stars().size());
         assertEquals(s, a.stars().get(0));
@@ -40,7 +40,7 @@ public class AsterismTest {
 
     @Test
     void accessorDoesNotAllowEncapsulationViolation() {
-        var a = new Asterism(newModifiableStarList("Rigel", "Aldebaran", "Sirius"));
+        var a = new Asterism(newModifiableStarList("Rigel", "Aldebaran", "Sirius"), "Dummy Name");
         try {
             a.stars().clear();
         } catch (UnsupportedOperationException e) {
