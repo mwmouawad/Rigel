@@ -15,11 +15,11 @@ final class SignatureChecks_5 {
         i = t.colorTemperature();
     }
 
-    void checkAsterism() {
-        List<Star> l = null;
-        Asterism a = new Asterism(l);
-        l = a.stars();
-    }
+    //void checkAsterism() {
+        //List<Star> l = null;
+        //Asterism a = new Asterism(l);
+        //l = a.stars();
+    //}
 
     void checkCelestialObjectModel() {
         CelestialObjectModel<Sun> s = null;
