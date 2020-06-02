@@ -11,6 +11,7 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.binding.ObjectBinding;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -130,6 +131,26 @@ final public class Main extends Application {
         sky.requestFocus();
 
     }
+
+   /* private void multipleChoice(){
+
+        ObservableList<String> list = FXCollections.observableArrayList();
+        list.add("Asterisms");
+        list.add("Planets");
+        list.add("Stars");
+        list.add("Moon");
+        list.add("Sun");
+
+        ChoiceBox choiceBox = new ChoiceBox<String>(list);
+
+        choiceBox.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+
+            }
+        });
+
+    }*/
 
     /**
      * Builds all panes for the application:
