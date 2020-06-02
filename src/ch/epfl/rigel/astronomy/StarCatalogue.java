@@ -94,7 +94,6 @@ public final class StarCatalogue {
      * @author Leah Uzzan (302829)
      */
     public static final class Builder {
-
         private List<Star> stars = new ArrayList<Star>();
         private List<Asterism> asterisms = new ArrayList<Asterism>();
 

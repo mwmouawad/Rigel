@@ -43,6 +43,7 @@ final public class SkyCanvasPainter {
     static final private Color HORIZON_COLOR = Color.RED;
     static final private HorizontalCoordinates PARALLEL_COORDINATES = HorizontalCoordinates.of(0, 0);
     static final private double CIRCLE_EIGHTH_DEGREE = 45;
+    static final private double SCALE_FACTOR_SUNMOON = 3.0;
 
 
     /**
@@ -132,7 +133,7 @@ final public class SkyCanvasPainter {
         );
         double diameter = planeToCanvas.deltaTransform(
                 projection.applyToAngle(sky.sun().angularSize()), 0
-        ).getX();
+        ).getX() * SCALE_FACTOR_SUNMOON;
 
 
         double outerDiameter = 2.2 * diameter;
@@ -160,9 +161,9 @@ final public class SkyCanvasPainter {
 
         double diameter = planeToCanvas.deltaTransform(
                 projection.applyToAngle(sky.moon().angularSize()), 0
-        ).getX();
+        ).getX() * SCALE_FACTOR_SUNMOON;
 
-        this.drawCircle(transformedPos.getX(), transformedPos.getY(), diameter, MOON_COLOR);
+        this.drawCircle(transformedPos.getX(), transformedPos.getY(), diameter , MOON_COLOR);
     }
 
     /**

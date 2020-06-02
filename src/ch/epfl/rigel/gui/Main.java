@@ -1,23 +1,28 @@
 package ch.epfl.rigel.gui;
 
-import ch.epfl.rigel.astronomy.AsterismLoader;
-import ch.epfl.rigel.astronomy.CelestialObject;
-import ch.epfl.rigel.astronomy.HygDatabaseLoader;
-import ch.epfl.rigel.astronomy.StarCatalogue;
+import ch.epfl.rigel.astronomy.*;
 import ch.epfl.rigel.coordinates.GeographicCoordinates;
 import ch.epfl.rigel.coordinates.HorizontalCoordinates;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.binding.ObjectBinding;
+import javafx.beans.binding.StringBinding;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventType;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -35,6 +40,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 
@@ -56,6 +62,7 @@ final public class Main extends Application {
     private static final String APP_TITLE = "Rigel";
     private static final String HYG_PATH = "/hygdata_v3.csv";
     private static final String AST_PATH = "/asterisms.txt";
+    private static final String CITIES_PATH = "/cities5000.txt";
     private static final String FONT_PATH = "/Font Awesome 5 Free-Solid-900.otf";
     private static final String APP_ICON_PATH = "/icon.png";
     private static final int FONT_SIZE = 15;
@@ -72,6 +79,10 @@ final public class Main extends Application {
     private static final String LONGITUDE_LABEL = "Longitude (°) :";
     private static final String DATE_LABEL = "Date : ";
     private static final String HOUR_LABEL = "Heure : ";
+    private static final String CITY_LABEL = " Localité :";
+
+    private static final int QUERY_LIMIT_SEARCH = 10;
+
     //Information Bar String Formatters
     private static final String INFO_COORD_FORMAT = "Azimut : %.2f°  hauteur : %.2f°";
     private static final String INFO_FOV_FORMAT = "Champ de vue : %.2f°";
@@ -87,6 +98,8 @@ final public class Main extends Application {
     private static final TextFormatter<LocalTime> DATE_TIME_TEXT_FORMATTER = new TextFormatter<LocalTime>(LOCAL_TIME_STRING_CONVERTER);
     private static final String CONTROL_BAR_STYLE = "-fx-spacing: inherit; -fx-alignment: baseline-left;";
     private static final String LAT_LON_STYLE = "-fx-pref-width: 60; -fx-alignment: baseline-right;";
+
+    private  CityCatalogue cityCatalogue;
 
     /**
      * Launches the application.
@@ -107,6 +120,8 @@ final public class Main extends Application {
      */
     @Override
     public void start(Stage primaryStage) {
+
+        this.cityCatalogue = loadCityCatalogue();
         //Build the application properties
         TimeAnimator timeAnimator = new TimeAnimator(buildDateTimeBean());
         ViewingParametersBean viewParams = buildViewingParamBean();
@@ -208,16 +223,38 @@ final public class Main extends Application {
      */
     private HBox buildControlBar(DateTimeBean dateTimeBean, ObserverLocationBean obsLocationBean, TimeAnimator timeAnimator) {
         //Disable nodes when time animator is running
+        HBox controlBarCitySearch = buildControlBarCitySearch(obsLocationBean, dateTimeBean);
         HBox controlBarPosition = buildControlBarPosition(obsLocationBean);
         HBox controlBarInstant = buildControlBarInstant(dateTimeBean);
         HBox controlBarTimeAnimator = buildControlBarTimeAnimator(timeAnimator);
-        HBox controlBar = new HBox(controlBarPosition, controlBarInstant, controlBarTimeAnimator);
+
+        HBox controlBar = new HBox(controlBarCitySearch, controlBarPosition, controlBarInstant, controlBarTimeAnimator);
         //Styles
         controlBar.setStyle("-fx-spacing: 4; -fx-padding: 4;");
         //Disable Binding.
         controlBarInstant.disableProperty().bind(timeAnimator.runningProperty());
 
         return controlBar;
+    }
+
+    private HBox buildControlBarCitySearch(ObserverLocationBean observerLocationBean, DateTimeBean dateTimeBean) {
+        Label cityLabel = new Label(CITY_LABEL);
+        ComboBox<City> citySearchBar = buildCitySearchBar();
+        citySearchBar.valueProperty().addListener((e, o, n) ->
+                {
+                    if(n != null){
+                        observerLocationBean.setCoordinates(n.getGeoCoordinates());
+                        dateTimeBean.setZone(n.getZoneId());
+                    }
+
+                }
+                );
+
+
+        //Create control bar
+        HBox controlBarCity = new HBox(cityLabel, citySearchBar);
+        controlBarCity.setStyle(CONTROL_BAR_STYLE);
+        return controlBarCity;
     }
 
     /**
@@ -237,6 +274,7 @@ final public class Main extends Application {
         controlBarPosition.setStyle(CONTROL_BAR_STYLE);
         return controlBarPosition;
     }
+
 
     /**
      * Builds the HBox containing the controls for the user current date and time
@@ -371,6 +409,17 @@ final public class Main extends Application {
         );
 
         return obsMousePositionLabel;
+    }
+
+    private ComboBox<City> buildCitySearchBar(){
+
+        ComboBox<City> citySearchField = new ComboBox<City>();
+
+        citySearchField.getSelectionModel().selectedItemProperty().addListener((e,o,n) -> System.out.println("Changed Selection " + FXUtilTest.getComboBoxValue(citySearchField)));
+
+        FXUtilTest.autoCompleteComboBoxPlus(citySearchField, this.cityCatalogue, QUERY_LIMIT_SEARCH);
+
+        return citySearchField;
     }
 
     /**
@@ -590,6 +639,26 @@ final public class Main extends Application {
             return new StarCatalogue.Builder()
                     .loadFrom(hs, HygDatabaseLoader.INSTANCE)
                     .loadFrom(astStream, AsterismLoader.INSTANCE)
+                    .build();
+
+        } catch (IOException ioException) {
+            System.out.println(String.format("Got an error while loading Font. Error: %s", ioException));
+            return null;
+        }
+
+    }
+
+    /**
+     * Loads the StarCatalogue.
+     *
+     * @return
+     */
+    private CityCatalogue loadCityCatalogue() {
+
+        try (InputStream ct = getClass().getResourceAsStream(CITIES_PATH)) {
+
+            return new CityCatalogue.Builder()
+                    .loadFrom(ct, CitiesLoader.INSTANCE)
                     .build();
 
         } catch (IOException ioException) {

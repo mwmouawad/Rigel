@@ -130,13 +130,13 @@ final public class SkyCanvasManager {
 
 
         //Listens to mouse movement in the horizontal. Only have effects when mouseEnableProperty is true.
-        this.horTransBinding.addListener((event) ->
-                this.translateHorizontalProjectCenter(this.horTransBinding.getValue())
+        this.horTransBinding.addListener((e, o, n) ->
+                this.translateHorizontalProjectCenter((double)n)
         );
 
         //Listens to mouse movement in the vertical. Only have effects when mouseEnableProperty is true.
-        this.verTransBinding.addListener((event) ->
-                this.translateVerticalProjectCenter(this.verTransBinding.getValue())
+        this.verTransBinding.addListener((e, o, n) ->
+                this.translateVerticalProjectCenter((double)n)
         );
 
 
@@ -179,8 +179,8 @@ final public class SkyCanvasManager {
         });
 
         //Whenever a change occurs, draw sky is called to update the view.
-        this.observedSky.addListener((e) -> this.drawSky());
-        this.planeToCanvas.addListener((e) -> this.drawSky());
+        this.observedSky.addListener((e, n, o) -> this.drawSky());
+        this.planeToCanvas.addListener((e, n , o) -> this.drawSky());
 
     }
 
