@@ -1,6 +1,7 @@
 package ch.epfl.rigel.gui;
 
 import ch.epfl.rigel.astronomy.City;
+import ch.epfl.rigel.astronomy.CityCatalogue;
 import ch.epfl.rigel.coordinates.GeographicCoordinates;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -18,12 +19,18 @@ import java.time.ZoneId;
  * on how to create auto complete box:
  * https://stackoverflow.com/questions/19924852/autocomplete-combobox-in-javafx
  */
-public class FXUtilTest {
+public class AutoCompleteBox {
 
     public interface AutoCompleteResult<T> {
         boolean matches(String typedText, T objectToCompare);
     }
 
+    /**
+     * Sets a combo box to become a auto completion box.
+     * @param comboBox
+     * @param cityCatalogue
+     * @param queryLimit
+     */
     public static void autoCompleteComboBoxPlus(ComboBox<City> comboBox, CityCatalogue cityCatalogue, int queryLimit) {
 
         //Set Converter
@@ -40,7 +47,6 @@ public class FXUtilTest {
             public City fromString(String string) {
                 // replace this with approquiate implementation of parsing function
                 // or lookup function
-                System.out.println("City");
                 return getComboBoxValue(comboBox);
             }
         });
@@ -61,9 +67,8 @@ public class FXUtilTest {
         });
         comboBox.setOnAction((e) -> {
             if(comboBox.getValue() != null) {
-            ;
-        }});
-        comboBox.valueProperty().addListener((e,o,n) -> System.out.println("Changed: " + n));
+                ;
+            }});
         comboBox.addEventHandler(KeyEvent.KEY_PRESSED, t -> comboBox.hide());
         comboBox.addEventHandler(KeyEvent.KEY_RELEASED, new EventHandler<KeyEvent>() {
 
@@ -107,13 +112,14 @@ public class FXUtilTest {
                     return;
                 }
 
-                ObservableList<City> list = FXCollections.observableList(
-                        cityCatalogue.search(comboBox.getEditor().getText(), queryLimit)
-                );
+                ObservableList<City> list = FXCollections.emptyObservableList();
 
                 String t = "";
                 if (comboBox.getEditor().getText() != null) {
                     t = comboBox.getEditor().getText();
+                    list = FXCollections.observableList(
+                            cityCatalogue.search(comboBox.getEditor().getText(), queryLimit)
+                    );
                 }
 
                 comboBox.setItems(list);

@@ -8,7 +8,7 @@ import java.util.Map;
 
 /***
  * Implementation of the Trie or Prefix tree type data structure
- * using genericity.
+ * using genericity to store objects and not just strings.
  *
  * @param <T> Type of the object needs to be a trieable object.
  *
@@ -20,16 +20,25 @@ public class Trie<T extends TrieableObject>  {
     private Node root;
     private boolean isCapitalSensitive;
 
+    /**
+     * Creates an empty trie.
+     * @param capitalSensitive true if the trie should be capital sensitive.
+     */
     public Trie(boolean capitalSensitive) {
         this.root = new Node();
         this.isCapitalSensitive = capitalSensitive;
 
     }
 
-    public  <T extends TrieableObject> void insert(T trieableObject) {
+    /**
+     * Puts a trieable object into the Trie instance
+     * @param trieableObject  the object to insert.
+     * @param <T> the type of the object the TrieableObject.
+     */
+    public  <T extends TrieableObject> void put(T trieableObject) {
         String word;
         if(!isCapitalSensitive)
-             word = trieableObject.getNameTrieable().toLowerCase();
+            word = trieableObject.getNameTrieable().toLowerCase();
         else
             word = trieableObject.getNameTrieable();
 
@@ -44,29 +53,19 @@ public class Trie<T extends TrieableObject>  {
             }
             current = node;
         }
-        // Set end to true
+        // Set node as end node, and add a trieable associated object.
         current.end = true;
         current.endTrieableObject = trieableObject;
     }
 
-    public void insert(String word) {
-         word = word.toLowerCase();
-        Node<T> current = root;
-        for (int i = 0; i < word.length(); i++) {
-            char c = word.charAt(i);
-            Node<T> node = current.childrenMap.get(c);
-            if (node == null) {
-                node = new Node();
-                current.childrenMap.put(c, node);
-            }
-            current = node;
-        }
-        // Set end to true
-        current.end = true;
-    }
-
-
-
+    /**
+     * Queries all children containing the prefix.
+     * @param prefix the prefix to query with.
+     * @param node the node to begin the query.
+     * @param queryLimit the limit to the query.
+     * @param <T> the type of the object the TrieableObject
+     * @return a list with all query results trieableObjects.
+     */
     private <T extends TrieableObject> List<T> queryAllChildren(String prefix, Node<T> node, int queryLimit) {
         List<T> r = new ArrayList<T>();
         if (node.end) {
@@ -82,12 +81,19 @@ public class Trie<T extends TrieableObject>  {
         return r;
     }
 
-    public List<T> query(String str, int queryLimit) {
+    /**
+     * Queries for all objects in the trie containing the same prefix as input.
+     * @param prefix the prefix to query.
+     * @param queryLimit the limit of objects to the query stop.
+     * @return a List containing all queried object containing the same prefix.
+     */
+    public List<T> query(String prefix, int queryLimit) {
         List<T> r = new ArrayList<T>();
         Node<T> current = root;
-        str = str.toLowerCase();
-        for (int i = 0; i < str.length(); i++) {
-            char c = str.charAt(i);
+        if(!isCapitalSensitive)
+            prefix = prefix.toLowerCase();
+        for (int i = 0; i < prefix.length(); i++) {
+            char c = prefix.charAt(i);
             Node<T> node = current.childrenMap.get(c);
             if (node == null) {
                 // Not found
@@ -96,12 +102,14 @@ public class Trie<T extends TrieableObject>  {
             current = node;
         }
 
-        return queryAllChildren(str, current, queryLimit);
+        return queryAllChildren(prefix, current, queryLimit);
     }
 
 
-
-
+    /**
+     * Node of the trie object.
+     * @param <T>
+     */
     public class  Node<T extends TrieableObject>  {
         private boolean end;
         private HashMap<Character, Node<T>> childrenMap;
@@ -113,9 +121,7 @@ public class Trie<T extends TrieableObject>  {
         }
 
 
-        public HashMap<Character, Node<T>> getChildrenMap() {
-            return childrenMap;
-        }
+
     }
 
 

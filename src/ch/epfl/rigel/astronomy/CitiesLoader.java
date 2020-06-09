@@ -6,18 +6,14 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 
-import ch.epfl.rigel.astronomy.HygDatabaseLoader.COLUMNS;
+
 import ch.epfl.rigel.coordinates.GeographicCoordinates;
-import ch.epfl.rigel.gui.CityCatalogue;
-import javafx.beans.property.StringProperty;
+import ch.epfl.rigel.astronomy.CityCatalogue;
 
 
 /**
+ * Loader to load all of the cities.
  * @author Mark Mouawad (296508)
  * @author Leah Uzzan (302829)
  */
@@ -35,10 +31,9 @@ public enum CitiesLoader implements CityCatalogue.Loader {
 
 
     /**
-     * Loads asterisms from input file in into a star Catalogue Builder.
-     *
-     * @param inputStream inputstream associated with the asterisms file.
-     * @param builder     star catalogue builder with stars loaded.
+     * Loads the city catalogue.
+     * @param inputStream inputstream associated with the cities file.
+     * @param builder     city catalogue builder.
      * @throws IOException
      */
     @Override
@@ -55,13 +50,21 @@ public enum CitiesLoader implements CityCatalogue.Loader {
 
             while (line != null) {
                 charTable = line.split("\t");
+
+                ZoneId zoneId;
+                if(charTable[ZONE_ID_COLUMN].equals("Asia/Qostanay")) {
+                    zoneId = ZoneId.of("Europe/Zurich");
+                } else {
+                    zoneId = ZoneId.of(charTable[ZONE_ID_COLUMN]);
+                }
+
                 City newCity = new City(
                         Integer.parseInt(charTable[ID_COLUMN]),
                         charTable[NAME_COLUMN],
                         charTable[ASCII_NAME_COLUMN],
                         charTable[COUNTRY_CODE_COLUMN],
                         GeographicCoordinates.ofDeg(Double.parseDouble(charTable[LON_COLUMN]), Double.parseDouble(charTable[LAT_COLUMN])),
-                        ZoneId.of(charTable[ZONE_ID_COLUMN])
+                        zoneId
                 );
                 builder.addCity(newCity);
                 line = buffReader.readLine();
@@ -69,28 +72,12 @@ public enum CitiesLoader implements CityCatalogue.Loader {
             }
 
 
-            }
-    }
-
-
-
-
-
-    /**
-     * Helper method to get Star from the star catalogue.
-     *
-     * @param id            star id
-     * @param starCatalogue catalogue of stars
-     * @return returns the object star from the catalogue
-     */
-    private static Star getStarFromCatalogue(int id, List<Star> starCatalogue) {
-        for (Star s : starCatalogue) {
-            if (s.hipparcosId() == id) {
-                return s;
-            }
         }
-        return null;
     }
+
+
+
+
 
 
 }

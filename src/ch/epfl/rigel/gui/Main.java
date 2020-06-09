@@ -4,26 +4,16 @@ import ch.epfl.rigel.astronomy.*;
 import ch.epfl.rigel.coordinates.GeographicCoordinates;
 import ch.epfl.rigel.coordinates.HorizontalCoordinates;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
-import javafx.beans.binding.DoubleBinding;
 import javafx.beans.binding.ObjectBinding;
-import javafx.beans.binding.StringBinding;
 import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.StringProperty;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.EventType;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -41,7 +31,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 
@@ -436,9 +425,9 @@ final public class Main extends Application {
 
         ComboBox<City> citySearchField = new ComboBox<City>();
 
-        citySearchField.getSelectionModel().selectedItemProperty().addListener((e,o,n) -> System.out.println("Changed Selection " + FXUtilTest.getComboBoxValue(citySearchField)));
+        citySearchField.getSelectionModel().selectedItemProperty().addListener((e,o,n) -> System.out.println("Changed Selection " + AutoCompleteBox.getComboBoxValue(citySearchField)));
 
-        FXUtilTest.autoCompleteComboBoxPlus(citySearchField, this.cityCatalogue, QUERY_LIMIT_SEARCH);
+        AutoCompleteBox.autoCompleteComboBoxPlus(citySearchField, this.cityCatalogue, QUERY_LIMIT_SEARCH);
 
         return citySearchField;
     }

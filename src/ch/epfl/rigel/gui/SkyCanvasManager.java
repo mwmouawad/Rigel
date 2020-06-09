@@ -79,7 +79,7 @@ final public class SkyCanvasManager {
         this.canvas = new Canvas();
         this.viewingParameters = viewingParameters;
         this.dateTimeBean = dateTime;
-        this.skyCanvasPainter = new SkyCanvasPainter(this.canvas, dateTimeBean.getTime().getHour());
+        this.skyCanvasPainter = new SkyCanvasPainter(this.canvas);
         this.mousePosition = new SimpleObjectProperty<Point2D>(Point2D.ZERO);
         this.mouseAzDegProperty = new SimpleDoubleProperty();
         this.mouseAltDegProperty = new SimpleDoubleProperty();
@@ -108,8 +108,9 @@ final public class SkyCanvasManager {
      * Draws the sky objects from the observedSky with the skyCanvasPainter.
      */
     public void drawSky() {
-        this.skyCanvasPainter.clear(dateTimeBean.getTime().getHour());
+        this.skyCanvasPainter.clear();
         Transform planeToCanvas = this.planeToCanvas.get();
+        this.skyCanvasPainter.drawSkyColor(this.observedSky.get(), planeToCanvas, projection.get());
         this.skyCanvasPainter.drawStars(this.observedSky.get(), planeToCanvas, projection.get());
         this.skyCanvasPainter.drawPlanets(this.observedSky.get(), planeToCanvas, projection.get());
         this.skyCanvasPainter.drawSun(this.observedSky.get(), this.projection.get(), planeToCanvas);

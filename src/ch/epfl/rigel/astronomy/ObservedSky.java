@@ -3,6 +3,7 @@ package ch.epfl.rigel.astronomy;
 import ch.epfl.rigel.Preconditions;
 import ch.epfl.rigel.coordinates.*;
 
+import java.lang.reflect.Array;
 import java.time.ZonedDateTime;
 import java.util.*;
 
@@ -223,6 +224,7 @@ public final class ObservedSky {
      * @return
      */
     private double[] computePlanetPositions() {
+
         double[] positions = new double[planets.size()*2];
         int j = 0;
         for(int i = 0; i<planets.size(); i++){
@@ -231,6 +233,8 @@ public final class ObservedSky {
             positions[j+1] = projCoord.y();
             j+=2;
         }
+
+
         return  positions;
     }
 
@@ -239,14 +243,43 @@ public final class ObservedSky {
      * @return
      */
     private double[] computeStarPositions() {
-        double[] positions = new double[stars().size()*2];
-        int j = 0;
-        for(int i = 0; i < stars().size(); i++){
-            CartesianCoordinates starCoord = this.project(stars().get(i));
-            positions[j] = starCoord.x();
-            positions[j+1] = starCoord.y();
-            j+=2;
+        double[] positions = new double[ 2 * stars().size()];
+        Runnable runnable1 = () -> {
+            int j = 0;
+            for(int i = 0; i < stars().size() / 2; i++){
+                CartesianCoordinates starCoord = this.project(stars().get(i));
+                positions[j] = starCoord.x();
+                positions[j+1] = starCoord.y();
+                j+=2;
+            }
+        };
+
+        Runnable runnable2 = () -> {
+            int j = 0;
+            for(int i = stars().size() / 2; i < stars().size(); i++){
+                CartesianCoordinates starCoord = this.project(stars().get(i));
+                positions[5066 + j] = starCoord.x();
+                positions[5066 + j+1] = starCoord.y();
+                j+=2;
+            }
+        };
+
+        Thread thread1 = new Thread(runnable1);
+        Thread thread2 = new Thread(runnable2);
+        thread1.start();
+        thread2.start();
+
+        try {
+            thread1.join();
+            thread2.join();
         }
+        catch (InterruptedException e){
+            e.printStackTrace();
+        }
+
+
+
+
         return positions;
     }
 

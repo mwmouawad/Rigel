@@ -25,9 +25,16 @@ public class MouseMovementAnimation extends AnimationTimer{
     private long lastNanoTime = 0;
 
 
-
+    /**
+     * Constructs a mouve movement animation.
+     *
+     * @param mousePositionProperty the property containing the mouse coordinates on screen.
+     * @param canvasWidthProperty   the canvas width property.
+     * @param canvasHeightProperty the canvas height property.
+     * @param fovDegProperty the Field of Vie (FOV) property.
+     */
     public MouseMovementAnimation(ObjectProperty<Point2D> mousePositionProperty, DoubleProperty canvasWidthProperty, DoubleProperty canvasHeightProperty,
-                                 DoubleProperty fovDegProperty){
+                                  DoubleProperty fovDegProperty){
         this.mousePositionProperty = mousePositionProperty;
         this.canvasWidthProperty = canvasWidthProperty;
         this.canvasHeightProperty = canvasHeightProperty;
@@ -39,6 +46,9 @@ public class MouseMovementAnimation extends AnimationTimer{
     }
 
 
+    /**
+     * Starts the mouse movement animation.
+     */
     @Override
     public void start() {
         super.start();
@@ -46,6 +56,9 @@ public class MouseMovementAnimation extends AnimationTimer{
         this.mouseMovementEnableProperty.set(true);
     }
 
+    /**
+     * Stops the mouse movement animation.
+     */
     @Override
     public void stop() {
         super.stop();
@@ -65,11 +78,11 @@ public class MouseMovementAnimation extends AnimationTimer{
 
         double deltaSec = (now - lastNanoTime) * 1e-9;
 
-
-        //TODO: Check if properly done the scale.
+        //Scale taking into account the FOV and the number of seconds passed.
+        //For a FOV of 150deg you should have 1 deg of animation per sec.
         double deltaMov = this.fovDegProperty.get() / 150.0
                 * (deltaSec  / PER_SEC_IN_FRAME)
-        ;
+                ;
         if(this.mousePositionProperty.getValue().getX() > (this.canvasWidthProperty.get() * (1 - HOR_THRESHOLD))){
             this.horizontalTranslation.set(deltaMov);
         }
@@ -84,6 +97,7 @@ public class MouseMovementAnimation extends AnimationTimer{
             this.verticalTranslation.set(deltaMov);
         }
 
+        //Reset to 0 to trigger the listeners on SkyCanvasManager.
         this.horizontalTranslationProperty().set(0.0);
         this.verticalTranslationProperty().set(0.0);
 
@@ -92,14 +106,26 @@ public class MouseMovementAnimation extends AnimationTimer{
     }
 
 
+    /**
+     * Returns the mouse movement Enable Property.
+     * @return returns the mouse movement Enable Property.
+     */
     public BooleanProperty getMouseMovementEnableProperty(){
         return this.mouseMovementEnableProperty;
     }
 
+    /**
+     * Returns horizontal translation property.
+     * @return returns horizontal Translation property.
+     */
     public DoubleProperty horizontalTranslationProperty(){
         return this.horizontalTranslation;
     }
 
+    /**
+     * Return the vertical translation property.
+     * @return the vertical translation property.
+     */
     public DoubleProperty verticalTranslationProperty(){
         return this.verticalTranslation;
     }

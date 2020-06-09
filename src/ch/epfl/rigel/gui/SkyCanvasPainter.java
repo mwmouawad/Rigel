@@ -2,9 +2,7 @@ package ch.epfl.rigel.gui;
 
 
 import ch.epfl.rigel.astronomy.*;
-import ch.epfl.rigel.coordinates.CartesianCoordinates;
-import ch.epfl.rigel.coordinates.HorizontalCoordinates;
-import ch.epfl.rigel.coordinates.StereographicProjection;
+import ch.epfl.rigel.coordinates.*;
 import ch.epfl.rigel.math.Angle;
 import ch.epfl.rigel.math.ClosedInterval;
 import javafx.geometry.Point2D;
@@ -12,6 +10,10 @@ import javafx.geometry.VPos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Stop;
+import javafx.scene.transform.NonInvertibleTransformException;
 import javafx.scene.transform.Transform;
 
 import java.util.List;
@@ -28,18 +30,12 @@ final public class SkyCanvasPainter {
 
     final Canvas canvas;
     final GraphicsContext graphicContext;
-    private Color BACKGROUND_COLOR_EARLY_NIGHT = Color.MIDNIGHTBLUE;
-    private Color BACKGROUND_COLOR_DARK_NIGHT = Color.BLACK;
-    private ClosedInterval DARK_NIGHT_INTERVAL = ClosedInterval.of(0, 3);
-    private ClosedInterval EARLY_NIGHT_INTERVAL = ClosedInterval.of(4, 5);
-    private Color BACKGROUND_COLOR_MID_MORNING = Color.SKYBLUE;
-    private ClosedInterval MID_MORNING_INTERVAL = ClosedInterval.of(8, 9);
-    private Color BACKGROUND_COLOR_EARLY_MORNING = Color.SKYBLUE;
-    private ClosedInterval EARLY_MORNING_INTERVAL = ClosedInterval.of(6, 7);
-    private Color BACKGROUND_COLOR_EVENING = Color.NAVY;
-    private ClosedInterval EVENING_INTERVAL = ClosedInterval.of(18, 20);
-    private Color BACKGROUND_COLOR_DAY = Color.STEELBLUE;
-    private ClosedInterval DAY_INTERVAL = ClosedInterval.of(10, 17);
+    static private Color BACKGROUND_COLOR_EARLY_NIGHT = Color.MIDNIGHTBLUE;
+    static private Color BACKGROUND_COLOR_DARK_NIGHT = Color.BLACK;
+    static private ClosedInterval DARK_NIGHT_INTERVAL = ClosedInterval.of(-90.0, -5.0);
+    static private ClosedInterval DAY_INTERVAL = ClosedInterval.of(15.0, 90.0);
+    static private Color BACKGROUND_COLOR_EVENING = Color.NAVY.darker();
+    static private ClosedInterval EVENING_INTERVAL = ClosedInterval.of(-5.0, 15.0);
     static final private ClosedInterval CLIP_INTERVAL_MAG = ClosedInterval.of(-2, 5);
     static final private double CLIP_MAG_FACTOR = 17.0;
     static final private double CLIP_MAG_ALPHA = 99.0;
@@ -63,40 +59,45 @@ final public class SkyCanvasPainter {
      *
      * @param canvas the canvas to draw to.
      */
-    public SkyCanvasPainter(Canvas canvas, int hour) {
+    public SkyCanvasPainter(Canvas canvas) {
         this.canvas = canvas;
         this.graphicContext = canvas.getGraphicsContext2D();
-        this.clear(hour);
+        this.clear();
     }
 
     /**
      * Clears the canvas.
      */
-    public void clear(int hour) {
-        this.graphicContext.setFill(skyColor(hour));
+    public void clear() {
+        this.graphicContext.setFill(Color.BLACK);
         this.graphicContext.fillRect(0, 0, this.canvas.getWidth(), this.canvas.getHeight());
     }
 
-    public Color skyColor(int hour) {
 
-        if (MID_MORNING_INTERVAL.contains(hour)) {
-            return BACKGROUND_COLOR_MID_MORNING.brighter();
-        } else if(EARLY_MORNING_INTERVAL.contains(hour)) {
-            return BACKGROUND_COLOR_EARLY_MORNING;
-        } else if(EVENING_INTERVAL.contains(hour)) {
-            return BACKGROUND_COLOR_EVENING.brighter();
-        } else if(DAY_INTERVAL.contains(hour)) {
-            return BACKGROUND_COLOR_DAY;
-        } else if(DARK_NIGHT_INTERVAL.contains(hour)) {
-            return BACKGROUND_COLOR_DARK_NIGHT.brighter();
-        } else if(EARLY_NIGHT_INTERVAL.contains(hour)) {
+
+    static private Color skyColor(double altDeg) {
+
+
+        if(DAY_INTERVAL.contains(altDeg)) {
             return BACKGROUND_COLOR_EARLY_NIGHT.brighter();
-        } else return BACKGROUND_COLOR_EARLY_NIGHT.darker();
+        } else if(EVENING_INTERVAL.contains(altDeg)) {
+            return BACKGROUND_COLOR_EVENING.brighter();
+        }  else if(DARK_NIGHT_INTERVAL.contains(altDeg)) {
+            return BACKGROUND_COLOR_DARK_NIGHT.brighter();
+        }  else return BACKGROUND_COLOR_EARLY_NIGHT.darker();
+
 
     }
 
 
+    public void drawSkyColor(ObservedSky sky, Transform planeToCanvas, StereographicProjection projection){
+        // create stops
 
+        double sunAltDeg = getSunAltitude(sky.sunPosition(), planeToCanvas, projection);
+        Color skyColor = this.skyColor(sunAltDeg);
+        this.graphicContext.setFill(skyColor);
+        this.graphicContext.fillRect(0, 0, this.canvas.getWidth(), this.canvas.getHeight());
+    }
     /**
      * Draws all stars from ObservedSky to the Canvas. Uses
      * a given transform matrix to convert to the screen coordinate system.
@@ -156,6 +157,7 @@ final public class SkyCanvasPainter {
      * @param projection    the stereographic projection used to apply to the Sun diameter.
      */
     public void drawSun(ObservedSky sky, StereographicProjection projection, Transform planeToCanvas) {
+
 
         Point2D transformedSunPos = planeToCanvas.transform(
                 sky.sunPosition().x(),
@@ -317,6 +319,26 @@ final public class SkyCanvasPainter {
         double clippedMag = CLIP_INTERVAL_MAG.clip(celestialObject.magnitude());
         double sizeFactor = (CLIP_MAG_ALPHA - CLIP_MAG_FACTOR * clippedMag) / CLIP_MAG_BETA;
         return sizeFactor * projection.applyToAngle(CLIP_MAG_APPARENT_SIZE);
+    }
+
+
+
+    static private double getSunAltitude(CartesianCoordinates sunCoordinates, Transform planeToCanvas, StereographicProjection stereographicProjection ){
+        Point2D sunPoint2D = new Point2D(sunCoordinates.x(), sunCoordinates.y());
+        Point2D inverse = new Point2D(0,0);
+        try{
+            inverse = planeToCanvas.inverseTransform(sunPoint2D);
+        }catch (NonInvertibleTransformException error){
+            String.format("Erreur de transformation inverse du Soleil: %s avec erreur: %s", sunPoint2D, error);
+        }
+
+        return stereographicProjection.inverseApply(
+                CartesianCoordinates.of(
+                        sunPoint2D.getX(),
+                        sunPoint2D.getY()
+                )
+        ).altDeg();
+
     }
 
     /**

@@ -1,26 +1,39 @@
-package ch.epfl.rigel.gui;
+package ch.epfl.rigel.astronomy;
 
-import ch.epfl.rigel.astronomy.City;
 import ch.epfl.rigel.structure.Trie;
-import ch.epfl.rigel.structure.TrieableObject;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * City Catalogue storing a Trie and a HashMap.
+ * @author Mark Mouawad (296508)
+ * @author Leah Uzzan (302829)
+ */
 public class CityCatalogue {
 
     private final HashMap<Integer, City> cityCatalogue;
-    private final Trie prefixTree;
+    private final Trie<City> prefixTree;
 
 
+    /**
+     * Constructs a city catalogue.
+     * @param cityCatalogue hash map mapping the geoname id and the city.
+     * @param prefixTree tries containg all.
+     */
     public CityCatalogue(HashMap<Integer, City> cityCatalogue, Trie prefixTree){
         this.cityCatalogue = cityCatalogue;
         this.prefixTree = prefixTree;
     }
 
+    /**
+     * Queries a prefix in the trie.
+     * @param query
+     * @param queryLimit
+     * @return a list with the result cities from the query.
+     */
     public List<City> search(String query, int queryLimit){
         List<City> result = this.prefixTree.query(query, queryLimit);
 
@@ -40,7 +53,7 @@ public class CityCatalogue {
 
 
     /**
-     * A builder intended to be used for manipulating it's associated star catalogue.
+     * A builder intended to be used constructing a city catalogue.
      *
      * @author Mark Mouawad (296508)
      * @author Leah Uzzan (302829)
@@ -53,7 +66,7 @@ public class CityCatalogue {
 
         public Builder addCity(City city){
             this.cityHashMap.put(city.getId(), city);
-            this.prefixTree.insert(city);
+            this.prefixTree.put(city);
             return this;
         }
 
@@ -72,9 +85,9 @@ public class CityCatalogue {
         }
 
         /**
-         * Build the star catalogue.
+         * Build the city catalogue.
          *
-         * @return Star Catalogue
+         * @return City Catalogue
          */
         public CityCatalogue build() {
             return new CityCatalogue(cityHashMap, prefixTree);
