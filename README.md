@@ -10,6 +10,8 @@ CS Project for the EPFL course Practice of Object Oriented Programming.
 
 This is a night sky viewer observation tool written in Java with JavaFX 11.
 
+![Alt Text](https://firebasestorage.googleapis.com/v0/b/testfirebase-2c880.appspot.com/o/rigelimg.png?alt=media&token=938a7e84-68aa-4d65-8f67-0769729dbf3eg)
+
 ### Running
 
 We have included a maven made sh script to launch a bundle application on any platform regardless of the java
@@ -20,7 +22,6 @@ On the main directory run:
 ```
 ./exec/script.sh
 ```
-
 
 ### Instructions
 
