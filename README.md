@@ -1,18 +1,45 @@
-![Alt Text](https://media.giphy.com/media/65R80T3r72EGTzlNad/giphy.gif)
+![Alt Text](https://img.icons8.com/color/100/000000/first-quarter.png)
 
 
 # Projet Rigel (CS-BA2)
 
-Projet dans le cadre du cours Programmation Orientée Objet BA2.
+CS Project for the EPFL course Practice of Object Oriented Programming.
 
 
-## Introduction
+### Introduction
+
+This is a night sky viewer observation tool written in Java with JavaFX 11.
+
+### Running
+
+We have included a maven made sh script to launch a bundle application on any platform regardless of the java
+and java fx installed versions.
+
+On the main directory run:
+
+```
+./exec/script.sh
+```
 
 
-## Building
+### Instructions
 
+* Use the keypads arrows to move your view.
+* Or simply hit spacebar to enter view mode to change view using the mouse.
+* Use the mouse scroll to zoom in and out.
+* Hover your mouse over a celestial object to get it's name printed on the bottom pane.
+* Animate the time with the play/pause and reset buttons.
 
-## Style conventions
+### Our features
 
+Most of the features are shared between all classmates who did the project, however some of them
+are specific to our team, such as:
+
+* View movement with the mouse.
+* Rendering the asterisms names.
+* City auto complete box search using a prefix tree.
+* Rendering the background sky color differently according to the sun elevation.
+* Minor aesthetic improvements.
+* Builded a bundle allowing the user to run the code on any platform regardless of their java version.
 
 
